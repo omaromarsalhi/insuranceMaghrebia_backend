@@ -22,15 +22,12 @@ spring:
           predicates:
             - Path=/api/v1/password/**
 
-        - id: subscription
-          uri: lb:http://SUBSCRIPTION
+        - id: offer
+          uri: lb:http://OFFER
           predicates:
-            - Path=/api/v1/subscriptions/**
+            - Path=/api/v1/offer-category/**
 
-        - id: tenderInvitation
-          uri: lb:http://TENDERINVITATION
-          predicates:
-            - Path=/api/v1/tenderInvitations/**
+
 
 
 application:
