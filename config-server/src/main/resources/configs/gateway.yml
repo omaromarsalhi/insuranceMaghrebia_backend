@@ -32,6 +32,11 @@ spring:
           predicates:
             - Path=/api/v1/tenderInvitations/**
 
+        - id: complaint
+          uri: lb:http://COMPLAINT
+          predicates:
+            - Path=/api/v1/complaint/**
+
 
 application:
   security:
