@@ -12,6 +12,15 @@
         <module name="gateway" />
         <module name="authentication" />
       </profile>
+      <profile name="Annotation profile for offer" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar" />
+        </processorPath>
+        <module name="offer" />
+      </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="marketplace" target="17" />
@@ -26,6 +35,7 @@
       <module name="discovery" options="-parameters" />
       <module name="gateway" options="-parameters" />
       <module name="marketplace" options="-parameters" />
+      <module name="offer" options="-parameters" />
       <module name="subscription" options="-parameters" />
       <module name="tenderInvitation" options="-parameters" />
     </option>
