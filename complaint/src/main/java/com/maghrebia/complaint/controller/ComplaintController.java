@@ -1,6 +1,7 @@
 package com.maghrebia.complaint.controller;
 
 import com.maghrebia.complaint.entity.Complaint;
+import com.maghrebia.complaint.repository.ComplaintRepository;
 import com.maghrebia.complaint.service.ComplaintService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ComplaintController {
 
-    private final ComplaintService complaintService;
+    private  final ComplaintService complaintService;
 
     @PostMapping("")
     public ResponseEntity<Complaint> addComplaint(@RequestBody Complaint complaint

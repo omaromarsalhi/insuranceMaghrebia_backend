@@ -24,9 +24,7 @@ public class Complaint {
     private StatusComplaint complaintStatus;
     private Date createdAt;
 
-    public String getDescription(){
-        return complaintDescription;
-    }
 }
+
 
 
