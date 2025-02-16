@@ -1,9 +1,17 @@
 spring:
   data:
     mongodb:
-#      uri: mongodb+srv://omar:FcybyLAxvwU6nsxT@cluster0.kp2s5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
       uri: mongodb://localhost:27017
       auto-index-creation: true
       database: users
+
 server:
   port: 9004
+  servlet:
+    context-path: /api/v1/
+
+application:
+  security:
+    jwt:
+        secret-key: da4ba9db27f108e4bf7e6b5cc7979d73a01b7b42e1a3e0164e1995e94e5ab2078cc3eb95926591b034ed17c06c80d13bac057fc9f210b31511ffb8625ad23830
+        expiration: 8640000 # 1 day
