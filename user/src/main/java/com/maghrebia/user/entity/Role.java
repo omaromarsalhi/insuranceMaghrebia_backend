@@ -25,4 +25,7 @@ public class Role {
     private LocalDateTime creationDate;
     @LastModifiedDate
     private LocalDateTime lastModifiedDate;
+    public Role(String name) {
+        this.name = name;
+    }
 }

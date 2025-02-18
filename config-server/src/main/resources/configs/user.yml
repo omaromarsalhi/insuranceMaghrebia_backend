@@ -4,7 +4,17 @@ spring:
       uri: mongodb://localhost:27017
       auto-index-creation: true
       database: users
-
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: contact.maghrebia1@gmail.com
+    password: ubwqsmqqurawemqa
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 server:
   port: 9004
   servlet:
@@ -15,3 +25,6 @@ application:
     jwt:
         secret-key: da4ba9db27f108e4bf7e6b5cc7979d73a01b7b42e1a3e0164e1995e94e5ab2078cc3eb95926591b034ed17c06c80d13bac057fc9f210b31511ffb8625ad23830
         expiration: 8640000 # 1 day
+  mailing:
+    frontend:
+      activation-url: http://localhost:4200/activate-account

@@ -79,5 +79,5 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return enabled;
     }
-
+    public String fullName() { return firstname + " " + lastname; }
 }
