@@ -1,21 +1,35 @@
 package com.maghrebia.user.service;
 
+import com.maghrebia.user.dto.request.AuthenticationRequest;
+import com.maghrebia.user.dto.request.EmailRequest;
 import com.maghrebia.user.dto.request.RegistrationRequest;
+import com.maghrebia.user.dto.response.AuthenticationResponse;
+import com.maghrebia.user.entity.PasswordToken;
 import com.maghrebia.user.entity.Role;
 import com.maghrebia.user.entity.user.Token;
 import com.maghrebia.user.entity.user.User;
+import com.maghrebia.user.exception.EmailAlreadyExistsException;
+import com.maghrebia.user.repository.PasswordTokenRepository;
 import com.maghrebia.user.repository.RoleRepository;
 import com.maghrebia.user.repository.TokenRepository;
 import com.maghrebia.user.repository.UserRepository;
 import jakarta.mail.MessagingException;
+import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -25,17 +39,16 @@ public class AuthenticationService {
     private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
     private final EmailService emailService;
-
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
     @Value("${application.mailing.frontend.activation-url}")
     private String activationUrl;
 
     public void register(RegistrationRequest registrationRequest) throws MessagingException {
-        var userRole = roleRepository.findByName("client").orElseGet(() -> roleRepository.save(new Role("client")));
-                // todo - better exception handling
-               // .orElseThrow(() -> new IllegalStateException("Role Client was not initialized"));
-            if(userRole == null) {
-               userRole = roleRepository.save(new Role("client"));
-            }
+        var userRole = roleRepository.findByName("client")
+                .orElseGet(() -> roleRepository.save(new Role("client")));
+
+        // Create the user object
         var user = User.builder()
                 .firstname(registrationRequest.getFirstName())
                 .lastname(registrationRequest.getLastName())
@@ -45,14 +58,25 @@ public class AuthenticationService {
                 .enabled(false)
                 .roles(List.of(userRole))
                 .build();
+
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new EmailAlreadyExistsException("The email is already registered.");
+        }
+
         userRepository.save(user);
+
         sendValidationEmail(user);
     }
 
+
     private void sendValidationEmail(User user) throws MessagingException {
         var newToken = generateAndSaveActivationToken(user);
-        emailService.sendEmail(user.getEmail(),user.fullName(),"activate_account",activationUrl,newToken,"Account activation");
-
+        emailService.sendVerificationEmail(user.getEmail(),
+                user.fullName(),
+                "activate_account",
+                activationUrl,
+                newToken,
+                "Account activation");
     }
 
     private String generateAndSaveActivationToken(User user) {
@@ -77,4 +101,31 @@ public class AuthenticationService {
         }
         return codeBuilder.toString();
     }
+
+    public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {
+        var auth = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(), authenticationRequest.getPassword())
+        );
+        var claims = new HashMap<String, Object>();
+        var user = (User) auth.getPrincipal();
+        claims.put("fullName", user.fullName());
+        var jwtToken = jwtService.generateToken(claims, user);
+        return AuthenticationResponse.builder().token(jwtToken).build();
+    }
+
+    @Transactional
+    public void activateAccount(String token) throws MessagingException {
+        Token savedToken = tokenRepository.findByToken(token).orElseThrow(() -> new RuntimeException("Token not found"));
+        if (LocalDateTime.now().isAfter(savedToken.getExpiresAt())) {
+            tokenRepository.deleteById(savedToken.getId());
+            sendValidationEmail(savedToken.getUser());
+            throw new RuntimeException("Activation token has expired . A new token has been sent");
+        }
+        var user = userRepository.findById(savedToken.getUser().getId()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        user.setEnabled(true);
+        userRepository.save(user);
+        tokenRepository.deleteById(savedToken.getId());
+    }
+
+
 }

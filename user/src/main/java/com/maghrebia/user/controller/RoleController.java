@@ -13,9 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("role")
-@Tag(name = "Authentication")
+@Tag(name = "Role")
 public class RoleController {
     private final RoleService roleService;
+
     @PostMapping("/add")
     public ResponseEntity<Role> addRole(@RequestBody Role role) {
         return roleService.addRole(role);

@@ -12,6 +12,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(collection = "user")
-public class User implements UserDetails {
+public class User implements UserDetails, Principal {
     @Id
     private String id;
     private String firstname;
@@ -79,5 +80,13 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return enabled;
     }
-    public String fullName() { return firstname + " " + lastname; }
+
+    public String fullName() {
+        return firstname + " " + lastname;
+    }
+
+    @Override
+    public String getName() {
+        return email;
+    }
 }

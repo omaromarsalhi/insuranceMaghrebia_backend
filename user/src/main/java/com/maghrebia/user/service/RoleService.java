@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class RoleService {
     private final RoleRepository roleRepository;
+
     public ResponseEntity<Role> addRole(Role role) {
         return ResponseEntity.ok(roleRepository.save(role));
     }
