@@ -8,7 +8,8 @@ import lombok.Getter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,7 +23,8 @@ public class Complaint {
     private String userId;
     private String complaintDescription;
     private StatusComplaint complaintStatus;
-    private Date createdAt;
+    private ComplaintType complaintType;
+    private LocalDateTime createdAt;
 
 }
 
