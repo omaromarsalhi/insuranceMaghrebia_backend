@@ -24,6 +24,8 @@ public class OfferCategory {
 
     private String description;
 
+    private String imageUri;
+
     @CreatedDate  // This will be populated automatically by Spring MongoDB Auditing
     private Date createdAt;
 
