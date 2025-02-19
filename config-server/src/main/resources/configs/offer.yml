@@ -4,6 +4,9 @@ spring:
       #      uri: mongodb+srv://omar:FcybyLAxvwU6nsxT@cluster0.kp2s5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
       uri: mongodb://localhost:27017
       database: offers
+
+
+
 server:
   port: 9002
 
@@ -12,3 +15,6 @@ application:
   security:
     jwt:
       secret-key: 3A3819FB8D35506C579DB26CC2B33952550D02BE99FBF626D8F9C4E8E934F1A3
+  upload:
+    path: ${user.dir}/uploadedImages
+

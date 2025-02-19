@@ -11,7 +11,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/api/v1/offer-category")
+@RequestMapping("/api/v1/offer-categories")
 @RequiredArgsConstructor
 public class OfferCategoryController {
 
@@ -22,19 +22,19 @@ public class OfferCategoryController {
         return offerCategoryService.createOfferCategory(offerCategory);
     }
 
-    @GetMapping
+    @GetMapping("getAll")
     public List<OfferCategory> getAllOfferCategories() {
         return offerCategoryService.getAllOfferCategories();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("getOne/{id}")
     public ResponseEntity<OfferCategory> getOfferCategoryById(@PathVariable String id) {
         return offerCategoryService.getOfferCategoryById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("update/{id}")
     public ResponseEntity<OfferCategory> updateOfferCategory(@PathVariable String id, @RequestBody OfferCategory offerCategoryDetails) {
         OfferCategory updatedOfferCategory = offerCategoryService.updateOfferCategory(id, offerCategoryDetails);
         return ResponseEntity.ok(updatedOfferCategory);

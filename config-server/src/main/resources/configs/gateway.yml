@@ -25,7 +25,17 @@ spring:
         - id: offer
           uri: lb:http://OFFER
           predicates:
-            - Path=/api/v1/offer-category/**
+            - Path=/api/v1/offer-categories/**
+
+        - id: offer
+          uri: lb:http://OFFER
+          predicates:
+            - Path=/api/v1/offers/**
+
+        - id: offer
+          uri: lb:http://OFFER
+          predicates:
+            - Path=/api/v1/images/**
 
 
 
