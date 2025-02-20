@@ -3,26 +3,37 @@ package com.maghrebia.complaint.controller;
 import com.maghrebia.complaint.entity.Complaint;
 import com.maghrebia.complaint.entity.ComplaintType;
 import com.maghrebia.complaint.service.ComplaintService;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/complaint")
-//@CrossOrigin(origins = "http://localhost:4200")
-@CrossOrigin(origins = {"http://localhost:49773","http://localhost:4200"})
+@CrossOrigin(origins = {" http://localhost:54237 ","http://localhost:4200"})
 @RequiredArgsConstructor
 public class ComplaintController {
 
     private  final ComplaintService complaintService;
-
     @PostMapping("/{userId}")
-    public ResponseEntity<Complaint> addComplaint(@RequestBody Complaint complaint,@PathVariable String userId
-    ){
-        return ResponseEntity.ok(complaintService.addComplaint(complaint,userId));
+    public ResponseEntity<?> addComplaint(@Valid @RequestBody Complaint complaint,
+                                          @PathVariable String userId,
+                                          BindingResult result) {
+        if (result.hasErrors()) {
+            Map<String, String> errors = new HashMap<>();
+            result.getFieldErrors().forEach(error -> {
+                errors.put(error.getField(), error.getDefaultMessage());
+                System.out.println("Validation error: " + error.getField() + " - " + error.getDefaultMessage()); // Log des erreurs
+            });
+            return ResponseEntity.badRequest().body(errors);
+        }
+        return ResponseEntity.ok(complaintService.addComplaint(complaint, userId));
     }
 
     @GetMapping("")
@@ -35,7 +46,6 @@ public class ComplaintController {
     ){
         return ResponseEntity.ok(complaintService.getComplaintById(id));
     }
-
     @GetMapping("/{userId}")
     public ResponseEntity<List<Complaint>> getComplaintByUserId( @PathVariable String userId
     ){
@@ -58,7 +68,5 @@ public class ComplaintController {
 //    ){
 //        return ResponseEntity.ok(complaintService.addComplaint(complaint));
 //    }
-
-
 
 }

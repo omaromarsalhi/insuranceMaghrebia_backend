@@ -2,7 +2,6 @@ package com.maghrebia.complaint.service;
 
 import com.maghrebia.complaint.entity.Complaint;
 import com.maghrebia.complaint.entity.ComplaintType;
-import com.maghrebia.complaint.entity.ResponseComplaint;
 import com.maghrebia.complaint.entity.StatusComplaint;
 import com.maghrebia.complaint.repository.ComplaintRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +22,6 @@ public class ComplaintService {
         complaint.setCreatedAt(LocalDateTime.now());
         complaint.setUserId(userId);
         complaint.setComplaintStatus(StatusComplaint.CLOSED);
-
-//        complaint.setComplaintType(ComplaintType.valueOf("SERVICE_QUALITY"));
         return complaintRepository.save(complaint);
     }
 

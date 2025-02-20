@@ -1,5 +1,7 @@
 package com.maghrebia.complaint.entity;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -12,12 +14,14 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 @Document(collection = "response")
+
 public class ResponseComplaint {
     @Id
     private String responseId;
     private String complaintId;
-    //l user qui va repond a  la reclamation
     private String responderId;
+    @NotBlank(message = "Complaint description is required")
+    @Size(max = 500, message = "Complaint description must not exceed 500 characters")
     private String responseDescription;
     private LocalDateTime createdAt;
 }

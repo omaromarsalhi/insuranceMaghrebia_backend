@@ -7,6 +7,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.List;
 
 public interface ResponseRepository extends MongoRepository<ResponseComplaint,String> {
-    ResponseComplaint findByComplaintId(String complaintId);
+    List<ResponseComplaint>  findAllByComplaintId(String complaintId);
 
 }

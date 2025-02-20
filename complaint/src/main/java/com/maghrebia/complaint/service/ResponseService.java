@@ -30,8 +30,11 @@ public class ResponseService {
     public void deleteResponse (ResponseComplaint response) {
         responseRepository.delete(response);
     }
-    public ResponseComplaint getResponsesByComplainId(String complaintId) {
-        return  responseRepository.findByComplaintId(complaintId);
+
+
+
+    public List<ResponseComplaint> getResponsesByComplainId(String complaintId) {
+        return  responseRepository.findAllByComplaintId(complaintId);
     }
 
 }
