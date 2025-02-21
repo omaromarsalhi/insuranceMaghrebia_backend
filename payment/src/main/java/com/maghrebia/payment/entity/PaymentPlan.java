@@ -1,5 +1,6 @@
 package com.maghrebia.payment.entity;
 
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,12 +25,16 @@ public class PaymentPlan {
 
     private double amountDue;
 
+    @NotNull(message = "Payment status cannot be null")
+    @Positive(message = "Total amount must be a positive number")
+    @Min(value = 50, message = "Total amount must be greater than 100")
     private double amountPaid;
 
+    @NotBlank(message = "Payment status is required")
+    @Pattern(regexp = "^(Pending|Paid|Overdue)$", message = "Payment status must be either 'Pending', 'Paid', or 'Overdue'")
     private PaymentStatus paymentStatus;
 
     private String paymentContractId;
-
 
     private Date paymentDate;
 

@@ -1,5 +1,9 @@
 package com.maghrebia.payment.entity;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Positive;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
@@ -24,10 +28,16 @@ public class PaymentContract {
 
     private String offerId;
 
+    @Positive(message = "Total amount must be a positive number")
+    @NotNull(message = "Payment status cannot be null")
     private double totalAmount;
 
+    @NotBlank(message = "Plan duration cannot be blank")
     private String planDuration;
 
+    @NotBlank(message = "Payment status is required")
+    @NotNull(message = "Payment status cannot be null")
+    @Pattern(regexp = "^(Pending|Paid|Overdue)$", message = "Payment status must be either 'Pending', 'Paid', or 'Overdue'")
     private String paymentStatus;
 
     @CreatedDate

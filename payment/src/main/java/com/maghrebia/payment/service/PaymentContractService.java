@@ -37,8 +37,13 @@ public class PaymentContractService {
     }
 
     public List<PaymentContract> getAllPayments() {
+        return paymentRepository.findAllWithoutPaymentPlans();
+    }
+
+    public List<PaymentContract> getAllPaymentsDetails() {
         return paymentRepository.findAll();
     }
+
 
     public Optional<PaymentContract> getPaymentContractById(String id) {
         return paymentRepository.findById(id);
@@ -49,6 +54,9 @@ public class PaymentContractService {
                 .orElseThrow(() -> new RuntimeException("payment not found with id: " + id));
 
         payment.setPlanDuration(paymentDetails.getPlanDuration());
+        payment.setUserId(paymentDetails.getUserId());
+        payment.setOfferId(paymentDetails.getOfferId());
+
         return paymentRepository.save(payment);
     }
 
