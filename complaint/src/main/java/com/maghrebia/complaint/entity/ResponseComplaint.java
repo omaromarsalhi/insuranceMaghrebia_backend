@@ -21,7 +21,9 @@ public class ResponseComplaint {
     private String complaintId;
     private String responderId;
     @NotBlank(message = "Complaint description is required")
-    @Size(max = 500, message = "Complaint description must not exceed 500 characters")
+    @Size(min = 5, max = 100, message = "Title must be between 5 and 100 characters")
     private String responseDescription;
     private LocalDateTime createdAt;
+    private Boolean isSeen=false;
+
 }

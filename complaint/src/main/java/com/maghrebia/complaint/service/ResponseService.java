@@ -37,4 +37,17 @@ public class ResponseService {
         return  responseRepository.findAllByComplaintId(complaintId);
     }
 
+    public ResponseComplaint  isSeen(String responseId) {
+        ResponseComplaint responseComplaint=responseRepository.findById(responseId).get();
+        if(responseComplaint!=null) {
+            responseComplaint.setIsSeen(true);
+            responseRepository.save(responseComplaint);
+        }
+       return responseComplaint;
+    }
+
+    public List<ResponseComplaint> getAllComplaints() {
+        return responseRepository.findAll();
+    }
+
 }

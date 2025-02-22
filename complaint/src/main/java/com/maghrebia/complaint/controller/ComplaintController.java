@@ -16,7 +16,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/complaint")
-@CrossOrigin(origins = {" http://localhost:54237 ","http://localhost:4200"})
+@CrossOrigin(origins = {"http://localhost:58138","http://localhost:4200"})
 @RequiredArgsConstructor
 public class ComplaintController {
 
@@ -39,6 +39,7 @@ public class ComplaintController {
     @GetMapping("")
     public ResponseEntity<List<Complaint>> getAll(
     ){
+
         return ResponseEntity.ok(complaintService.getAllComplaints());
     }
     @GetMapping("/get/{id}")
