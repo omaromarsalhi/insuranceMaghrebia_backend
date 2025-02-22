@@ -14,7 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-@CrossOrigin(origins = "http://localhost:4300")
+
 @RestController
 @RequestMapping("auth")
 @Tag(name = "Authentication")
@@ -32,9 +32,10 @@ public class AuthenticationController {
     public ResponseEntity<AuthenticationResponse> login(@RequestBody @Valid AuthenticationRequest authenticationRequest) {
         return ResponseEntity.ok(authenticationService.authenticate(authenticationRequest));
     }
+
     @GetMapping("/activate-account")
     public ResponseEntity<?> confirm(@RequestParam String token) throws MessagingException {
-            authenticationService.activateAccount(token);
+        authenticationService.activateAccount(token);
         return ResponseEntity.ok().build();
     }
 }
