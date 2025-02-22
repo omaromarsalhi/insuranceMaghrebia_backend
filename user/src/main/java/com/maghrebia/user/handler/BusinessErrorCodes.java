@@ -6,16 +6,18 @@ import org.springframework.http.HttpStatus;
 import static org.springframework.http.HttpStatus.*;
 
 public enum BusinessErrorCodes {
-    ACCOUNT_LOCKED("User account is locked", UNAUTHORIZED),
-    ACCOUNT_NOT_ACTIVE("User account is not active", UNAUTHORIZED),
-    BAD_CREDENTIALS("Login and/or password is incorrect", UNAUTHORIZED),
+    ACCOUNT_LOCKED("User account is banned", FORBIDDEN),
+    ACCOUNT_NOT_ACTIVE("User account is not verified please check your email", FORBIDDEN),
+    BAD_CREDENTIALS("Email and/or password is incorrect", BAD_REQUEST),
     INCORRECT_CURRENT_PASSWORD("Incorrect password", BAD_REQUEST),
     NEW_PASSWORD_DOES_NOT_MATCH("New password does not match", BAD_REQUEST),
     ACCESS_DENIED("Access is denied", FORBIDDEN),
-    INTERNAL_SERVER_ERROR("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR),
-    MAIL_NOT_SENT("Mail not sent", HttpStatus.INTERNAL_SERVER_ERROR ),
-    EMAIL_ALREADY_EXISTS("Email already exists", CONFLICT);
+    EMAIL_ALREADY_EXISTS("Email already exists", CONFLICT),
+    INVALID_TOKEN("Invalid token", BAD_REQUEST),
+    EMAIL_PROBLEM("Mail has not been send", FAILED_DEPENDENCY),
+    EXPIRED_TOKEN("Activation token has expired . A new token has been sent", BAD_REQUEST),
 
+    ;
     @Getter
     private final String description;
 

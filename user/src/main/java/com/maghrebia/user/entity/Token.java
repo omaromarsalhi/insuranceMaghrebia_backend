@@ -1,4 +1,4 @@
-package com.maghrebia.user.entity.user;
+package com.maghrebia.user.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

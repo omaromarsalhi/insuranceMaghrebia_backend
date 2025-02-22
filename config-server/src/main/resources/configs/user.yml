@@ -27,4 +27,7 @@ application:
         expiration: 8640000 # 1 day
   mailing:
     frontend:
-      activation-url: http://localhost:4200/activate-account
+      activation-url: http://localhost:4300/account/activate-account
+
+springdoc:
+  default-produces-media-type: application/json

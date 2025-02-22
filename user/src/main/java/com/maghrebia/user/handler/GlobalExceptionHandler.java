@@ -2,6 +2,8 @@ package com.maghrebia.user.handler;
 
 import com.maghrebia.user.dto.response.ExceptionResponse;
 import com.maghrebia.user.exception.EmailAlreadyExistsException;
+import com.maghrebia.user.exception.ExpiredTokenException;
+import com.maghrebia.user.exception.InvalidTokenException;
 import com.mongodb.DuplicateKeyException;
 import jakarta.mail.MessagingException;
 import org.springframework.http.HttpStatus;
@@ -30,6 +32,7 @@ public class GlobalExceptionHandler {
                         .build());
     }
 
+
     @ExceptionHandler(LockedException.class)
     public ResponseEntity<ExceptionResponse> handleLockedException(LockedException exp) {
         return buildResponse(ACCOUNT_LOCKED, exp);
@@ -50,18 +53,11 @@ public class GlobalExceptionHandler {
         return buildResponse(ACCESS_DENIED, exp);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ExceptionResponse> handleGenericException(Exception exp) {
-        return buildResponse(INTERNAL_SERVER_ERROR, exp);
-    }
     @ExceptionHandler(EmailAlreadyExistsException.class)
     public ResponseEntity<ExceptionResponse> handleEmailAlreadyExistsException(EmailAlreadyExistsException exp) {
         return buildResponse(EMAIL_ALREADY_EXISTS, exp);
     }
-    @ExceptionHandler(MessagingException.class)
-    public ResponseEntity<ExceptionResponse> handleMessagingException(MessagingException exp) {
-        return buildResponse(MAIL_NOT_SENT, exp);
-    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ExceptionResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException exp) {
         Set<String> errors = new HashSet<>();
@@ -76,4 +72,20 @@ public class GlobalExceptionHandler {
                                 .build()
                 );
     }
+
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<ExceptionResponse> handleInvalidTokenException(InvalidTokenException exp) {
+        return buildResponse(INVALID_TOKEN, exp);
+    }
+
+    @ExceptionHandler(MessagingException.class)
+    public ResponseEntity<ExceptionResponse> handleMessagingException(MessagingException exp) {
+        return buildResponse(EMAIL_PROBLEM, exp);
+    }
+
+    @ExceptionHandler(ExpiredTokenException.class)
+    public ResponseEntity<ExceptionResponse> handleExpiredTokenException(ExpiredTokenException exp) {
+        return buildResponse(EXPIRED_TOKEN, exp);
+    }
+
 }

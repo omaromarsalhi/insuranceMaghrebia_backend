@@ -1,6 +1,5 @@
-package com.maghrebia.user.entity.user;
+package com.maghrebia.user.entity;
 
-import com.maghrebia.user.entity.Role;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
@@ -33,7 +32,7 @@ public class User implements UserDetails, Principal {
     private String email;
     private String password;
     private LocalDate dateOfBirth;
-    private String gender;
+    private Gender gender;
     private String phone;
     private String address;
     @CreatedDate

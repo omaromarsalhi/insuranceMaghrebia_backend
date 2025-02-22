@@ -3,7 +3,7 @@ package com.maghrebia.user.service;
 import com.maghrebia.user.dto.request.EmailRequest;
 import com.maghrebia.user.dto.request.PasswordResetRequest;
 import com.maghrebia.user.entity.PasswordToken;
-import com.maghrebia.user.entity.user.User;
+import com.maghrebia.user.entity.User;
 import com.maghrebia.user.repository.PasswordTokenRepository;
 import com.maghrebia.user.repository.UserRepository;
 import jakarta.mail.MessagingException;
@@ -28,7 +28,7 @@ public class PasswordService {
         emailService.sendResetPasswordEmail(user.getEmail(),
                 user.fullName(),
                 "forget-password",
-                "http://localhost:4200/forget-password?token=" + generatedToken,
+                "http://localhost:4300/forget-password?token=" + generatedToken,
                 "Reset Password");
         return generatedToken;
     }

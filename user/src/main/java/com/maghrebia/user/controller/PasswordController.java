@@ -20,8 +20,8 @@ public class PasswordController {
 
     @PostMapping("/forget-password")
     public ResponseEntity<?> forgetPassword(@RequestBody @Valid EmailRequest email) throws MessagingException {
-        String generatedToken=passwordService.sendResetPassword(email);
-        return ResponseEntity.ok("token:"+generatedToken+"\n An email has been sent");
+        String generatedToken = passwordService.sendResetPassword(email);
+        return ResponseEntity.ok("An email has been sent");
     }
 
     @PostMapping("/reset-password")
