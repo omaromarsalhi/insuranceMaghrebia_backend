@@ -2,72 +2,110 @@ package com.maghrebia.complaint.controller;
 
 import com.maghrebia.complaint.entity.Complaint;
 import com.maghrebia.complaint.entity.ComplaintType;
+import com.maghrebia.complaint.exception.InvalidComplaintException;
+import com.maghrebia.complaint.exception.UserNotFoundException;
+import com.maghrebia.complaint.service.AiService;
 import com.maghrebia.complaint.service.ComplaintService;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/complaint")
-@CrossOrigin(origins = {"http://localhost:58138","http://localhost:4200"})
+@CrossOrigin(origins = {"http://localhost:58138", "http://localhost:4200"})
 @RequiredArgsConstructor
 public class ComplaintController {
 
-    private  final ComplaintService complaintService;
+    private final ComplaintService complaintService;
+    private final AiService aiService;
+
     @PostMapping("/{userId}")
     public ResponseEntity<?> addComplaint(@Valid @RequestBody Complaint complaint,
                                           @PathVariable String userId,
                                           BindingResult result) {
+
         if (result.hasErrors()) {
             Map<String, String> errors = new HashMap<>();
-            result.getFieldErrors().forEach(error -> {
-                errors.put(error.getField(), error.getDefaultMessage());
-                System.out.println("Validation error: " + error.getField() + " - " + error.getDefaultMessage()); // Log des erreurs
-            });
+            result.getFieldErrors().forEach(error ->
+                    errors.put(error.getField(), error.getDefaultMessage())
+            );
             return ResponseEntity.badRequest().body(errors);
         }
-        return ResponseEntity.ok(complaintService.addComplaint(complaint, userId));
+
+        try {
+            Complaint savedComplaint = complaintService.addComplaint(complaint, userId);
+            return ResponseEntity.ok(savedComplaint);
+        } catch (InvalidComplaintException e) {
+            return ResponseEntity.badRequest().body(Collections.singletonMap("error", e.getMessage()));
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.singletonMap("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error", "An error occurred while saving the complaint."));
+        }
     }
+
 
     @GetMapping("")
     public ResponseEntity<List<Complaint>> getAll(
-    ){
+    ) {
 
         return ResponseEntity.ok(complaintService.getAllComplaints());
     }
+
     @GetMapping("/get/{id}")
-    public ResponseEntity<Complaint> getById( @PathVariable String id
-    ){
+    public ResponseEntity<Complaint> getById(@PathVariable String id
+    ) {
         return ResponseEntity.ok(complaintService.getComplaintById(id));
     }
+
     @GetMapping("/{userId}")
-    public ResponseEntity<List<Complaint>> getComplaintByUserId( @PathVariable String userId
-    ){
+    public ResponseEntity<List<Complaint>> getComplaintByUserId(@PathVariable String userId
+    ) {
         return ResponseEntity.ok(complaintService.getComplaintByUserId(userId));
     }
+
     @GetMapping("/getType/{type}")
-    public ResponseEntity<List<Complaint>> getResponsesByType( @PathVariable ComplaintType type
-    ){
-        return ResponseEntity.ok(complaintService.getResponsesByType(type));
+    public ResponseEntity<List<Complaint>> getResponsesByType(@PathVariable ComplaintType type
+    ) {
+        return ResponseEntity.ok(complaintService.getComplaintsByType(type));
     }
-    @DeleteMapping("")
-    public Response delete(@RequestBody Complaint complaint
-    ){
-        complaintService.deleteComplaint(complaint);
-        return Response.ok().build();
-    }
+//    @DeleteMapping("")
+//    public Response delete(@RequestBody Complaint complaint
+//    ){
+//        complaintService.deleteComplaint(complaint);
+//        return Response.ok().build();
+    //  }
 
 //    @PostMapping("")
 //    public ResponseEntity<Complaint> updateComplaint(@RequestBody Complaint complaint
 //    ){
 //        return ResponseEntity.ok(complaintService.addComplaint(complaint));
 //    }
+@PostMapping("/getTitle")
+public ResponseEntity<String> getSuggestedTitle(@RequestBody Map<String, String> requestBody) {
+
+    String description = requestBody.get("description");
+    if (description == null || description.isEmpty()) {
+        return ResponseEntity.badRequest().body("No description provided.");
+    }
+
+    String suggestedTitle = aiService.getSuggestedTitle(description);
+
+    if ("Error occurred while calling the Flask API.".equals(suggestedTitle)) {
+        System.err.println(suggestedTitle);
+        return ResponseEntity.status(500).body(suggestedTitle);
+    }
+
+    return ResponseEntity.ok(suggestedTitle);
+}
 
 }

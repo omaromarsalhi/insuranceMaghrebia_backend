@@ -23,6 +23,7 @@ public class ComplaintService {
 
     private final ComplaintRepository complaintRepository;
     private final UserRepository userRepository;
+    private final AiService aiService;
 
 
     public Complaint addComplaint(Complaint complaint, String userId) {
@@ -38,11 +39,13 @@ public class ComplaintService {
             if (complaint == null || !StringUtils.hasText(complaint.getComplaintDescription())) {
                 throw new InvalidComplaintException("Complaint description is required");
             }
-
-            // Configuration des métadonnées
+            if (!aiService.isComplaintValid(complaint.getTitle(), complaint.getComplaintDescription())) {
+                String responseMessage = aiService.getComplaintResponse(complaint.getTitle(), complaint.getComplaintDescription());
+                throw new InvalidComplaintException("Complaint title and description are not compatible"+responseMessage);
+            }
             complaint.setCreatedAt(LocalDateTime.now());
             complaint.setUserId(userId);
-            complaint.setComplaintStatus(StatusComplaint.CLOSED); // Ou StatusComplaint.OPEN selon la logique métier
+            complaint.setComplaintStatus(StatusComplaint.CLOSED);
 
             return complaintRepository.save(complaint);
 
@@ -126,4 +129,6 @@ public class ComplaintService {
             throw new RuntimeException("Database error while fetching complaints by type", e);
         }
     }
+
+
 }
