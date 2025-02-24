@@ -14,8 +14,8 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "token")
-public class Token {
+@Document(collection = "activationToken")
+public class ActivationToken {
     @Id
     private String id;
     private String token;

@@ -18,10 +18,12 @@ import io.jsonwebtoken.Jwts;
 
 @Service
 public class JwtService {
-    @Value("${application.security.jwt.expiration}")
-    private long jwtExpiration;
+    @Value("${application.security.jwt.access-expiration}")
+    private long accessExpiration;
     @Value("${application.security.jwt.secret-key}")
     private String secretKey;
+    @Value("${application.security.jwt.refresh-expiration}")
+    private long refreshExpiration;
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -32,15 +34,26 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
-    public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
+    public String generateAccessToken(UserDetails userDetails) {
+        return generateAccessToken(new HashMap<>(), userDetails);
     }
 
-    public String generateToken(
+    public String generateAccessToken(
             Map<String, Object> extraClaims,
             UserDetails userDetails
     ) {
-        return buildToken(extraClaims, userDetails, jwtExpiration);
+        return buildToken(extraClaims, userDetails, accessExpiration);
+    }
+
+    public String generateRefreshToken(UserDetails userDetails) {
+        return generateRefreshToken(new HashMap<>(), userDetails);
+    }
+
+    public String generateRefreshToken(
+            Map<String, Object> extraClaims,
+            UserDetails userDetails
+    ) {
+        return buildToken(extraClaims, userDetails, refreshExpiration);
     }
 
     private String buildToken(
@@ -63,9 +76,14 @@ public class JwtService {
                 .compact();
     }
 
-    public boolean isTokenValid(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+    public boolean isAccessTokenValid(String accessToken, UserDetails userDetails) {
+        final String username = extractUsername(accessToken);
+        return (username.equals(userDetails.getUsername())) && !isTokenExpired(accessToken);
+    }
+
+    public boolean isRefreshTokenValid(String refreshToken, UserDetails userDetails) {
+        final String username = extractUsername(refreshToken);
+        return (username.equals(userDetails.getUsername())) && !isTokenExpired(refreshToken);
     }
 
     private boolean isTokenExpired(String token) {

@@ -1,27 +1,32 @@
 package com.maghrebia.user.service;
 
 import com.maghrebia.user.dto.request.AuthenticationRequest;
+import com.maghrebia.user.dto.request.RefreshTokenRequest;
 import com.maghrebia.user.dto.request.RegistrationRequest;
 import com.maghrebia.user.dto.response.AuthenticationResponse;
+import com.maghrebia.user.dto.response.RefreshResponse;
 import com.maghrebia.user.entity.Role;
-import com.maghrebia.user.entity.Token;
+import com.maghrebia.user.entity.ActivationToken;
 import com.maghrebia.user.entity.User;
 import com.maghrebia.user.exception.EmailAlreadyExistsException;
 import com.maghrebia.user.exception.ExpiredTokenException;
 import com.maghrebia.user.exception.InvalidTokenException;
 import com.maghrebia.user.repository.RoleRepository;
-import com.maghrebia.user.repository.TokenRepository;
+import com.maghrebia.user.repository.ActivationTokenRepository;
 import com.maghrebia.user.repository.UserRepository;
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -33,12 +38,17 @@ public class AuthenticationService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
-    private final TokenRepository tokenRepository;
+    private final ActivationTokenRepository tokenRepository;
     private final EmailService emailService;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final RefreshTokenService refreshTokenService;
     @Value("${application.mailing.frontend.activation-url}")
     private String activationUrl;
+    @Value("${application.security.jwt.access-expiration}")
+    private long accessExpiration;
+    @Value("${application.security.jwt.refresh-expiration}")
+    private long refreshExpiration;
 
     public void register(RegistrationRequest registrationRequest) throws MessagingException {
         var userRole = roleRepository.findByName("client")
@@ -78,7 +88,7 @@ public class AuthenticationService {
 
     private String generateAndSaveActivationToken(User user) {
         String generatedToken = generateActivationCode(7);
-        var token = Token.builder()
+        var token = ActivationToken.builder()
                 .token(generatedToken)
                 .createdAt(LocalDateTime.now())
                 .expiresAt(LocalDateTime.now().plusMinutes(15))
@@ -99,22 +109,37 @@ public class AuthenticationService {
         return codeBuilder.toString();
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {
+    public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest, HttpServletResponse response) {
+        // Authenticate user
         var auth = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(), authenticationRequest.getPassword())
         );
-        var claims = new HashMap<String, Object>();
         var user = (User) auth.getPrincipal();
-        claims.put("fullName", user.fullName());
-        var jwtToken = jwtService.generateToken(claims, user);
-        user.setLastLoginDate(LocalDateTime.now());
-        userRepository.save(user);
-        return AuthenticationResponse.builder().token(jwtToken).build();
+
+        // Generate tokens
+        var accessToken = jwtService.generateAccessToken(user);
+        var refreshToken = jwtService.generateRefreshToken(user);
+        refreshTokenService.storeRefreshToken(refreshToken,user);
+
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh_token", refreshToken)
+                .secure(false)
+                .path("/")
+                .maxAge(authenticationRequest.isRememberMe() ? 5*60 : -1)  //refreshExpiration / 1000
+                .sameSite("Lax")
+                .build();
+
+        // Add cookie to the response
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+
+        return AuthenticationResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 
     @Transactional
     public void activateAccount(String token) throws MessagingException {
-        Token savedToken = tokenRepository.findByToken(token).orElseThrow(() -> new InvalidTokenException("Invalid token"));
+        ActivationToken savedToken = tokenRepository.findByToken(token).orElseThrow(() -> new InvalidTokenException("Invalid token"));
         if (LocalDateTime.now().isAfter(savedToken.getExpiresAt())) {
             tokenRepository.deleteById(savedToken.getId());
             sendValidationEmail(savedToken.getUser());
@@ -127,4 +152,19 @@ public class AuthenticationService {
     }
 
 
+    public RefreshResponse refreshToken(@Valid RefreshTokenRequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        if (!jwtService.isRefreshTokenValid(request.getRefreshToken(), user)) {
+            throw new InvalidTokenException("Invalid refresh token");
+        }
+        String newAccessToken = jwtService.generateAccessToken(user);
+        return RefreshResponse.builder()
+                .accessToken(newAccessToken)
+                .build();
+    }
 }
+
+//for deployement
+                /*.secure(true) // Set to true for HTTPS (production)
+                .domain(".yourdomain.com") // Allow subdomains*/

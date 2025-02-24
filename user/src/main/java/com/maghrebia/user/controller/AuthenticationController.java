@@ -1,17 +1,15 @@
 package com.maghrebia.user.controller;
 
 import com.maghrebia.user.dto.request.AuthenticationRequest;
+import com.maghrebia.user.dto.request.RefreshTokenRequest;
 import com.maghrebia.user.dto.request.RegistrationRequest;
 import com.maghrebia.user.dto.response.AuthenticationResponse;
-import com.maghrebia.user.dto.response.ExceptionResponse;
-import com.maghrebia.user.exception.InvalidTokenException;
 import com.maghrebia.user.service.AuthenticationService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,13 +27,18 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponse> login(@RequestBody @Valid AuthenticationRequest authenticationRequest) {
-        return ResponseEntity.ok(authenticationService.authenticate(authenticationRequest));
+    public ResponseEntity<AuthenticationResponse> login(@RequestBody @Valid AuthenticationRequest authenticationRequest, HttpServletResponse response) {
+        return ResponseEntity.ok(authenticationService.authenticate(authenticationRequest, response));
     }
 
     @GetMapping("/activate-account")
     public ResponseEntity<?> confirm(@RequestParam String token) throws MessagingException {
         authenticationService.activateAccount(token);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/refresh-token")
+    public ResponseEntity<?> refresh(@RequestBody @Valid RefreshTokenRequest request) {
+        return ResponseEntity.ok(authenticationService.refreshToken(request));
     }
 }
