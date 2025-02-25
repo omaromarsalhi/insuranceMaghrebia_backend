@@ -40,6 +40,8 @@ public class PaymentContract {
     @Pattern(regexp = "^(Pending|Paid|Overdue)$", message = "Payment status must be either 'Pending', 'Paid', or 'Overdue'")
     private String paymentStatus;
 
+    private boolean isArchived=false;
+
     @CreatedDate
     private Date contractCreatedAt;
 

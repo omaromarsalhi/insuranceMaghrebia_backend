@@ -1,4 +1,4 @@
-package com.maghrebia.payment.entity;
+package com.maghrebia.payment.entity.enums;
 
 public enum PaymentStatus {
     Pending,

@@ -1,12 +1,18 @@
 package com.maghrebia.payment.service;
 
+
+import com.maghrebia.payment.config.StripeConfig;
+import com.maghrebia.payment.dto.PaymentIntentDto;
+import com.maghrebia.payment.dto.PaymentIntentResponse;
 import com.maghrebia.payment.entity.PaymentContract;
 import com.maghrebia.payment.entity.PaymentPlan;
-import com.maghrebia.payment.entity.PaymentStatus;
-import com.maghrebia.payment.entity.PlanDuration;
+import com.maghrebia.payment.entity.enums.PaymentStatus;
+import com.maghrebia.payment.entity.enums.PlanDuration;
 import com.maghrebia.payment.exceptions.InvalidAmountException;
 import com.maghrebia.payment.repository.PaymentContractRepository;
 import com.maghrebia.payment.repository.PaymentPlanRepository;
+import com.stripe.exception.StripeException;
+import com.stripe.model.PaymentIntent;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
@@ -95,5 +101,14 @@ public class PaymentContractService {
     private int getNumberOfMonths(String planDuration) {
         return PlanDuration.fromLabel(planDuration).getMonths();
     }
+
+    public void archivePaymentContract(PaymentContract paymentContract){
+        PaymentContract archivedPaymentContract= paymentRepository.findById(paymentContract.getContractPaymentId())
+        .orElseThrow(() -> new RuntimeException("Payment contract not found with ID: " + paymentContract.getContractPaymentId()));
+        archivedPaymentContract.setArchived(true);
+        paymentRepository.save(archivedPaymentContract);
+    }
+
+
 
 }
