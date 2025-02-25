@@ -1,5 +1,6 @@
-package com.maghrebia.offer.OfferCategory;
+package com.maghrebia.offer.repository;
 
+import com.maghrebia.offer.model.OfferCategory;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

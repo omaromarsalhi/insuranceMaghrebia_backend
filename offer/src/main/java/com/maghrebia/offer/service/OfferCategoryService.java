@@ -1,7 +1,7 @@
 package com.maghrebia.offer.service;
 
-import com.maghrebia.offer.OfferCategory.OfferCategory;
-import com.maghrebia.offer.OfferCategory.OfferCategoryRepository;
+import com.maghrebia.offer.model.OfferCategory;
+import com.maghrebia.offer.repository.OfferCategoryRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,8 +23,8 @@ public class OfferCategoryService {
         return offerCategoryRepository.findAll();
     }
 
-    public Optional<OfferCategory> getOfferCategoryById(String id) {
-        return offerCategoryRepository.findById(id);
+    public OfferCategory getOfferCategoryById(String id) {
+        return offerCategoryRepository.findById(id).orElse(null);
     }
 
     public OfferCategory updateOfferCategory(String id, OfferCategory offerCategoryDetails) {
@@ -33,6 +33,7 @@ public class OfferCategoryService {
 
         offerCategory.setName(offerCategoryDetails.getName());
         offerCategory.setDescription(offerCategoryDetails.getDescription());
+        offerCategory.setCategoryTarget(offerCategoryDetails.getCategoryTarget());
 
         return offerCategoryRepository.save(offerCategory);
     }

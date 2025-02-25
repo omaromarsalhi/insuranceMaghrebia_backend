@@ -40,7 +40,7 @@ public class ImageUploadController {
             Files.copy(file.getInputStream(), filePath);
 
             // Return the file URL (you can customize this based on your server setup)
-            String fileUrl = "http://localhost:8888/api/v1/images/" + fileName;
+            String fileUrl = "http://localhost:9002/api/v1/images/" + fileName;
             return ResponseEntity.ok(fileUrl);
         } catch (IOException e) {
             return ResponseEntity.status(500).body("Failed to upload image");

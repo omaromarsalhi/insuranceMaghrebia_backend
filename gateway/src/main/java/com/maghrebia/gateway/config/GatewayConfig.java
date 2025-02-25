@@ -19,22 +19,6 @@ import java.util.List;
 @AllArgsConstructor
 public class GatewayConfig {
 
-
-
-//    @Bean
-//    public CorsWebFilter corsWebFilter() {
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        CorsConfiguration config = new CorsConfiguration();
-//        config.setAllowCredentials(true);
-//        config.addAllowedOrigin("http://localhost:4300");
-//        config.addAllowedHeader("*");
-//        config.addAllowedMethod("*");
-//        source.registerCorsConfiguration("/**", config);
-//        return new CorsWebFilter(source);
-//    }
-
-
-
     @Bean
     public CorsWebFilter corsWebFilter() {
         CorsConfiguration corsConfig = new CorsConfiguration();

@@ -18,3 +18,5 @@ application:
   upload:
     path: ${user.dir}/uploadedImages
 
+springdoc:
+  default-produces-media-type: application/json

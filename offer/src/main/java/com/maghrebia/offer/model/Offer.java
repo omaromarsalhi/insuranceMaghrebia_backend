@@ -1,4 +1,5 @@
-package com.maghrebia.offer.OfferCategory;
+package com.maghrebia.offer.model;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,25 +9,36 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Builder
-@Document(collection = "offer_category")
-public class OfferCategory {
+@Document(collection = "offer")
+public class Offer {
 
     @Id
-    private String offerCategoryId;
+    private String offerId;
 
     private String name;
 
-    private String description;
+    private String header;
 
     private String imageUri;
 
-    @CreatedDate  // This will be populated automatically by Spring MongoDB Auditing
-    private Date createdAt;
+    private boolean isActive;
+
+    private FilteredCategory category;
+
+    private List<OfferLabel> labels;
+
+
+    @CreatedDate
+    private LocalDateTime createdAt;
+
 
 }
