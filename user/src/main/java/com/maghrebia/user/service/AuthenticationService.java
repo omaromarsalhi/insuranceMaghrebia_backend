@@ -4,7 +4,6 @@ import com.maghrebia.user.dto.request.AuthenticationRequest;
 import com.maghrebia.user.dto.request.RefreshTokenRequest;
 import com.maghrebia.user.dto.request.RegistrationRequest;
 import com.maghrebia.user.dto.response.AuthenticationResponse;
-import com.maghrebia.user.dto.response.RefreshResponse;
 import com.maghrebia.user.entity.Role;
 import com.maghrebia.user.entity.ActivationToken;
 import com.maghrebia.user.entity.User;
@@ -16,7 +15,6 @@ import com.maghrebia.user.repository.ActivationTokenRepository;
 import com.maghrebia.user.repository.UserRepository;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -27,10 +25,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -110,27 +110,36 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest, HttpServletResponse response) {
-        // Authenticate user
         var auth = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(), authenticationRequest.getPassword())
         );
         var user = (User) auth.getPrincipal();
-
+        user.setLastLoginDate(LocalDateTime.now());
+        userRepository.save(user);
         // Generate tokens
         var accessToken = jwtService.generateAccessToken(user);
-        var refreshToken = jwtService.generateRefreshToken(user);
-        refreshTokenService.storeRefreshToken(refreshToken,user);
+        Map<String,Object> claims = new HashMap<>();
+        claims.put("firstname", user.getFirstname());
+        claims.put("id", user.getId());
+        var refreshToken = jwtService.generateRefreshToken(claims,user);
+        refreshTokenService.storeRefreshToken(refreshToken, user);
 
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh_token", refreshToken)
                 .secure(false)
                 .path("/")
-                .maxAge(authenticationRequest.isRememberMe() ? 5*60 : -1)  //refreshExpiration / 1000
+                .maxAge(authenticationRequest.isRememberMe() ? 5 * 60 : -1)  //refreshExpiration / 1000
+                .sameSite("Lax")
+                .build();
+        ResponseCookie accessTokenCookie = ResponseCookie.from("access_token", accessToken)
+                .secure(false)
+                .path("/")
+                .maxAge(accessExpiration / 1000)
                 .sameSite("Lax")
                 .build();
 
         // Add cookie to the response
         response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
-
+        response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
         return AuthenticationResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
@@ -152,16 +161,21 @@ public class AuthenticationService {
     }
 
 
-    public RefreshResponse refreshToken(@Valid RefreshTokenRequest request) {
+    public void refreshToken(RefreshTokenRequest request, HttpServletResponse response) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         if (!jwtService.isRefreshTokenValid(request.getRefreshToken(), user)) {
             throw new InvalidTokenException("Invalid refresh token");
         }
         String newAccessToken = jwtService.generateAccessToken(user);
-        return RefreshResponse.builder()
-                .accessToken(newAccessToken)
+        ResponseCookie accessTokenCookie = ResponseCookie.from("access_token", newAccessToken)
+                .secure(false)
+                .path("/")
+                .maxAge(accessExpiration / 1000)
+                .sameSite("Lax")
                 .build();
+        // Add cookie to the response
+        response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
     }
 }
 

@@ -19,7 +19,8 @@ public enum BusinessErrorCodes {
     EXPIRED_TOKEN("Activation token has expired . A new token has been sent", BAD_REQUEST),
     EXPIRED_PASSWORD_TOKEN("This link is expired", FORBIDDEN),
     INVALID_PASSWORD_TOKEN("This link is invalid", FORBIDDEN),
-    ;
+    EMAIL_CHANGE_REQUIRES_VERIFICATION("Email change requires verification", UNPROCESSABLE_ENTITY),
+    CURRENT_PASSWORD_DOES_NOT_MATCH("The current password does not match the existing password.", BAD_REQUEST ),;
     @Getter
     private final String description;
 

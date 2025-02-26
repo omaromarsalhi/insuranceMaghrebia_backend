@@ -2,8 +2,6 @@ package com.maghrebia.user.handler;
 
 import com.maghrebia.user.dto.response.ExceptionResponse;
 import com.maghrebia.user.exception.*;
-import com.mongodb.DuplicateKeyException;
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.mail.MessagingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +10,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -90,18 +87,31 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(EmailNotFoundException.class)
     public ResponseEntity<ExceptionResponse> handleEmailNotFoundException(EmailNotFoundException exp) {
-        return buildResponse(ACCOUNT_NOT_FOUND,exp);
+        return buildResponse(ACCOUNT_NOT_FOUND, exp);
     }
+
     @ExceptionHandler(PasswordDoesNotMatchException.class)
     public ResponseEntity<ExceptionResponse> handlePasswordDoesNotMatchException(PasswordDoesNotMatchException exp) {
-        return buildResponse(NEW_PASSWORD_DOES_NOT_MATCH,exp);
+        return buildResponse(NEW_PASSWORD_DOES_NOT_MATCH, exp);
     }
+
     @ExceptionHandler(LinkInvalidException.class)
     public ResponseEntity<ExceptionResponse> handleLinkInvalidException(LinkInvalidException exp) {
-        return buildResponse(INVALID_PASSWORD_TOKEN,exp);
+        return buildResponse(INVALID_PASSWORD_TOKEN, exp);
     }
+
     @ExceptionHandler(LinkExpiredException.class)
     public ResponseEntity<ExceptionResponse> handleLinkExpiredException(LinkExpiredException exp) {
-        return buildResponse(EXPIRED_PASSWORD_TOKEN,exp);
+        return buildResponse(EXPIRED_PASSWORD_TOKEN, exp);
+    }
+
+    @ExceptionHandler(EmailChangeRequiresVerificationException.class)
+    public ResponseEntity<ExceptionResponse> handleEmailChangeRequiresVerificationException(EmailChangeRequiresVerificationException exp) {
+        return buildResponse(EMAIL_CHANGE_REQUIRES_VERIFICATION, exp);
+    }
+
+    @ExceptionHandler(CurrentPasswordDoesNotMatchException.class)
+    public ResponseEntity<ExceptionResponse> handleCurrentPasswordDoesNotMatchException(CurrentPasswordDoesNotMatchException exp) {
+        return buildResponse(CURRENT_PASSWORD_DOES_NOT_MATCH, exp);
     }
 }

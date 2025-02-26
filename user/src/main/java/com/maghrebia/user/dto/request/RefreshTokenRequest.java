@@ -11,6 +11,6 @@ import lombok.Setter;
 public class RefreshTokenRequest {
     @NotBlank(message = "Refresh token must not be blank.")
     private String refreshToken;
-    @NotBlank(message = "User not found")
+    @NotBlank(message = "email must not be blank")
     private String email;
 }
