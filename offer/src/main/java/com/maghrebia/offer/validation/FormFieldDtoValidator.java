@@ -1,4 +1,4 @@
-package com.maghrebia.offer;
+package com.maghrebia.offer.validation;
 
 import com.maghrebia.offer.dto.helpers.FormFieldDto;
 import jakarta.validation.ConstraintValidator;
@@ -14,7 +14,7 @@ public class FormFieldDtoValidator implements ConstraintValidator<FormFieldDtoVa
         String type = formField.type();
 
         // Validate selectOptions for select, checkbox, radio
-        if (type != null && (type.equals("select") || type.equals("checkbox"))) {
+        if (type != null && (type.equals("select") || type.equals("checkbox") || type.equals("radio"))) {
             List<String> options = formField.selectOptions();
             String placeholder = formField.placeholder();
 

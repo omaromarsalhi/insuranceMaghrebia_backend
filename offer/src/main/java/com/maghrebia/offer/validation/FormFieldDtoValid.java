@@ -1,4 +1,4 @@
-package com.maghrebia.offer;
+package com.maghrebia.offer.validation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

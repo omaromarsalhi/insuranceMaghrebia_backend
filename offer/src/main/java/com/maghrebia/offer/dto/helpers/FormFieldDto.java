@@ -1,6 +1,6 @@
 package com.maghrebia.offer.dto.helpers;
 
-import com.maghrebia.offer.FormFieldDtoValid;
+import com.maghrebia.offer.validation.FormFieldDtoValid;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
 
@@ -14,7 +14,7 @@ public record FormFieldDto(
         String label,
 
         @NotBlank(message = "Type is required")
-        @Pattern(regexp = "^(text|email|date|time|select|checkbox|color|range)$",
+        @Pattern(regexp = "^(text|email|date|time|select|checkbox|color|range|radio)$",
                 message = "Invalid type. Allowed values: text, email, date, select, checkbox, radio")
         String type,
 
@@ -23,7 +23,6 @@ public record FormFieldDto(
 
         boolean required,
 
-//        @NotBlank(message = "Placeholder is required")
         String placeholder,
 
         String regex,
