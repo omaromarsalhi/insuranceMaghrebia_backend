@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
@@ -19,29 +18,12 @@ import java.util.Map;
 @NoArgsConstructor
 @Data
 @Builder
-@Document(collection = "offer")
-public class Offer {
+@Document(collection = "offer_form")
+public class OfferForm {
 
     @Id
-    private String offerId;
+    private String formId;
 
-    private String name;
-
-    private String header;
-
-    private String imageUri;
-
-    private boolean isActive;
-
-    private FilteredCategory category;
-
-    private List<OfferLabel> labels;
-
-    @DBRef
-    private OfferForm form;
-
-    @CreatedDate
-    private LocalDateTime createdAt;
-
+    private List<FormField> fields;
 
 }

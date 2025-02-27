@@ -30,5 +30,7 @@ public record OfferRequest(
 
         @NotNull @Valid FilteredCategoryDto category,
 
-        @Valid List<@Valid OfferLabelDto> labels
+        @Valid List<@Valid OfferLabelDto> labels,
+
+        String formId
 ) {}

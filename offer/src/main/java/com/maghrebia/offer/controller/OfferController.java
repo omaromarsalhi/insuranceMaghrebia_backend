@@ -18,9 +18,9 @@ public class OfferController {
 
     private final OfferService offerService;
 
-    @PostMapping
-    public ResponseEntity<OfferResponse> createOffer(@RequestBody @Valid OfferRequest offer) {
-        return ResponseEntity.ok(offerService.createOffer(offer));
+    @PostMapping("create")
+    public ResponseEntity<OfferResponse> create(@RequestBody @Valid OfferRequest request) {
+        return ResponseEntity.ok(offerService.create(request));
     }
 
 

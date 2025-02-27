@@ -28,6 +28,7 @@ public class OfferMapper {
                 .imageUri(request.imageUri())
                 .category(filteredCategory)
                 .labels(labels)
+                .form(OfferForm.builder().formId(request.formId()).build())
                 .build();
 
     }
