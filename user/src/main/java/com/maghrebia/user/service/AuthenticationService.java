@@ -57,24 +57,18 @@ public class AuthenticationService {
                 .firstname(registrationRequest.getFirstName())
                 .lastname(registrationRequest.getLastName())
                 .email(registrationRequest.getEmail())
-                .dateOfBirth(registrationRequest.getDateOfBirth())
-                .gender(registrationRequest.getGender())
-                .phone(registrationRequest.getPhone())
-                .address(registrationRequest.getAddress())
                 .password(passwordEncoder.encode(registrationRequest.getPassword()))
                 .accountLocked(false)
                 .enabled(false)
+                .canContinue(false)
                 .roles(List.of(userRole))
                 .build();
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new EmailAlreadyExistsException("The email is already registered.");
         }
-
         userRepository.save(user);
-
         sendValidationEmail(user);
     }
-
 
     public void sendValidationEmail(User user) throws MessagingException {
         var newToken = generateAndSaveActivationToken(user);
@@ -118,16 +112,16 @@ public class AuthenticationService {
         userRepository.save(user);
         // Generate tokens
         var accessToken = jwtService.generateAccessToken(user);
-        Map<String,Object> claims = new HashMap<>();
+        Map<String, Object> claims = new HashMap<>();
         claims.put("firstname", user.getFirstname());
         claims.put("id", user.getId());
-        var refreshToken = jwtService.generateRefreshToken(claims,user);
+        var refreshToken = jwtService.generateRefreshToken(claims, user);
         refreshTokenService.storeRefreshToken(refreshToken, user);
 
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh_token", refreshToken)
                 .secure(false)
                 .path("/")
-                .maxAge(authenticationRequest.isRememberMe() ? 5 * 60 : -1)  //refreshExpiration / 1000
+                .maxAge(authenticationRequest.isRememberMe() ? refreshExpiration / 1000 : -1)
                 .sameSite("Lax")
                 .build();
         ResponseCookie accessTokenCookie = ResponseCookie.from("access_token", accessToken)
@@ -159,7 +153,6 @@ public class AuthenticationService {
         userRepository.save(user);
         tokenRepository.deleteById(savedToken.getId());
     }
-
 
     public void refreshToken(RefreshTokenRequest request, HttpServletResponse response) {
         User user = userRepository.findByEmail(request.getEmail())

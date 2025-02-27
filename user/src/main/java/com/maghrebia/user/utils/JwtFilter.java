@@ -37,13 +37,11 @@ public class JwtFilter extends OncePerRequestFilter {
         final String jwt;
         final String userEmail;
 
-        // Skip the JWT validation for certain public paths
         if (isPublicPath(request)) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // Check if the JWT exists
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.getWriter().write("{\"message\": \"Authorization header is missing or incorrect\"}");
@@ -51,7 +49,7 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-        jwt = authHeader.substring(7);  // Extract token
+        jwt = authHeader.substring(7);
         try {
             userEmail = jwtService.extractUsername(jwt);
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {

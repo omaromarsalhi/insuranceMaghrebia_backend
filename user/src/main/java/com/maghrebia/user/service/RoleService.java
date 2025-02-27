@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class RoleService {
@@ -13,5 +15,9 @@ public class RoleService {
 
     public ResponseEntity<Role> addRole(Role role) {
         return ResponseEntity.ok(roleRepository.save(role));
+    }
+
+    public List<Role> findAllRoles() {
+        return roleRepository.findAll();
     }
 }

@@ -9,7 +9,6 @@ import com.maghrebia.user.exception.*;
 import com.maghrebia.user.repository.RoleRepository;
 import com.maghrebia.user.repository.UserRepository;
 import jakarta.mail.MessagingException;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,7 +16,10 @@ import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -34,33 +36,52 @@ public class UserService {
         return firstThree + "MA" + lastFour;
     }
 
-    public boolean existEmail(String email) {
-        return userRepository.existsByEmail(email);
-    }
-
-    public User createUser(EmployeeRegistrationRequest employeeRegistrationRequest) {
-
-        var userRole = roleRepository.findByName("admin")
-                .orElseGet(() -> roleRepository.save(new Role("admin")));
+    public List<User> createUser(EmployeeRegistrationRequest employeeRegistrationRequest,String creatorId) {
+        List<Role> listRole = new ArrayList<>();
+        roleRepository.findAll().forEach(role -> {
+            employeeRegistrationRequest.getRoles().forEach(role1 -> {
+                if (role.getName().equals(role1.getName())) {
+                    listRole.add(role);
+                }
+            });
+        });
         User user = User.builder().email(employeeRegistrationRequest.getEmail())
                 .firstname(employeeRegistrationRequest.getFirstname())
                 .lastname(employeeRegistrationRequest.getLastname())
-                .password(passwordEncoder.encode("aaa"))
-                .roles(List.of(userRole))
+                .password(passwordEncoder.encode(generatePassword()))
+                .roles(listRole)
                 .accountLocked(false)
                 .enabled(true)
+                .canContinue(false)
                 .build();
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new EmailAlreadyExistsException("The email is already registered.");
         }
-        return userRepository.save(user);
+        userRepository.save(user);
+        return userRepository.findAllExceptById(creatorId);
+    }
+
+    public void createAdmin() {
+        Role role = roleRepository.findByName("admin")
+                .orElseGet(() -> roleRepository.save(new Role("admin")));
+        User user = User.builder()
+                .email("admin@admin.com")
+                .firstname("admin")
+                .lastname("admin")
+                .password(passwordEncoder.encode("admin"))
+                .roles(List.of(role))
+                .accountLocked(false)
+                .enabled(true)
+                .canContinue(false)
+                .build();
+        userRepository.findByEmail("admin@admin.com").orElseGet(() -> userRepository.save(user));
     }
 
     public User getUserProfile(String id) {
         return this.userRepository.findById(id).orElseThrow(() -> new EmailNotFoundException("The user does not exist."));
     }
 
-    public User updateUserProfile(UpdateProfileRequest user, String id) throws MessagingException {
+    public User updateProfile(UpdateProfileRequest user, String id) throws MessagingException {
         User actualUser = userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("User not found"));
         if (!actualUser.getEmail().equals(user.getEmail())) {
             if (userRepository.existsByEmail(user.getEmail())) {
@@ -74,6 +95,7 @@ public class UserService {
                 actualUser.setDateOfBirth(user.getDateOfBirth());
                 actualUser.setGender(user.getGender());
                 actualUser.setEnabled(false);
+                actualUser.setCanContinue(true);
                 actualUser.setLastModifiedDate(LocalDateTime.now());
                 userRepository.save(actualUser);
                 authenticationService.sendValidationEmail(actualUser);
@@ -86,11 +108,12 @@ public class UserService {
         actualUser.setPhone(user.getPhone());
         actualUser.setDateOfBirth(user.getDateOfBirth());
         actualUser.setGender(user.getGender());
+        actualUser.setCanContinue(true);
         actualUser.setLastModifiedDate(LocalDateTime.now());
         return userRepository.save(actualUser);
     }
 
-    public User changeProfilePassword(@Valid ChangePasswordRequest changePasswordRequest, String id) {
+    public User changeProfilePassword(ChangePasswordRequest changePasswordRequest, String id) {
         User user = userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("User not found"));
         if (!passwordEncoder.matches(changePasswordRequest.getCurrentPassword(), user.getPassword())) {
             throw new CurrentPasswordDoesNotMatchException("current password does not match to the account password");
@@ -107,12 +130,12 @@ public class UserService {
         return userRepository.findAllExceptById(id);
     }
 
-    public List<User> deleteUser(String id,String deleterId) {
+    public List<User> deleteUser(String id, String deleterId) {
         userRepository.deleteById(id);
         return userRepository.findAllExceptById(deleterId);
     }
 
-    public List<User> banUserById(String id,String bannerId) {
+    public List<User> banUserById(String id, String bannerId) {
         User user = userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("User not found"));
         user.setAccountLocked(true);
         userRepository.save(user);
@@ -124,5 +147,38 @@ public class UserService {
         user.setAccountLocked(false);
         userRepository.save(user);
         return userRepository.findAllExceptById(unBannerId);
+    }
+
+    public void updateUserRoles(List<Role> roles, String id) {
+        User actualUser = userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        List<Role> listRole = addRolesToList(roles);
+        actualUser.setRoles(listRole);
+        userRepository.save(actualUser);
+    }
+
+    public List<Role> getUserRoles(String id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return user.getRoles();
+    }
+
+    private List<Role> addRolesToList(List<Role> roles) {
+        List<Role> listRole = new ArrayList<>();
+        roleRepository.findAll().forEach(role -> {
+            roles.forEach(role1 -> {
+                if (role.getName().equals(role1.getName())) {
+                    listRole.add(role);
+                }
+            });
+        });
+        return listRole;
+    }
+
+    public Map<String, Boolean> checkUserCanContinue(String id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        Map<String, Boolean> canContinue = new HashMap<>();
+        canContinue.put(
+                "canContinue", user.isCanContinue()
+        );
+        return canContinue;
     }
 }

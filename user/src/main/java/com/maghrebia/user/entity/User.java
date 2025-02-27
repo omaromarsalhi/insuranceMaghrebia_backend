@@ -44,6 +44,7 @@ public class User implements UserDetails, Principal {
     private boolean enabled;
     @DBRef
     private List<Role> roles;
+    private boolean canContinue;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -1,5 +1,6 @@
 package com.maghrebia.user.dto.request;
 
+import com.maghrebia.user.entity.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -7,6 +8,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -23,4 +26,6 @@ public class EmployeeRegistrationRequest {
     @NotBlank(message = "Email should not be empty")
     @Email(message = "Email is not formatted")
     private String email;
+
+    private List<Role> roles;
 }
