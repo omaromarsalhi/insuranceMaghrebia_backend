@@ -1,6 +1,7 @@
 package com.maghrebia.offer.service;
 
 import com.maghrebia.offer.dto.OfferRequest;
+import com.maghrebia.offer.dto.OfferResponse;
 import com.maghrebia.offer.mapper.OfferMapper;
 import com.maghrebia.offer.model.Offer;
 import com.maghrebia.offer.repository.OfferRepository;
@@ -17,8 +18,16 @@ public class OfferService {
     private final OfferMapper offerMapper;
 
 
-    public Offer createOffer(OfferRequest offer) {
-        return offerRepository.save(OfferMapper.toEntity(offer));
+    public OfferResponse createOffer(OfferRequest offer) {
+        var savedOffer = offerRepository.save(OfferMapper.toEntity(offer));
+        return OfferResponse.builder()
+                .offerId(savedOffer.getOfferId())
+                .name(savedOffer.getName())
+                .header(savedOffer.getHeader())
+                .category(offer.category())
+                .imageUri(offer.imageUri())
+                .labels(offer.labels())
+                .build();
     }
 
 

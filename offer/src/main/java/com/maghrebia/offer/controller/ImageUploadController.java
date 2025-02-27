@@ -26,7 +26,6 @@ public class ImageUploadController {
         try {
             // Create the upload directory if it doesn't exist
             Path uploadPath = Paths.get(UPLOAD_DIR);
-            System.out.println(uploadPath.toAbsolutePath());
             if (!Files.exists(uploadPath)) {
                 System.out.println(uploadPath.toAbsolutePath());
                 Files.createDirectories(uploadPath);
@@ -43,6 +42,7 @@ public class ImageUploadController {
             String fileUrl = "http://localhost:9002/api/v1/images/" + fileName;
             return ResponseEntity.ok(fileUrl);
         } catch (IOException e) {
+            System.out.println("Error while uploading image");
             return ResponseEntity.status(500).body("Failed to upload image");
         }
     }

@@ -32,7 +32,7 @@ public class OfferMapper {
 
     }
 
-    private static FilteredCategory toFilteredCategoryEntity(FilteredCategoryDto dto) {
+    public  static FilteredCategory toFilteredCategoryEntity(FilteredCategoryDto dto) {
         return FilteredCategory.builder()
                 .categoryId(dto.categoryId())
                 .categoryTarget(dto.categoryTarget())
