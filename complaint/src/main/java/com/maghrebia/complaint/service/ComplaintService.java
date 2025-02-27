@@ -24,6 +24,7 @@ public class ComplaintService {
     private final ComplaintRepository complaintRepository;
     private final UserRepository userRepository;
     private final AiService aiService;
+    private final UtilisService utilisService;
 
 
     public Complaint addComplaint(Complaint complaint, String userId) {
@@ -32,27 +33,34 @@ public class ComplaintService {
                 throw new IllegalArgumentException("User ID cannot be null/empty");
             }
 
-            if (userRepository.findById(userId)==null) {
+            if (userRepository.findById(userId) == null) {
                 throw new UserNotFoundException("User not found with ID: " + userId);
             }
 
             if (complaint == null || !StringUtils.hasText(complaint.getComplaintDescription())) {
                 throw new InvalidComplaintException("Complaint description is required");
             }
-            if (!aiService.isComplaintValid(complaint.getTitle(), complaint.getComplaintDescription())) {
-                String responseMessage = aiService.getComplaintResponse(complaint.getTitle(), complaint.getComplaintDescription());
-                throw new InvalidComplaintException("Complaint title and description are not compatible"+responseMessage);
+
+            String validationResult = aiService.isComplaintValid(complaint.getTitle(), complaint.getComplaintDescription());
+            if ("invalid".equals(validationResult)) {
+                throw new InvalidComplaintException("This does not appear to be a valid complaint. Please provide a real issue.");
             }
+            if ("mismatch".equals(validationResult)) {
+                String responseMessage = aiService.getComplaintResponse(complaint.getTitle(), complaint.getComplaintDescription());
+                utilisService.extractBetterTitle(responseMessage);
+                throw new InvalidComplaintException("Complaint title and description are not compatible." + responseMessage);
+            }
+
             complaint.setCreatedAt(LocalDateTime.now());
             complaint.setUserId(userId);
             complaint.setComplaintStatus(StatusComplaint.CLOSED);
-
             return complaintRepository.save(complaint);
 
         } catch (DataAccessException e) {
             throw new RuntimeException("Database error while saving complaint", e);
         }
     }
+
 
     public void deleteComplaint(String complaintId) {
         try {

@@ -19,8 +19,18 @@
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.32/lombok-1.18.32.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.32/lombok-1.18.32.jar" />
         </processorPath>
         <module name="complaint" />
+      </profile>
+      <profile name="Annotation profile for userAction" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.32/lombok-1.18.32.jar" />
+        </processorPath>
+        <module name="userAction" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -28,6 +38,8 @@
       <module name="subscription" target="17" />
       <module name="tenderInvitation" target="17" />
       <module name="test" target="17" />
+      <module name="userBehavior" target="17" />
+      <module name="userTracking" target="17" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
@@ -41,6 +53,9 @@
       <module name="subscription" options="-parameters" />
       <module name="tenderInvitation" options="-parameters" />
       <module name="test" options="-parameters" />
+      <module name="userAction" options="-parameters" />
+      <module name="userBehavior" options="-parameters" />
+      <module name="userTracking" options="-parameters" />
     </option>
   </component>
 </project>

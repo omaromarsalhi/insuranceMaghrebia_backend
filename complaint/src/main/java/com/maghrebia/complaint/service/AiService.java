@@ -4,6 +4,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class AiService {
@@ -17,10 +19,9 @@ public class AiService {
             headers.setContentType(MediaType.APPLICATION_JSON);
 
             String requestBody = String.format("{\"title\": \"%s\", \"description\": \"%s\"}", title, description);
+            System.out.println(requestBody);
             HttpEntity<String> request = new HttpEntity<>(requestBody, headers);
-
             ResponseEntity<Map> response = restTemplate.exchange(apiUrl, HttpMethod.POST, request, Map.class);
-
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
                 return (String) response.getBody().get("response");
             }
@@ -31,10 +32,15 @@ public class AiService {
         return "Erreur de communication avec l'API Flask";
     }
 
-    public boolean isComplaintValid(String title, String description) {
-        String result = getComplaintResponse(title, description);
-        System.err.println("Résultat de la vérification : " + result);
-        return "compatible".equalsIgnoreCase(result);
+    public String isComplaintValid(String title, String description) {
+        String result = getComplaintResponse(title, description).trim().toLowerCase();
+        if (result.startsWith("yes")) {
+            return "valid";
+        } else if (result.contains("invalid complaint")) {
+            return "invalid";
+        } else {
+            return "mismatch";
+        }
     }
 
     public String getSuggestedTitle(String description) {
@@ -48,6 +54,7 @@ public class AiService {
             headers.setContentType(MediaType.APPLICATION_JSON);
             String requestBody = String.format("{\"description\": \"%s\"}", description);
             HttpEntity<String> request = new HttpEntity<>(requestBody, headers);
+            System.err.println(request);
             ResponseEntity<Map> response = restTemplate.exchange(apiUrlTitle, HttpMethod.POST, request, Map.class);
 
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
@@ -59,4 +66,9 @@ public class AiService {
         }
         return "Error occurred while calling the Flask API.";
     }
+
+
 }
+
+
+

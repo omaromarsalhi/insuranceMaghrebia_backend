@@ -21,7 +21,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/complaint")
-@CrossOrigin(origins = {"http://localhost:58138", "http://localhost:4200"})
+@CrossOrigin("*")
 @RequiredArgsConstructor
 public class ComplaintController {
 
@@ -38,6 +38,7 @@ public class ComplaintController {
             result.getFieldErrors().forEach(error ->
                     errors.put(error.getField(), error.getDefaultMessage())
             );
+
             return ResponseEntity.badRequest().body(errors);
         }
 
@@ -97,7 +98,6 @@ public ResponseEntity<String> getSuggestedTitle(@RequestBody Map<String, String>
     if (description == null || description.isEmpty()) {
         return ResponseEntity.badRequest().body("No description provided.");
     }
-
     String suggestedTitle = aiService.getSuggestedTitle(description);
 
     if ("Error occurred while calling the Flask API.".equals(suggestedTitle)) {

@@ -13,11 +13,16 @@
         <option value="$PROJECT_DIR$/tenderInvitation/pom.xml" />
         <option value="$PROJECT_DIR$/test/pom.xml" />
         <option value="$PROJECT_DIR$/complaint/pom.xml" />
+        <option value="$PROJECT_DIR$/userBehavior/pom.xml" />
+        <option value="$PROJECT_DIR$/userTracking/pom.xml" />
+        <option value="$PROJECT_DIR$/userAction/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
       <set>
         <option value="$PROJECT_DIR$/test/pom.xml" />
+        <option value="$PROJECT_DIR$/userBehavior/pom.xml" />
+        <option value="$PROJECT_DIR$/userTracking/pom.xml" />
       </set>
     </option>
   </component>
