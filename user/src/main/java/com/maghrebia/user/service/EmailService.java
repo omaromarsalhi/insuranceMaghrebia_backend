@@ -48,6 +48,7 @@ public class EmailService {
 
         mailSender.send(mimeMessage);
     }
+
     @Async
     public void sendResetPasswordEmail(String to, String username,
                                        String emailTemplate,
@@ -70,6 +71,30 @@ public class EmailService {
         mimeMessageHelper.setText(template, true);
 
         mailSender.send(mimeMessage);
+    }
 
+    @Async
+    public void sendLoginAccountEmail(String to, String username,
+                                      String emailTemplate,
+                                      String password,
+                                      String subject) throws MessagingException {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, MimeMessageHelper.MULTIPART_MODE_MIXED, StandardCharsets.UTF_8.name());
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("username", username);
+        properties.put("email", to);
+        properties.put("password", password);
+
+        Context context = new Context();
+        context.setVariables(properties);
+
+        mimeMessageHelper.setFrom("contact.maghrebia1@gmail.com");
+        mimeMessageHelper.setTo(to);
+        mimeMessageHelper.setSubject(subject);
+
+        String template = templateEngine.process(emailTemplate, context);
+        mimeMessageHelper.setText(template, true);
+
+        mailSender.send(mimeMessage);
     }
 }

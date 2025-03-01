@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Created</title>
+    <style>
+        body {
+            font-family: "DM Sans", sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #FEFBE9;
+            color: #0F0F2D;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 40px;
+            background-color: #fff;
+            border-radius: 20px;
+            box-shadow: 0px 4px 60px rgba(0, 0, 0, 0.07);
+        }
+
+        h1 {
+            font-size: 50px;
+            font-weight: 700;
+            line-height: 60px;
+            color: #0F0F2D;
+            margin-bottom: 20px;
+        }
+
+        .greeting {
+            font-size: 18px;
+            line-height: 30px;
+            color: #0F0F2D;
+            margin-bottom: 20px;
+        }
+
+        .credentials {
+            font-size: 16px;
+            line-height: 24px;
+            color: #0F0F2D;
+            margin-bottom: 30px;
+        }
+
+        .credentials strong {
+            color: #193B1E;
+        }
+
+        .login-instructions {
+            font-size: 16px;
+            line-height: 24px;
+            color: #0F0F2D;
+            margin-bottom: 30px;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .login-link a {
+            display: inline-block;
+            padding: 17px 35px;
+            background-color: #193B1E;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 50px;
+            font: 700 16px "DM Sans", sans-serif;
+            text-transform: capitalize;
+            transition: all 0.3s ease-out 0s;
+        }
+
+        .login-link a:hover {
+            background-color: #FFB966;
+            color: #0F0F2D;
+        }
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Account Created</h1>
+    <p class="greeting" th:text="'Hello ' + ${username} + ','"></p>
+    <p class="credentials">
+        Your account has been successfully created. Below are your login credentials:
+        <br><br>
+        <strong>Email:</strong> <span th:text="${email}"></span>
+        <br>
+        <strong>Password:</strong> <span th:text="${password}"></span>
+    </p>
+    <p class="login-instructions">
+        You can use these credentials to log in to the site. Please change your password after your first login for security reasons.
+    </p>
+    <div class="login-link">
+        <a href="http://localhost:4300/account/signin" target="_blank">Login to Your Account</a>
+    </div>
+</div>
+</body>
+</html>

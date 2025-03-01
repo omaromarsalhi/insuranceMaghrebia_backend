@@ -22,8 +22,8 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/create")
-    public ResponseEntity<?> createEmployee(@RequestBody EmployeeRegistrationRequest employeeRegistrationRequest,@RequestParam String creatorId) {
-        return ResponseEntity.ok(userService.createUser(employeeRegistrationRequest,creatorId));
+    public ResponseEntity<?> createEmployee(@RequestBody EmployeeRegistrationRequest employeeRegistrationRequest, @RequestParam String creatorId) throws MessagingException {
+        return ResponseEntity.ok(userService.createUser(employeeRegistrationRequest, creatorId));
     }
 
     @GetMapping("/profile/{id}")
@@ -60,10 +60,12 @@ public class UserController {
     public ResponseEntity<?> unbanUser(@PathVariable String id, @RequestParam String unBannerId) {
         return ResponseEntity.ok(userService.unBanUserById(id, unBannerId));
     }
+
     @GetMapping("/roles/{id}")
     public ResponseEntity<?> getRoles(@PathVariable String id) {
         return ResponseEntity.ok(userService.getUserRoles(id));
     }
+
     @PostMapping("/edit-user-roles/{id}")
     public ResponseEntity<?> editUserRoles(@RequestBody List<Role> roles, @PathVariable String id) {
         userService.updateUserRoles(roles, id);

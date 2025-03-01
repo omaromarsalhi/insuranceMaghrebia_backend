@@ -29,6 +29,7 @@ public class UserService {
     private static final SecureRandom random = new SecureRandom();
     private final RoleRepository roleRepository;
     private final AuthenticationService authenticationService;
+    private final EmailService emailService;
 
     public static String generatePassword() {
         int firstThree = random.nextInt(900) + 100;
@@ -36,7 +37,7 @@ public class UserService {
         return firstThree + "MA" + lastFour;
     }
 
-    public List<User> createUser(EmployeeRegistrationRequest employeeRegistrationRequest,String creatorId) {
+    public List<User> createUser(EmployeeRegistrationRequest employeeRegistrationRequest, String creatorId) throws MessagingException {
         List<Role> listRole = new ArrayList<>();
         roleRepository.findAll().forEach(role -> {
             employeeRegistrationRequest.getRoles().forEach(role1 -> {
@@ -45,10 +46,11 @@ public class UserService {
                 }
             });
         });
+        String password = generatePassword();
         User user = User.builder().email(employeeRegistrationRequest.getEmail())
                 .firstname(employeeRegistrationRequest.getFirstname())
                 .lastname(employeeRegistrationRequest.getLastname())
-                .password(passwordEncoder.encode(generatePassword()))
+                .password(passwordEncoder.encode(password))
                 .roles(listRole)
                 .accountLocked(false)
                 .enabled(true)
@@ -57,8 +59,16 @@ public class UserService {
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new EmailAlreadyExistsException("The email is already registered.");
         }
+        sendLoginAccountEmail(user.getEmail(), password, user.fullName());
         userRepository.save(user);
         return userRepository.findAllExceptById(creatorId);
+    }
+
+    private void sendLoginAccountEmail(String email, String password, String username) throws MessagingException {
+        emailService.sendLoginAccountEmail(email, username,
+                "account-created",
+                password,
+                "Account Created");
     }
 
     public void createAdmin() {

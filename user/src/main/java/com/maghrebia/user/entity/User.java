@@ -37,7 +37,6 @@ public class User implements UserDetails, Principal {
     private String address;
     @CreatedDate
     private LocalDateTime creationDate;
-    @LastModifiedDate
     private LocalDateTime lastModifiedDate;
     private LocalDateTime lastLoginDate;
     private boolean accountLocked;
