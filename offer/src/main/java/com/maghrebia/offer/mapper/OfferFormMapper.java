@@ -2,14 +2,9 @@ package com.maghrebia.offer.mapper;
 
 import com.maghrebia.offer.dto.OfferFormRequest;
 import com.maghrebia.offer.dto.helpers.FormFieldDto;
-import com.maghrebia.offer.model.FormField;
+import com.maghrebia.offer.model.records.FormField;
 import com.maghrebia.offer.model.OfferForm;
-import com.maghrebia.offer.model.OfferLabel;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 
 @Component

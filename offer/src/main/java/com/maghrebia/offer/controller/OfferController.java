@@ -19,8 +19,13 @@ public class OfferController {
     private final OfferService offerService;
 
     @PostMapping("create")
-    public ResponseEntity<OfferResponse> create(@RequestBody @Valid OfferRequest request) {
+    public ResponseEntity<OfferResponse> create(@RequestBody  OfferRequest request) {
         return ResponseEntity.ok(offerService.create(request));
+    }
+
+    @GetMapping("/one")
+    public ResponseEntity<OfferResponse> getOne() {
+        return ResponseEntity.ok(offerService.getOne());
     }
 
 

@@ -1,7 +1,9 @@
 package com.maghrebia.offer.dto;
 
+import com.maghrebia.offer.dto.helpers.BenefitTypeDto;
 import com.maghrebia.offer.dto.helpers.FilteredCategoryDto;
 import com.maghrebia.offer.dto.helpers.OfferLabelDto;
+import com.maghrebia.offer.dto.helpers.OfferPackageDto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -31,6 +33,10 @@ public record OfferRequest(
         @NotNull @Valid FilteredCategoryDto category,
 
         @Valid List<@Valid OfferLabelDto> labels,
+
+        List<BenefitTypeDto> benefits,
+
+        List<OfferPackageDto> packages,
 
         String formId
 ) {}

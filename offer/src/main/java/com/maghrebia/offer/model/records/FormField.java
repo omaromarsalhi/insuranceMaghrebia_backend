@@ -1,4 +1,4 @@
-package com.maghrebia.offer.model;
+package com.maghrebia.offer.model.records;
 
 
 import lombok.Builder;
