@@ -1,5 +1,6 @@
 package com.maghrebia.payment.entity;
 
+import com.maghrebia.payment.entity.enums.PaymentStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -35,10 +36,7 @@ public class PaymentContract {
     @NotBlank(message = "Plan duration cannot be blank")
     private String planDuration;
 
-    @NotBlank(message = "Payment status is required")
-    @NotNull(message = "Payment status cannot be null")
-    @Pattern(regexp = "^(Pending|Paid|Overdue)$", message = "Payment status must be either 'Pending', 'Paid', or 'Overdue'")
-    private String paymentStatus;
+    private PaymentStatus paymentStatus;
 
     private boolean isArchived=false;
 

@@ -43,9 +43,8 @@ public class PaymentPlanService {
                     .stream()
                     .allMatch(p -> p.getPaymentStatus() == PaymentStatus.Paid);
 
-            // Update the contract status if all plans are paid
             if (allPlansPaid) {
-                contract.setPaymentStatus("Paid");
+                contract.setPaymentStatus(PaymentStatus.Paid);
             paymentRepository.save(contract);
              }
 

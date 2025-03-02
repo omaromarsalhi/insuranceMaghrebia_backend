@@ -1,18 +1,15 @@
 package com.maghrebia.payment.service;
 
-
-import com.maghrebia.payment.config.StripeConfig;
-import com.maghrebia.payment.dto.PaymentIntentDto;
-import com.maghrebia.payment.dto.PaymentIntentResponse;
+import com.maghrebia.payment.entity.IndexTracker;
 import com.maghrebia.payment.entity.PaymentContract;
 import com.maghrebia.payment.entity.PaymentPlan;
 import com.maghrebia.payment.entity.enums.PaymentStatus;
 import com.maghrebia.payment.entity.enums.PlanDuration;
 import com.maghrebia.payment.exceptions.InvalidAmountException;
+import com.maghrebia.payment.exceptions.PaymentContractNotFoundException;
+import com.maghrebia.payment.repository.IndexTrackerRepository;
 import com.maghrebia.payment.repository.PaymentContractRepository;
 import com.maghrebia.payment.repository.PaymentPlanRepository;
-import com.stripe.exception.StripeException;
-import com.stripe.model.PaymentIntent;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
@@ -27,8 +24,11 @@ public class PaymentContractService {
 
     private  final PaymentPlanRepository paymentPlanRepository;
 
-    public PaymentContract createPaymentContract(PaymentContract contract) {
+    private final IndexTrackerRepository indexTrackerRepository;
+
+    public String createPaymentContract(PaymentContract contract) {
         contract.setContractCreatedAt(new Date());
+        contract.setPaymentStatus(PaymentStatus.Pending);
 
         PaymentContract savedContract = paymentRepository.save(contract);
 
@@ -39,7 +39,8 @@ public class PaymentContractService {
                 savedContract.getContractPaymentId()
         ));
 
-        return paymentRepository.save(savedContract);
+         paymentRepository.save(savedContract);
+        return savedContract.getContractPaymentId();
     }
 
     public List<PaymentContract> getAllPayments() {
@@ -50,6 +51,13 @@ public class PaymentContractService {
         return paymentRepository.findAll();
     }
 
+    public List<PaymentContract> getAllPaymentByUserId(String userId) {
+        List<PaymentContract> contracts = paymentRepository.findByUserId(userId);
+
+        if (contracts.isEmpty())
+            throw new PaymentContractNotFoundException("No payment contracts found for userId: " + userId);
+        return contracts;
+    }
 
     public Optional<PaymentContract> getPaymentContractById(String id) {
         return paymentRepository.findById(id);
@@ -63,6 +71,52 @@ public class PaymentContractService {
         payment.setUserId(paymentDetails.getUserId());
         payment.setOfferId(paymentDetails.getOfferId());
 
+
+        return paymentRepository.save(payment);
+    }
+    public PaymentContract updatePaymentStatus(String id) {
+
+        PaymentContract payment = paymentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Payment not found with id: " + id));
+
+        IndexTracker indexTracker = indexTrackerRepository.findById("payment_plan_index")
+                .orElseThrow(() -> new RuntimeException("Index tracker not found"));
+        int newIndex = indexTracker.getIndex() + 1;
+
+
+        List<PaymentPlan> paymentPlans = paymentPlanRepository.findByPaymentContractId(id);
+        if (paymentPlans.isEmpty()) {
+            throw new RuntimeException("No PaymentPlans found for PaymentContract with id: " + id);
+        }
+
+        boolean allTranchesPaid = paymentPlans.stream()
+                .allMatch(plan -> plan.getPaymentStatus() == PaymentStatus.Paid);
+
+        if (allTranchesPaid) {
+            throw new RuntimeException("All payments have already been made. No further payment is required.");
+        }
+
+        PaymentPlan firstTranche = paymentPlans.get(0);
+
+        if (firstTranche.getPaymentStatus() == PaymentStatus.Paid) {
+            throw new RuntimeException("The first tranche is already paid. No further payment is required.");
+        }
+
+        firstTranche.setPaymentStatus(PaymentStatus.Paid);
+        firstTranche.setAmountPaid(firstTranche.getAmountDue());
+        firstTranche.setPaymentDate(new Date());
+        firstTranche.setHashBlock(firstTranche.getHashBlock());
+        firstTranche.setIndex(newIndex);
+
+        allTranchesPaid = paymentPlans.stream()
+                .allMatch(plan -> plan.getPaymentStatus() == PaymentStatus.Paid);
+
+
+        if (allTranchesPaid) {
+            payment.setPaymentStatus(PaymentStatus.Paid);
+        }
+
+        paymentPlanRepository.saveAll(paymentPlans);
         return paymentRepository.save(payment);
     }
 
@@ -83,10 +137,10 @@ public class PaymentContractService {
             PaymentPlan plan = PaymentPlan.builder()
                     .month(i)
                     .amountDue(amountDue)
-                    .amountPaid(i == 1 ? amountDue : 0.0)
-                    .paymentStatus(i == 1 ? PaymentStatus.Paid : PaymentStatus.Pending)
+                    .amountPaid(0.0)
+                    .paymentStatus(PaymentStatus.Pending)
                     .dueDate(Date.from(dueDate.atStartOfDay(ZoneId.systemDefault()).toInstant()))
-                    .paymentDate(i == 1 ? createdAtDate : null)
+                    .paymentDate(null)
                     .paymentContractId(paymentId)
                     .build();
 

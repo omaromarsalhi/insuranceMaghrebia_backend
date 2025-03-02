@@ -1,4 +1,4 @@
-package com.maghrebia.payment.config;
+package com.maghrebia.blockchain.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

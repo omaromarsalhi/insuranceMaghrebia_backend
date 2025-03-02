@@ -42,5 +42,7 @@ public class PaymentPlan {
 
     private String hashBlock;
 
+    private int index;
+
 
 }

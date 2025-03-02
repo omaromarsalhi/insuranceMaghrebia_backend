@@ -4,7 +4,7 @@ import com.maghrebia.payment.entity.PaymentContract;
 import com.maghrebia.payment.service.PaymentContractService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -19,10 +19,12 @@ public class PaymentContractController {
 
     private final PaymentContractService paymentContractService;
 
-    @PostMapping
-    public PaymentContract createContract(@Valid @RequestBody PaymentContract contract) {
-        return paymentContractService.createPaymentContract(contract);
-    }
+        @PostMapping
+        public ResponseEntity<String>  createContract(@Valid @RequestBody PaymentContract contract) {
+            String paymentContractId = paymentContractService.createPaymentContract(contract);
+            return ResponseEntity.ok(paymentContractId);
+
+        }
 
     @GetMapping("/Payments")
     public List<PaymentContract> getAllPayments() {
@@ -41,22 +43,31 @@ public class PaymentContractController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<PaymentContract> updatePaymentContract(
-            @PathVariable String id,
-            @Valid @RequestBody PaymentContract paymentDetails) {
-        PaymentContract updatedPayment = paymentContractService.updatePayment(id, paymentDetails);
-        return ResponseEntity.ok(updatedPayment);
+    @GetMapping("/user/{id}")
+    public ResponseEntity<List<PaymentContract>> getPaymentContractByUserId(@PathVariable String id) {
+        List<PaymentContract> contracts = paymentContractService.getAllPaymentByUserId(id);
+        return ResponseEntity.ok(contracts);
     }
 
-    @PutMapping("/archive")
-    public ResponseEntity<String> archivePaymentContract(@RequestBody PaymentContract paymentContract) {
-        try {
-            paymentContractService.archivePaymentContract(paymentContract);
-            return ResponseEntity.ok("Payment contract archived successfully");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to archive payment contract");
-        }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<String> updatePaymentContract(@PathVariable String id) {
+        paymentContractService.updatePaymentStatus(id);
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("{\"message\": \"Payment contract status updated successfully.\"}");
+
     }
+
+
+//    @PutMapping("/archive")
+//    public ResponseEntity<String> archivePaymentContract(@RequestBody PaymentContract paymentContract) {
+//        try {
+//            paymentContractService.archivePaymentContract(paymentContract);
+//            return ResponseEntity.ok("Payment contract archived successfully");
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to archive payment contract");
+//        }
+//    }
 
 }

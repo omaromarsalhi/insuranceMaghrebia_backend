@@ -12,25 +12,32 @@
         <module name="gateway" />
         <module name="authentication" />
       </profile>
-      <profile name="Annotation profile for payment" enabled="true">
+      <profile name="Annotation profile for blockchain" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.30/lombok-1.18.30.jar" />
         </processorPath>
-        <module name="payment" />
+        <module name="blockchain (2)" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="BlockChain" target="17" />
+      <module name="blockchain" target="17" />
       <module name="marketplace" target="17" />
+      <module name="payment" target="17" />
       <module name="subscription" target="17" />
       <module name="tenderInvitation" target="17" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="BlockChain" options="-parameters" />
       <module name="authentication" options="-parameters" />
+      <module name="blockchain" options="-parameters" />
+      <module name="blockchain (1)" options="-parameters" />
+      <module name="blockchain (2)" options="-parameters" />
       <module name="config-server" options="-parameters" />
       <module name="discovery" options="-parameters" />
       <module name="gateway" options="-parameters" />

@@ -11,4 +11,6 @@ import java.util.List;
 public interface PaymentContractRepository extends MongoRepository<PaymentContract, String> {
     @Query(value = "{}", fields = "{ 'paymentPlans' : 0 }")
     List<PaymentContract> findAllWithoutPaymentPlans();
+
+    List<PaymentContract> findByUserId(String userId);
 }
