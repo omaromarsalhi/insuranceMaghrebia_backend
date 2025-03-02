@@ -3,6 +3,7 @@ package com.maghrebia.user.service;
 import com.maghrebia.user.entity.ActivationToken;
 import com.maghrebia.user.entity.RefreshToken;
 import com.maghrebia.user.entity.User;
+import com.maghrebia.user.exception.InvalidTokenException;
 import com.maghrebia.user.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,7 @@ public class RefreshTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     public RefreshToken findByToken(String token) {
-        return refreshTokenRepository.findByToken(token).orElseThrow(() -> new RuntimeException("Refresh Token invalid"));
+        return refreshTokenRepository.findByToken(token).orElse(null);
     }
     public void storeRefreshToken(String refreshToken, User user) {
         RefreshToken refToken = RefreshToken.builder()

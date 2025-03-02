@@ -27,15 +27,20 @@ spring:
           predicates:
             - Path=/api/v1/role/**
 
-        - id: subscription
-          uri: lb:http://SUBSCRIPTION
+        - id: JOB
+          uri: lb:http://HR
           predicates:
-            - Path=/api/v1/subscriptions/**
+            - Path=/api/v1/job-posting/**
 
-        - id: tenderInvitation
-          uri: lb:http://TENDERINVITATION
+        - id: CANDIDATE
+          uri: lb:http://HR
           predicates:
-            - Path=/api/v1/tenderInvitations/**
+            - Path=/api/v1/candidate/**
+
+        - id: INTERVIEW
+          uri: lb:http://HR
+          predicates:
+            - Path=/api/v1/interview/**
 
 
 application:

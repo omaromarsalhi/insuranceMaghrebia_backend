@@ -157,7 +157,7 @@ public class AuthenticationService {
     public void refreshToken(RefreshTokenRequest request, HttpServletResponse response) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        if (!jwtService.isRefreshTokenValid(request.getRefreshToken(), user)) {
+        if (!jwtService.isRefreshTokenValid(request.getRefreshToken(), user) && refreshTokenService.findByToken(request.getRefreshToken())==null) {
             throw new InvalidTokenException("Invalid refresh token");
         }
         String newAccessToken = jwtService.generateAccessToken(user);

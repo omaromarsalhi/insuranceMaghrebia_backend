@@ -33,7 +33,7 @@ public class JwtAuthenticationFilter implements WebFilter {
 
     private final JwtService jwtService;
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
-    private final List<String> excludedPaths = List.of("/api/v1/auth/**", "/api/v1/password/**");
+    private final List<String> excludedPaths = List.of("/api/v1/auth/**", "/api/v1/password/**","/api/v1/candidate/add");
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
