@@ -21,48 +21,5 @@ public class GatewayConfig {
         return jwtAuthenticationFilter;
     }
 
-//    @Bean
-//    public CorsWebFilter corsWebFilter() {
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        CorsConfiguration config = new CorsConfiguration();
-//        config.setAllowCredentials(true);
-//        config.addAllowedOrigin("http://localhost:3000");
-//        config.addAllowedHeader("*");
-//        config.addAllowedMethod("*");
-//        source.registerCorsConfiguration("/**", config);
-//        return new CorsWebFilter(source);
-//    }
-
-
-
-//    @Bean
-//    public CorsWebFilter corsWebFilter() {
-//        CorsConfiguration corsConfig = new CorsConfiguration();
-//        corsConfig.setAllowCredentials(true);
-//        corsConfig.setAllowedOrigins(List.of("http://localhost:3000"));
-//        corsConfig.setAllowedHeaders(
-//                Arrays.asList(
-//                        HttpHeaders.ORIGIN,
-//                        HttpHeaders.CONTENT_TYPE,
-//                        HttpHeaders.ACCEPT,
-//                        HttpHeaders.AUTHORIZATION
-//                )
-//        );
-//        corsConfig.setAllowedMethods(
-//                Arrays.asList(
-//                        "GET",
-//                        "POST",
-//                        "DELETE",
-//                        "PUT",
-//                        "PATCH",
-//                        "OPTIONS"
-//                )
-//        );
-//
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", corsConfig);
-//
-//        return new CorsWebFilter(source);
-//    }
 }
 
