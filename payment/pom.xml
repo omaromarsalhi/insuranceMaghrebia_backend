@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.maghrebia</groupId>
-    <artifactId>blockchain</artifactId>
+    <artifactId>payment</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>blockchain</name>
-    <description>blockchain</description>
+    <name>payment</name>
+    <description>payment</description>
     <url/>
     <licenses>
         <license/>
