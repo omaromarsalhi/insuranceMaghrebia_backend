@@ -22,9 +22,17 @@ public class JobPostingController {
     public ResponseEntity<?> getAllJobPostings() {
         return ResponseEntity.ok(jobPostingService.findAllJobs());
     }
+    @GetMapping("/all/available")
+    public ResponseEntity<?> getAllJobPostingsAvailable() {
+        return ResponseEntity.ok(jobPostingService.findAllJobsAvailable());
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getJobPostingById(@PathVariable String id) {
         return ResponseEntity.ok(jobPostingService.findJobById(id));
+    }
+    @GetMapping("/close")
+    public ResponseEntity<?> closeJobPosting(@RequestParam String id) {
+        return ResponseEntity.ok(jobPostingService.closeJob(id));
     }
 }

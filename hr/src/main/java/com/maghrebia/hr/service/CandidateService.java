@@ -18,8 +18,9 @@ import java.util.List;
 public class CandidateService {
     private final CandidateRepository candidateRepository;
     private final JobPostingRepository jobPostingRepository;
+
     public Candidate createCandidate(CandidateRequest candidateRequest, String jobId) {
-        JobPosting job = jobPostingRepository.findById(jobId).orElseThrow(()-> new JobNotFoundException("The id of this posting was not found"));
+        JobPosting job = jobPostingRepository.findById(jobId).orElseThrow(() -> new JobNotFoundException("The id of this posting was not found"));
         Candidate candidate = Candidate.builder()
                 .firstname(candidateRequest.getFirstname())
                 .lastname(candidateRequest.getLastname())
@@ -37,6 +38,6 @@ public class CandidateService {
     }
 
     public Candidate findCandidate(String id) {
-        return candidateRepository.findById(id).orElseThrow(()-> new CandidateNotFoundException("This is of candidate not found"));
+        return candidateRepository.findById(id).orElseThrow(() -> new CandidateNotFoundException("This is of candidate not found"));
     }
 }

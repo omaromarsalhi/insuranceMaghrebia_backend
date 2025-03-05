@@ -19,10 +19,21 @@ public class JobPostingService {
                 .title(jobRequest.getTitle())
                 .description(jobRequest.getDescription())
                 .numberOfOpenings(jobRequest.getNumberOfOpenings())
+                .minimumYearsOfExperience(jobRequest.getMinimumYearsOfExperience())
+                .startWorkingHour(jobRequest.getStartWorkingHour())
+                .endWorkingHour(jobRequest.getEndWorkingHour())
+                .workingDaysPerWeek(jobRequest.getWorkingDaysPerWeek())
+                .salaryAmount(jobRequest.getSalaryAmount())
+                .salaryType(jobRequest.getSalaryType())
+                .numberOfVacations(jobRequest.getNumberOfVacations())
+                .location(jobRequest.getLocation())
+                .jobType(jobRequest.getJobType())
+                .skillsRequired(jobRequest.getSkillsRequired())
                 .isOpen(true)
                 .build();
         return jobPostingRepository.save(job);
     }
+
 
     public List<JobPosting> findAllJobs() {
         return jobPostingRepository.findAll();
@@ -32,4 +43,14 @@ public class JobPostingService {
         return jobPostingRepository.findById(id).orElseThrow(() -> new JobNotFoundException("The id of this posting was not found"));
     }
 
+    public List<JobPosting> closeJob(String id) {
+        JobPosting jobPosting = findJobById(id);
+        jobPosting.setIsOpen(false);
+        jobPostingRepository.save(jobPosting);
+        return jobPostingRepository.findAll();
+    }
+
+    public List<JobPosting> findAllJobsAvailable() {
+        return jobPostingRepository.findAllByIsOpen(true);
+    }
 }
