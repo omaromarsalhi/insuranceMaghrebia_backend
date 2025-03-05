@@ -1,7 +1,9 @@
 package com.maghrebia.offer.dto;
 
+import com.maghrebia.offer.dto.helpers.BenefitTypeDto;
 import com.maghrebia.offer.dto.helpers.FilteredCategoryDto;
 import com.maghrebia.offer.dto.helpers.OfferLabelDto;
+import com.maghrebia.offer.dto.helpers.OfferPackageDto;
 import lombok.Builder;
 
 import java.util.List;
@@ -12,7 +14,9 @@ public record OfferResponse(
         String name,
         String header,
         String imageUri,
+        List<BenefitTypeDto> benefits,
         FilteredCategoryDto category,
-        List<OfferLabelDto> labels
+        List<OfferLabelDto> labels,
+        List<OfferPackageDto> packages
 ) {
 }

@@ -111,7 +111,9 @@ public class OfferMapper {
                 .header(entity.getHeader())
                 .imageUri(entity.getImageUri())
                 .category(filteredCategory)
+                .benefits(benefits)
                 .labels(labels)
+                .packages(packages)
                 .build();
     }
 
