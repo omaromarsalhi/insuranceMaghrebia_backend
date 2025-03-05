@@ -24,8 +24,6 @@ public class Candidate {
     private String email;
     private String resume;
     private String coverLetter;
-    @DBRef
-    private JobPosting appliedJobId;
     @CreatedDate
     private LocalDateTime applicationDate;
     private CandidateStatus status;

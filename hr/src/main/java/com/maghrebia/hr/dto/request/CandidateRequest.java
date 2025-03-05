@@ -1,6 +1,7 @@
 package com.maghrebia.hr.dto.request;
 
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -11,6 +12,6 @@ public class CandidateRequest {
     private String firstname;
     private String lastname;
     private String email;
-    private String resume;
-    private String coverLetter;
+    private MultipartFile resume;
+    private MultipartFile coverLetter;
 }

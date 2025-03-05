@@ -42,6 +42,12 @@ spring:
           predicates:
             - Path=/api/v1/interview/**
 
+        - id: RESOURCE
+          uri: lb:http://HR
+          predicates:
+            - Path=/api/v1/resource/**
+
+
 
 application:
   security:

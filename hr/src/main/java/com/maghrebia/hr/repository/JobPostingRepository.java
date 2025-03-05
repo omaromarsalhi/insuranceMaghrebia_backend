@@ -9,5 +9,7 @@ import java.util.List;
 @Repository
 public interface JobPostingRepository extends MongoRepository<JobPosting, String> {
 
+    List<JobPosting> findAllByOrderByIsOpenDesc();
+
     List<JobPosting> findAllByIsOpen(Boolean isOpen);
 }

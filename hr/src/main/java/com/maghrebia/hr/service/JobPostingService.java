@@ -36,7 +36,7 @@ public class JobPostingService {
 
 
     public List<JobPosting> findAllJobs() {
-        return jobPostingRepository.findAll();
+        return jobPostingRepository.findAllByOrderByIsOpenDesc();
     }
 
     public JobPosting findJobById(String id) {
@@ -47,7 +47,7 @@ public class JobPostingService {
         JobPosting jobPosting = findJobById(id);
         jobPosting.setIsOpen(false);
         jobPostingRepository.save(jobPosting);
-        return jobPostingRepository.findAll();
+        return jobPostingRepository.findAllByOrderByIsOpenDesc();
     }
 
     public List<JobPosting> findAllJobsAvailable() {

@@ -4,8 +4,12 @@ import com.maghrebia.hr.dto.request.CandidateRequest;
 import com.maghrebia.hr.entity.Candidate;
 import com.maghrebia.hr.service.CandidateService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("candidate")
@@ -13,14 +17,25 @@ import org.springframework.web.bind.annotation.*;
 public class CandidateController {
     private final CandidateService candidateService;
 
-    @PostMapping("/add")
-    public ResponseEntity<?> addCandidate(@RequestBody CandidateRequest candidate, @RequestParam String jobId) {
-        return ResponseEntity.ok(candidateService.createCandidate(candidate, jobId));
+    @PostMapping(value = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> addCandidate(@RequestParam("firstname") String firstname,
+                                          @RequestParam("lastname") String lastname,
+                                          @RequestParam("email") String email,
+                                          @RequestParam("resume") MultipartFile resume,
+                                          @RequestParam("coverLetter") MultipartFile coverLetter,
+                                          @RequestParam String jobId) throws IOException {
+        CandidateRequest candidateRequest = new CandidateRequest();
+        candidateRequest.setFirstname(firstname);
+        candidateRequest.setLastname(lastname);
+        candidateRequest.setEmail(email);
+        candidateRequest.setResume(resume);
+        candidateRequest.setCoverLetter(coverLetter);
+        return ResponseEntity.ok(candidateService.createCandidate(candidateRequest, jobId));
     }
 
     @GetMapping("/all")
     public ResponseEntity<?> getAllCandidates() {
-        return ResponseEntity.ok(candidateService.findAllCandidate());
+        return ResponseEntity.ok(candidateService.findAll());
     }
 
     @GetMapping("/{id}")
