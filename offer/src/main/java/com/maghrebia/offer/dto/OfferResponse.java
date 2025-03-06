@@ -14,6 +14,7 @@ public record OfferResponse(
         String name,
         String header,
         String imageUri,
+        String formId,
         List<BenefitTypeDto> benefits,
         FilteredCategoryDto category,
         List<OfferLabelDto> labels,

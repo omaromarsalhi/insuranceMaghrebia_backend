@@ -23,9 +23,9 @@ public class OfferController {
         return ResponseEntity.ok(offerService.create(request));
     }
 
-    @GetMapping("/one")
-    public ResponseEntity<OfferResponse> getOne() {
-        return ResponseEntity.ok(offerService.getOne());
+    @GetMapping("/one/{categoryId}")
+    public ResponseEntity<OfferResponse> getOne(@PathVariable String categoryId) {
+        return ResponseEntity.ok(offerService.getOne(categoryId));
     }
 
 

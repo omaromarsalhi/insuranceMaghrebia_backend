@@ -13,6 +13,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -36,6 +37,7 @@ public class Offer {
 
     private boolean isActive;
 
+    @Field("category")
     private FilteredCategory category;
 
     private List<OfferLabel> labels;
@@ -44,8 +46,7 @@ public class Offer {
 
     private List<OfferPackage> packages;
 
-    @DBRef
-    private OfferForm form;
+    private String formId;
 
     @CreatedDate
     private LocalDateTime createdAt;

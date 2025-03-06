@@ -34,7 +34,7 @@ public class OfferMapper {
                 .labels(labels)
                 .benefits(benefits)
                 .packages(packages)
-                .form(OfferForm.builder().formId(request.formId()).build())
+                .formId(request.formId())
                 .build();
 
     }
@@ -110,6 +110,7 @@ public class OfferMapper {
                 .name(entity.getName())
                 .header(entity.getHeader())
                 .imageUri(entity.getImageUri())
+                .formId(entity.getFormId())
                 .category(filteredCategory)
                 .benefits(benefits)
                 .labels(labels)

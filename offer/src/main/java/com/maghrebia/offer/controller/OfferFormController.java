@@ -10,10 +10,7 @@ import com.maghrebia.offer.service.OfferService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -27,6 +24,11 @@ public class OfferFormController {
     @PostMapping("/create")
     public ResponseEntity<OfferFormResponse> create(@RequestBody  OfferFormRequest request) {
         return ResponseEntity.ok(offerFormService.create(request));
+    }
+
+    @GetMapping("/{formId}")
+    public ResponseEntity<OfferFormResponse> get(@PathVariable String formId) {
+        return ResponseEntity.ok(offerFormService.getById(formId));
     }
 
 

@@ -22,13 +22,12 @@ public class OfferFormService {
 
     public OfferFormResponse create(OfferFormRequest request) {
         var savedForm = offerFormRepository.save(OfferFormMapper.toEntity(request));
-        return OfferFormResponse
-                .builder()
-                .formId(savedForm.getFormId())
-                .build();
+        return OfferFormMapper.toResponse(savedForm);
     }
 
 
-
-
+    public OfferFormResponse getById(String formId) {
+        var form = offerFormRepository.findById(formId).orElse(null);
+        return OfferFormMapper.toResponse(form);
+    }
 }
