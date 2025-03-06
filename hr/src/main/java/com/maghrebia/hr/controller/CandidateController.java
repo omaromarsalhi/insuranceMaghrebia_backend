@@ -42,4 +42,13 @@ public class CandidateController {
     public ResponseEntity<?> getCandidateById(@PathVariable String id) {
         return ResponseEntity.ok(candidateService.findCandidate(id));
     }
+
+    @PostMapping("/reject")
+    public ResponseEntity<?> rejectCandidate(@RequestParam String id) {
+        return ResponseEntity.ok(candidateService.reject(id));
+    }
+    @PostMapping("/hire")
+    public ResponseEntity<?> hireCandidate(@RequestParam String id) {
+        return ResponseEntity.ok(candidateService.hire(id));
+    }
 }

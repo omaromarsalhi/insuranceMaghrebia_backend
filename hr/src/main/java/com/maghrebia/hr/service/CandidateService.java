@@ -1,12 +1,11 @@
 package com.maghrebia.hr.service;
 
 import com.maghrebia.hr.dto.request.CandidateRequest;
-import com.maghrebia.hr.entity.Candidate;
-import com.maghrebia.hr.entity.CandidateStatus;
-import com.maghrebia.hr.entity.JobPosting;
+import com.maghrebia.hr.entity.*;
 import com.maghrebia.hr.exception.CandidateNotFoundException;
 import com.maghrebia.hr.exception.JobNotFoundException;
 import com.maghrebia.hr.repository.CandidateRepository;
+import com.maghrebia.hr.repository.InterviewRepository;
 import com.maghrebia.hr.repository.JobPostingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,6 +25,7 @@ public class CandidateService {
     private final CandidateRepository candidateRepository;
     private final JobPostingRepository jobPostingRepository;
     private static final String UPLOAD_DIR = "uploads/candidates/";
+    private final InterviewRepository interviewRepository;
 
 
     public Candidate createCandidate(CandidateRequest candidateRequest, String jobId) throws IOException {
@@ -73,5 +73,24 @@ public class CandidateService {
 
     public Candidate findCandidate(String id) {
         return candidateRepository.findById(id).orElseThrow(() -> new CandidateNotFoundException("This id of candidate not found"));
+    }
+
+    public Candidate reject(String id) {
+        Candidate candidate = findCandidate(id);
+        if(candidate.getStatus()== CandidateStatus.INTERVIEW_SCHEDULED) {
+            Interview interview = interviewRepository.findInterviewByCandidateId(candidate);
+            interview.setStatus(InterviewStatus.CANCELLED);
+            interviewRepository.save(interview);
+        }
+        candidate.setStatus(CandidateStatus.REJECTED);
+        return candidateRepository.save(candidate);
+    }
+    public Candidate hire(String id) {
+        Candidate candidate = findCandidate(id);
+            Interview interview = interviewRepository.findInterviewByCandidateId(candidate);
+            interview.setStatus(InterviewStatus.COMPLETED);
+            interviewRepository.save(interview);
+        candidate.setStatus(CandidateStatus.HIRED);
+        return candidateRepository.save(candidate);
     }
 }
