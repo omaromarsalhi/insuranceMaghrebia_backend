@@ -39,16 +39,22 @@ public class ClaimController {
 
     @GetMapping
     public ResponseEntity<List<Claim>> getClaims(
-            @RequestParam(required = false, defaultValue = "false") boolean includeImages
+            @RequestParam(required = false, defaultValue = "false") boolean includeImages,
+            @RequestParam(required = false, defaultValue = "false") boolean includeResponses,
+            @RequestParam(required = false) String userId
             ) {
-        return ResponseEntity.accepted().body(claimService.findAll(includeImages));
+        if(userId != null) {
+            return ResponseEntity.accepted().body(claimService.findAllByUserId(userId, includeImages, includeResponses));
+        }
+        return ResponseEntity.accepted().body(claimService.findAll(includeImages, includeResponses));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Claim> getClaim(
             @RequestParam(required = false, defaultValue = "false") boolean includeImages,
+            @RequestParam(required = false, defaultValue = "false") boolean includeResponses,
             @PathVariable String id
     ) {
-        return ResponseEntity.accepted().body(claimService.findById(id,includeImages));
+        return ResponseEntity.accepted().body(claimService.findById(id, includeImages, includeResponses));
     }
 }

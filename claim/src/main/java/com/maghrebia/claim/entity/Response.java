@@ -8,32 +8,18 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
-@Document(collection = "claims")
+@Document(collection = "responses")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class Claim {
+public class Response {
     @Id
     String id;
     @DBRef
-    IncidentType incidentType;
-    @DBRef
     User user;
-    @DBRef
-    List<Response> responses = new ArrayList<>();
-    String title;
-    String incidentLocation;
-    String locationCoordinates;
-    LocalDateTime incidentDate;
-    LocalDateTime submitDate;
-    String description;
-    ClaimStatus status;
-    List<String> images;
-
+    String response;
+    LocalDateTime respondedAt;
 }

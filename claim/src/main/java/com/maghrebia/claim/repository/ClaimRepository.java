@@ -4,6 +4,8 @@ import com.maghrebia.claim.entity.Claim;
 import com.maghrebia.claim.entity.IncidentType;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface ClaimRepository extends MongoRepository<Claim, String> {
+import java.util.List;
 
+public interface ClaimRepository extends MongoRepository<Claim, String> {
+    List<Claim> findAllByUserId(String user_id);
 }

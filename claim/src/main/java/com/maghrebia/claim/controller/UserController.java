@@ -16,7 +16,7 @@ public class UserController {
 
     @PostMapping()
     public void createUser() {
-        User user = new User(null, "7amadi", "7amadi");
+        User user = new User(null, "Admoun", "9wey");
         userService.saveUser(user);
     }
 }

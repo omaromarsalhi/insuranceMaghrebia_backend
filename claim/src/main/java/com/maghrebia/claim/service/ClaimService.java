@@ -18,19 +18,37 @@ public class ClaimService {
         claimRepository.save(claim);
     }
 
-    public List<Claim> findAll(boolean withImages) {
+    public List<Claim> findAll(boolean withImages, boolean withResponses) {
         List<Claim> claims = claimRepository.findAll();
-        if (withImages)
-            for(Claim claim : claims) {
-                claim.setImages(claim.getImages().stream().map(ImageService::convertImageToBase64).collect(Collectors.toList()));
-            }
+
+        for(Claim claim : claims) {
+            claim = prepareClaim(claim, withImages, withResponses);
+        }
         return claims;
     }
 
-    public Claim findById(String id, boolean withImages) {
+    public Claim findById(String id, boolean withImages, boolean withResponses) {
         Claim claim = claimRepository.findById(id).orElse(null);
-        if(claim != null && withImages)
-            claim.setImages(claim.getImages().stream().map(ImageService::convertImageToBase64).collect(Collectors.toList()));
+        claim = prepareClaim(claim, withImages, withResponses);
         return claim;
+    }
+
+    public List<Claim> findAllByUserId(String userId, boolean withImages, boolean withResponses) {
+        List<Claim> claims = claimRepository.findAllByUserId(userId);
+        for(Claim claim : claims) {
+            claim = prepareClaim(claim, withImages, withResponses);
+        }
+        return claims;
+    }
+
+    private Claim prepareClaim(Claim claim, boolean withImages, boolean withResponses) {
+        if(claim != null && withImages)
+            claim.setImages(loadImages(claim.getImages()));
+        if(!withResponses)
+            claim.getResponses().clear();
+        return claim;
+    }
+    private List<String> loadImages(List<String> imagesPaths) {
+        return imagesPaths.stream().map(ImageService::convertImageToBase64).collect(Collectors.toList());
     }
 }
