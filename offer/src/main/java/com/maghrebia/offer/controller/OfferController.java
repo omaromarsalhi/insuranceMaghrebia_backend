@@ -2,6 +2,7 @@ package com.maghrebia.offer.controller;
 
 
 import com.maghrebia.offer.dto.OfferRequest;
+import com.maghrebia.offer.dto.OfferResponse;
 import com.maghrebia.offer.model.Offer;
 import com.maghrebia.offer.service.OfferService;
 import jakarta.validation.Valid;
@@ -17,10 +18,14 @@ public class OfferController {
 
     private final OfferService offerService;
 
-    @PostMapping
-    public ResponseEntity<Offer> createOffer(@RequestBody @Valid OfferRequest offer) {
-        System.out.println(offer);
-        return ResponseEntity.ok(offerService.createOffer(offer));
+    @PostMapping("create")
+    public ResponseEntity<OfferResponse> create(@RequestBody  OfferRequest request) {
+        return ResponseEntity.ok(offerService.create(request));
+    }
+
+    @GetMapping("/one/{categoryId}")
+    public ResponseEntity<OfferResponse> getOne(@PathVariable String categoryId) {
+        return ResponseEntity.ok(offerService.getOne(categoryId));
     }
 
 

@@ -1,13 +1,17 @@
 package com.maghrebia.offer.dto;
 
+import com.maghrebia.offer.dto.helpers.BenefitTypeDto;
 import com.maghrebia.offer.dto.helpers.FilteredCategoryDto;
 import com.maghrebia.offer.dto.helpers.OfferLabelDto;
+import com.maghrebia.offer.dto.helpers.OfferPackageDto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
+
 import java.util.List;
+
 
 public record OfferRequest(
         @NotBlank(message = "Offer name is required")
@@ -24,13 +28,15 @@ public record OfferRequest(
         )
         String header,
 
-//        @Pattern(
-//                regexp = "^(http?://)?([\\w\\-]+\\.)+[a-z]{2,6}(/\\S*)?$",
-//                message = "Invalid URL format (e.g., http://example.com/image.jpg)"
-//        )
         String imageUri,
 
         @NotNull @Valid FilteredCategoryDto category,
 
-        @Valid List<@Valid OfferLabelDto> labels
+        @Valid List<@Valid OfferLabelDto> labels,
+
+        List<BenefitTypeDto> benefits,
+
+        List<OfferPackageDto> packages,
+
+        String formId
 ) {}

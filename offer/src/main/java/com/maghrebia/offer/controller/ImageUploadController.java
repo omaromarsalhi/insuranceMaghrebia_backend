@@ -1,7 +1,9 @@
 package com.maghrebia.offer.controller;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,11 +24,10 @@ public class ImageUploadController {
     private String UPLOAD_DIR;
 
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<String> uploadImage(@RequestParam("file")  MultipartFile file) {
         try {
             // Create the upload directory if it doesn't exist
             Path uploadPath = Paths.get(UPLOAD_DIR);
-            System.out.println(uploadPath.toAbsolutePath());
             if (!Files.exists(uploadPath)) {
                 System.out.println(uploadPath.toAbsolutePath());
                 Files.createDirectories(uploadPath);
@@ -43,6 +44,7 @@ public class ImageUploadController {
             String fileUrl = "http://localhost:9002/api/v1/images/" + fileName;
             return ResponseEntity.ok(fileUrl);
         } catch (IOException e) {
+            System.out.println("Error while uploading image");
             return ResponseEntity.status(500).body("Failed to upload image");
         }
     }

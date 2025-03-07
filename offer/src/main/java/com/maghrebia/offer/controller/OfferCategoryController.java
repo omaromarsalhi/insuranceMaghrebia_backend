@@ -1,6 +1,8 @@
 package com.maghrebia.offer.controller;
 
 
+import com.maghrebia.offer.dto.CategoryRequest;
+import com.maghrebia.offer.dto.CategoryResponse;
 import com.maghrebia.offer.model.OfferCategory;
 import com.maghrebia.offer.service.OfferCategoryService;
 import lombok.RequiredArgsConstructor;
@@ -18,24 +20,23 @@ public class OfferCategoryController {
     private final OfferCategoryService offerCategoryService;
 
     @PostMapping("/create")
-    public ResponseEntity<OfferCategory> createOfferCategory(@RequestBody OfferCategory offerCategory) {
+    public ResponseEntity<CategoryResponse> createOfferCategory(@RequestBody CategoryRequest offerCategory) {
         return ResponseEntity.ok(offerCategoryService.createOfferCategory(offerCategory));
     }
 
     @GetMapping("getAll")
-    public ResponseEntity<List<OfferCategory>> getAllOfferCategories() {
+    public ResponseEntity<List<CategoryResponse>> getAllOfferCategories() {
         return ResponseEntity.ok(offerCategoryService.getAllOfferCategories());
     }
 
     @GetMapping("getOne/{id}")
-    public ResponseEntity<OfferCategory> getOfferCategoryById(@PathVariable String id) {
+    public ResponseEntity<CategoryResponse> getOfferCategoryById(@PathVariable String id) {
         return ResponseEntity.ok(offerCategoryService.getOfferCategoryById(id));
     }
 
     @PutMapping("update/{id}")
-    public ResponseEntity<OfferCategory> updateOfferCategory(@PathVariable String id, @RequestBody OfferCategory offerCategoryDetails) {
-        OfferCategory updatedOfferCategory = offerCategoryService.updateOfferCategory(id, offerCategoryDetails);
-        return ResponseEntity.ok(updatedOfferCategory);
+    public ResponseEntity<CategoryResponse> updateOfferCategory(@PathVariable String id, @RequestBody OfferCategory offerCategoryDetails) {
+        return ResponseEntity.ok(offerCategoryService.updateOfferCategory(id, offerCategoryDetails));
     }
 
     @DeleteMapping("/{id}")

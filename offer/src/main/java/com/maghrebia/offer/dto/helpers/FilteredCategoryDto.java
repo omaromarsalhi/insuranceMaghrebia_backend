@@ -2,8 +2,10 @@ package com.maghrebia.offer.dto.helpers;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import lombok.Builder;
 
 
+@Builder
 public record FilteredCategoryDto(
 //        @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$")
         String categoryId,

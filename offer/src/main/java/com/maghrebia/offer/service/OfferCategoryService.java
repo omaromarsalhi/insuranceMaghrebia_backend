@@ -1,5 +1,8 @@
 package com.maghrebia.offer.service;
 
+import com.maghrebia.offer.dto.CategoryRequest;
+import com.maghrebia.offer.dto.CategoryResponse;
+import com.maghrebia.offer.mapper.CategoryMapper;
 import com.maghrebia.offer.model.OfferCategory;
 import com.maghrebia.offer.repository.OfferCategoryRepository;
 import lombok.AllArgsConstructor;
@@ -15,19 +18,24 @@ public class OfferCategoryService {
     private final OfferCategoryRepository offerCategoryRepository;
 
 
-    public OfferCategory createOfferCategory(OfferCategory offerCategory) {
-        return offerCategoryRepository.save(offerCategory);
+    public CategoryResponse createOfferCategory(CategoryRequest offerCategory) {
+        var savedCategory = offerCategoryRepository.save(CategoryMapper.toOfferCategory(offerCategory));
+        return CategoryMapper.toCategoryResponse(savedCategory);
     }
 
-    public List<OfferCategory> getAllOfferCategories() {
-        return offerCategoryRepository.findAll();
+    public List<CategoryResponse> getAllOfferCategories() {
+        var allCategories = offerCategoryRepository.findAll();
+        return allCategories.stream()
+                .map(CategoryMapper::toCategoryResponse)
+                .toList();
     }
 
-    public OfferCategory getOfferCategoryById(String id) {
-        return offerCategoryRepository.findById(id).orElse(null);
+    public CategoryResponse getOfferCategoryById(String id) {
+        var savedCategory = offerCategoryRepository.findByCategoryId(id);
+        return CategoryMapper.toCategoryResponse(savedCategory);
     }
 
-    public OfferCategory updateOfferCategory(String id, OfferCategory offerCategoryDetails) {
+    public CategoryResponse updateOfferCategory(String id, OfferCategory offerCategoryDetails) {
         OfferCategory offerCategory = offerCategoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("OfferCategory not found with id: " + id));
 
@@ -35,7 +43,8 @@ public class OfferCategoryService {
         offerCategory.setDescription(offerCategoryDetails.getDescription());
         offerCategory.setCategoryTarget(offerCategoryDetails.getCategoryTarget());
 
-        return offerCategoryRepository.save(offerCategory);
+        var savedCategory = offerCategoryRepository.save(offerCategory);
+        return CategoryMapper.toCategoryResponse(savedCategory);
     }
 
     public void deleteOfferCategory(String id) {
