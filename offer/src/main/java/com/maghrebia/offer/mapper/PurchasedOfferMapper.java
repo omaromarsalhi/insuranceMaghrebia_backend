@@ -34,7 +34,7 @@ public class PurchasedOfferMapper {
                 .formId(request.formId())
                 .offerId(request.offerId())
                 .data(request.data().stream()
-                        .map(dto -> new PurchasedOfferData(dto.fieldLabel(), dto.fieldValue()))
+                        .map(dto -> new PurchasedOfferData(dto.fieldLabel(), dto.fieldType(), dto.fieldValue()))
                         .collect(Collectors.toList()))
                 .build();
     }
