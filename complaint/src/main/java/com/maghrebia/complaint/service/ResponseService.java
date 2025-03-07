@@ -20,7 +20,7 @@ public class ResponseService {
 
     public ResponseComplaint addRespons(ResponseComplaint response, String responderId,String complaintId) {
         Complaint complaint = complaintRepository.findById(complaintId).get();
-        complaint.setComplaintStatus(StatusComplaint.OPEN);
+        complaint.setComplaintStatus(StatusComplaint.IN_PROGRESS);
         complaintRepository.save(complaint);
         response.setResponderId(responderId);//l id de user qui va repond
         response.setComplaintId(complaintId);

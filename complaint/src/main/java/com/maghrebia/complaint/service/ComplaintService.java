@@ -36,11 +36,9 @@ public class ComplaintService {
             if (userRepository.findById(userId) == null) {
                 throw new UserNotFoundException("User not found with ID: " + userId);
             }
-
             if (complaint == null || !StringUtils.hasText(complaint.getComplaintDescription())) {
                 throw new InvalidComplaintException("Complaint description is required");
             }
-
             String validationResult = aiService.isComplaintValid(complaint.getTitle(), complaint.getComplaintDescription());
             if ("invalid".equals(validationResult)) {
                 throw new InvalidComplaintException("This does not appear to be a valid complaint. Please provide a real issue.");
@@ -50,10 +48,9 @@ public class ComplaintService {
                 utilisService.extractBetterTitle(responseMessage);
                 throw new InvalidComplaintException("Complaint title and description are not compatible." + responseMessage);
             }
-
             complaint.setCreatedAt(LocalDateTime.now());
             complaint.setUserId(userId);
-            complaint.setComplaintStatus(StatusComplaint.CLOSED);
+            complaint.setComplaintStatus(StatusComplaint.NEW);
             return complaintRepository.save(complaint);
 
         } catch (DataAccessException e) {
@@ -137,6 +134,15 @@ public class ComplaintService {
             throw new RuntimeException("Database error while fetching complaints by type", e);
         }
     }
-
+    public void updateStatus(String userId, StatusComplaint newStatus) {
+        Optional<Complaint> complaintOptional = complaintRepository.findById(userId);
+        if (complaintOptional.isPresent()) {
+            Complaint complaint = complaintOptional.get();
+            complaint.setComplaintStatus(newStatus);
+            complaintRepository.save(complaint);
+        } else {
+            throw new RuntimeException("Complaint not found with id: " + userId);
+        }
+    }
 
 }

@@ -17,7 +17,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/complaintResponse")
-@CrossOrigin("*")
+@CrossOrigin("http://localhost:4300/, http://localhost:4200/ ")
 @RequiredArgsConstructor
 public class ResponseController {
 

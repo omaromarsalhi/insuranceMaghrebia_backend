@@ -2,6 +2,7 @@ package com.maghrebia.complaint.controller;
 
 import com.maghrebia.complaint.entity.Complaint;
 import com.maghrebia.complaint.entity.ComplaintType;
+import com.maghrebia.complaint.entity.StatusComplaint;
 import com.maghrebia.complaint.exception.InvalidComplaintException;
 import com.maghrebia.complaint.exception.UserNotFoundException;
 import com.maghrebia.complaint.service.AiService;
@@ -21,8 +22,8 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/complaint")
-@CrossOrigin("*")
 @RequiredArgsConstructor
+@CrossOrigin("http://localhost:4300/, http://localhost:4200/ ")
 public class ComplaintController {
 
     private final ComplaintService complaintService;
@@ -58,7 +59,6 @@ public class ComplaintController {
     @GetMapping("")
     public ResponseEntity<List<Complaint>> getAll(
     ) {
-
         return ResponseEntity.ok(complaintService.getAllComplaints());
     }
 
@@ -79,33 +79,27 @@ public class ComplaintController {
     ) {
         return ResponseEntity.ok(complaintService.getComplaintsByType(type));
     }
-//    @DeleteMapping("")
-//    public Response delete(@RequestBody Complaint complaint
-//    ){
-//        complaintService.deleteComplaint(complaint);
-//        return Response.ok().build();
-    //  }
+    @PostMapping("/getTitle")
+    public ResponseEntity<String> getSuggestedTitle(@RequestBody Map<String, String> requestBody) {
 
-//    @PostMapping("")
-//    public ResponseEntity<Complaint> updateComplaint(@RequestBody Complaint complaint
-//    ){
-//        return ResponseEntity.ok(complaintService.addComplaint(complaint));
-//    }
-@PostMapping("/getTitle")
-public ResponseEntity<String> getSuggestedTitle(@RequestBody Map<String, String> requestBody) {
+        String description = requestBody.get("description");
+        if (description == null || description.isEmpty()) {
+            return ResponseEntity.badRequest().body("No description provided.");
+        }
+        String suggestedTitle = aiService.getSuggestedTitle(description);
 
-    String description = requestBody.get("description");
-    if (description == null || description.isEmpty()) {
-        return ResponseEntity.badRequest().body("No description provided.");
-    }
-    String suggestedTitle = aiService.getSuggestedTitle(description);
+        if ("Error occurred while calling the Flask API.".equals(suggestedTitle)) {
+            System.err.println(suggestedTitle);
+            return ResponseEntity.status(500).body(suggestedTitle);
+        }
 
-    if ("Error occurred while calling the Flask API.".equals(suggestedTitle)) {
-        System.err.println(suggestedTitle);
-        return ResponseEntity.status(500).body(suggestedTitle);
+        return ResponseEntity.ok(suggestedTitle);
     }
 
-    return ResponseEntity.ok(suggestedTitle);
-}
+    @PutMapping("/{idComplaint}/{status}")
+    public ResponseEntity<String> updateStatus(@PathVariable String idComplaint, @PathVariable StatusComplaint status) {
+        complaintService.updateStatus(idComplaint, status);
+        return ResponseEntity.ok("Status updated successfully!");
+    }
 
 }
