@@ -4,15 +4,13 @@ from llama_index.core.memory import ChatMemoryBuffer
 from llama_index.core.llms import ChatMessage
 from dotenv import load_dotenv
 
-from prompts import form_generate_prompt
-
-
 # Load environment variables
+GOOGLE_API_KEY = ""
 
-class FormBuilderAgent:
+class ConversationalAgent:
     def __init__(self):
         # Configure Gemini
-        self.api_key = ""
+        self.api_key = GOOGLE_API_KEY
         genai.configure(api_key=self.api_key)
         self.model = genai.GenerativeModel()
 
@@ -32,7 +30,8 @@ class FormBuilderAgent:
 
         # Generate prompt with conversation history
         history = self._format_history()
-        prompt = f"""{form_generate_prompt}
+        prompt = f"""you are an agent that only knows how to add 1+1
+        
         
         Current Conversation:
         {history}
@@ -46,10 +45,8 @@ class FormBuilderAgent:
 
         return assistant_response
 
-agent = FormBuilderAgent()
-
 # if __name__ == "__main__":
-#     agent = FormBuilderAgent()
+#     agent = ConversationalAgent()
 #     print("Agent: Hello! How can I assist you today? (Type 'exit' to end)")
 #
 #     while True:
@@ -60,38 +57,3 @@ agent = FormBuilderAgent()
 #
 #         response = agent.chat(user_input)
 #         print(f"Agent: {response}")
-
-# hwo can you help me today
-
-# from llama_index.llms.gemini import Gemini
-# from llama_index.core.memory import ChatMemoryBuffer
-# from llama_index.core.agent import AgentRunner
-#
-# from prompts import form_generate_prompt
-#
-# # Set your Google API key
-# GOOGLE_API_KEY = "AIzaSyCD1fNQlZCEmYSIxw7nI2G7WR6N9Ea-kQ0"
-#
-# # Initialize Gemini
-# llm = Gemini(api_key=GOOGLE_API_KEY)
-#
-# # Initialize memory buffer to retain conversation history
-# memory = ChatMemoryBuffer.from_defaults()
-#
-# # Create a simple agent with memory
-# agent = AgentRunner.from_llm(
-#     llm=llm,
-#     memory=memory,
-# )
-#
-# # Conversation loop
-# print("Chat with Gemini (type 'exit' to quit)")
-# while True:
-#     user_input = input("You: ")
-#     if user_input.lower() == "exit":
-#         break
-#
-#     user_input =form_generate_prompt.format(user_input=user_input)
-#     # Get response with preserved memory
-#     response = agent.chat(user_input)
-#     print(f"Assistant: {response}")

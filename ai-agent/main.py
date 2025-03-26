@@ -2,32 +2,72 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-from uuid import uuid4
+import json
+# from formAgent import agent
+# from prompts import form_generate_prompt
+# from utils import clean_json_response
+#
+#
+# # Initialize FastAPI app
+# app = FastAPI()
+#
+# # Configure CORS
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=["http://localhost:4300"],
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
+#
+# # Request model for chat input
+# class ChatRequest(BaseModel):
+#     user_input: str
+#
+# # Chat endpoint
+# @app.post("/chat/")
+# async def chat_with_agent(request: ChatRequest):
+#     if request.user_input.lower() == "exit" or request.user_input.lower() == "close":
+#         return JSONResponse(content={"type": "text","responseText": "Goodbye!"})
+#     formatted_input = form_generate_prompt.format(user_input=request.user_input )
+#     try:
+#         response = str(agent.chat(formatted_input))
+#         response=clean_json_response(response)
+#         if response.startswith("[") or response.startswith("```json") :
+#             cleaned_response = response.strip("```json").strip("```").strip()
+#             parsed_json = json.loads(cleaned_response)
+#             return JSONResponse(content={"type": "json","responseText": parsed_json})
+#         return JSONResponse(content={"type": "text","responseText": response})
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))
+#
+# if __name__ == "__main__":
+#     import uvicorn
+#     uvicorn.run(app, host="0.0.0.0", port=9100)
 
-# Session management
-from fastapi_sessions.backends.implementations import InMemoryBackend
-from fastapi_sessions.frontends.implementations import SessionCookie, CookieParameters
 
-# Define session data model
-class SessionData(BaseModel):
-    user_id: str
-    conversation_history: list = []
 
-# Session backend (in-memory for simplicity)
-backend = InMemoryBackend[str, SessionData]()
 
-# Cookie parameters
-cookie_params = CookieParameters()
-cookie = SessionCookie(
-    cookie_name="session_cookie",
-    identifier="general_verifier",
-    auto_error=True,
-    secret_key="your_secret_key_here",
-    cookie_params=cookie_params,
-)
+
+
+
+
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
+import json
+import logging
+from formAgent import agent
+from prompts import form_generate_prompt
+from utils import clean_json_response
 
 # Initialize FastAPI app
 app = FastAPI()
+
+# Configure logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 # Configure CORS
 app.add_middleware(
@@ -38,29 +78,72 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Request model for chat input
+class ChatRequest(BaseModel):
+    user_input: str
+
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    try:
+        if request.method == "POST":
+            body = await request.body()
+            logger.debug(f"Request body: {body.decode()}")
+    except Exception as e:
+        logger.error(f"Error logging request: {e}")
+
+    response = await call_next(request)
+    return response
+
 # Chat endpoint
 @app.post("/chat/")
-async def chat_with_agent(request: Request):
-    session_id = request.cookies.get("session_cookie")
-    if session_id is None:
-        # Create a new session
-        session_id = str(uuid4())
-        session_data = SessionData(user_id=session_id)
-        await backend.create(session_id, session_data)
-    else:
-        # Retrieve existing session
-        session_data = await backend.read(session_id)
-        if session_data is None:
-            # Create a new session if the existing one is invalid
-            session_id = str(uuid4())
-            session_data = SessionData(user_id=session_id)
-            await backend.create(session_id, session_data)
+async def chat_with_agent(request: ChatRequest):
+    logger.debug(f"Received chat request with input: {request.user_input}")
 
-    # Set the cookie in the response
-    response = JSONResponse(content={"message": "Chat response", "session_id": session_id})
-    cookie(session_id, response)  # Correct usage of SessionCookie
-    return response
+    if request.user_input.lower() in ["exit", "close", "quit"]:
+        logger.debug("Received exit command")
+        return JSONResponse(content={"type": "text", "responseText": "Goodbye!"})
+
+    try:
+        formatted_input = form_generate_prompt.format(user_input=request.user_input)
+        response = str(agent.chat(formatted_input))
+        response=clean_json_response(response)
+        if response.startswith("[") or response.startswith("```json"):
+            logger.debug("Detected JSON response")
+            try:
+                cleaned_response = response.strip("```json").strip("```").strip()
+                logger.debug(f"Cleaned response: {cleaned_response}")
+
+                parsed_json = json.loads(cleaned_response)
+                logger.debug(f"Successfully parsed JSON: {parsed_json}")
+
+                return JSONResponse(content={"type": "json", "responseText": parsed_json})
+            except json.JSONDecodeError as e:
+                logger.error(f"JSON parsing error: {e}")
+                logger.error(f"Problematic response: {response}")
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"Failed to parse JSON response: {str(e)}"
+                )
+
+        logger.debug("Returning text response")
+        return JSONResponse(content={"type": "text", "responseText": response})
+
+    except Exception as e:
+        logger.error(f"Error processing request: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
+        )
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=9100)
+    logger.info("Starting FastAPI server in debug mode...")
+    uvicorn.run(
+        app,
+        host="0.0.0.0",
+        port=9100,
+        log_level="debug",
+        reload=True
+    )
+
+
