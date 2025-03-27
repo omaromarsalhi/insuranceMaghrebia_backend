@@ -70,7 +70,7 @@ agent = FormBuilderAgent()
 # from prompts import form_generate_prompt
 #
 # # Set your Google API key
-# GOOGLE_API_KEY = "AIzaSyCD1fNQlZCEmYSIxw7nI2G7WR6N9Ea-kQ0"
+# GOOGLE_API_KEY = ""
 #
 # # Initialize Gemini
 # llm = Gemini(api_key=GOOGLE_API_KEY)

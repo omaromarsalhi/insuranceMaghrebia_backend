@@ -14,6 +14,7 @@ public record FormField(
         String placeholder,
         String description,
         String regex,
+        String javaRegex,
         String regexErrorMessage,
         int rangeStart,
         int rangeEnd,

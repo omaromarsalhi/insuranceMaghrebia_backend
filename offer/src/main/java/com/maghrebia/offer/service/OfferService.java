@@ -11,6 +11,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 @AllArgsConstructor
 @Service
@@ -43,5 +46,12 @@ public class OfferService {
                 .build();
         var offer = offerRepository.findOneByCategory(filteredCategory);
         return OfferMapper.toDto(offer);
+    }
+
+    public List<OfferResponse> getAll() {
+        var offer = offerRepository.findAll();
+        return offer.stream()
+                .map(OfferMapper::toDto)
+                .toList();
     }
 }

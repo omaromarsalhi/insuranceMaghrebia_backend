@@ -10,6 +10,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @AllArgsConstructor
@@ -26,6 +28,11 @@ public class OfferController {
     @GetMapping("/one/{categoryId}")
     public ResponseEntity<OfferResponse> getOne(@PathVariable String categoryId) {
         return ResponseEntity.ok(offerService.getOne(categoryId));
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<OfferResponse>> getAll() {
+        return ResponseEntity.ok(offerService.getAll());
     }
 
 

@@ -6,6 +6,7 @@ import com.maghrebia.offer.dto.helpers.OfferLabelDto;
 import com.maghrebia.offer.dto.helpers.OfferPackageDto;
 import lombok.Builder;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Builder
@@ -15,9 +16,11 @@ public record OfferResponse(
         String header,
         String imageUri,
         String formId,
+        boolean isActive,
         List<BenefitTypeDto> benefits,
         FilteredCategoryDto category,
         List<OfferLabelDto> labels,
-        List<OfferPackageDto> packages
+        List<OfferPackageDto> packages,
+        LocalDateTime createdAt
 ) {
 }

@@ -27,6 +27,8 @@ public record FormFieldDto(
 
         String regex,
 
+        String javaRegex,
+
         String regexErrorMessage,
 
         @Min(value = 0, message = "Range start must be at least 0")

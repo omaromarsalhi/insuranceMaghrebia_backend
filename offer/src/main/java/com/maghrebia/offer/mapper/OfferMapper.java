@@ -32,6 +32,7 @@ public class OfferMapper {
                 .imageUri(request.imageUri())
                 .category(filteredCategory)
                 .labels(labels)
+                .isActive(true)
                 .benefits(benefits)
                 .packages(packages)
                 .formId(request.formId())
@@ -112,9 +113,11 @@ public class OfferMapper {
                 .imageUri(entity.getImageUri())
                 .formId(entity.getFormId())
                 .category(filteredCategory)
+                .isActive(entity.isActive())
                 .benefits(benefits)
                 .labels(labels)
                 .packages(packages)
+                .createdAt(entity.getCreatedAt())
                 .build();
     }
 
