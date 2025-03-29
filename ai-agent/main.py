@@ -104,8 +104,7 @@ async def chat_with_agent(request: ChatRequest):
         return JSONResponse(content={"type": "text", "responseText": "Goodbye!"})
 
     try:
-        formatted_input = form_generate_prompt.format(user_input=request.user_input)
-        response = str(agent.chat(formatted_input))
+        response = str(agent.chat(request.user_input))
         response=str(clean_json_response(response))
         if response.startswith("[") or response.startswith("```json"):
             logger.debug("Detected JSON response")

@@ -18,6 +18,17 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<?> handleException(EntityNotFoundException exp) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("error: ", exp.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(errors);
+    }
+
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ApiResponses({
             @ApiResponse(responseCode = "400", description = "Validation Error",

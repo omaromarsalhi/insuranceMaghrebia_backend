@@ -2,6 +2,7 @@ package com.maghrebia.offer.mapper;
 
 import com.maghrebia.offer.dto.OfferFormRequest;
 import com.maghrebia.offer.dto.OfferFormResponse;
+import com.maghrebia.offer.dto.OfferFormUpdateRequest;
 import com.maghrebia.offer.dto.helpers.FormFieldDto;
 import com.maghrebia.offer.model.records.FormField;
 import com.maghrebia.offer.model.OfferForm;
@@ -21,6 +22,20 @@ public class OfferFormMapper {
                 .fields(fields)
                 .build();
     }
+
+    public static OfferForm toUpdateEntity(OfferFormUpdateRequest request) {
+
+        var fields = request.fields()
+                .stream().map(OfferFormMapper::toFormField)
+                .toList();
+
+        return OfferForm.builder()
+                .formId(request.formId())
+                .fields(fields)
+                .build();
+    }
+
+
     public static OfferFormResponse toResponse(OfferForm offerForm) {
         var fields = offerForm.getFields()
                 .stream().map(OfferFormMapper::toFormFieldDto)

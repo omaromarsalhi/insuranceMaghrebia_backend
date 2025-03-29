@@ -4,13 +4,16 @@ import com.maghrebia.offer.dto.helpers.BenefitTypeDto;
 import com.maghrebia.offer.dto.helpers.FilteredCategoryDto;
 import com.maghrebia.offer.dto.helpers.OfferLabelDto;
 import com.maghrebia.offer.dto.helpers.OfferPackageDto;
-import lombok.Builder;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Builder
-public record OfferResponse(
+
+public record OfferUpdateRequest(
         String offerId,
         String name,
         String header,
@@ -23,5 +26,4 @@ public record OfferResponse(
         List<String> tags,
         List<OfferPackageDto> packages,
         LocalDateTime createdAt
-) {
-}
+) {}

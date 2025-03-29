@@ -17,9 +17,14 @@ public class OfferController {
 
     private final OfferService offerService;
 
-    @PostMapping("create")
+    @PostMapping("/create")
     public ResponseEntity<OfferResponse> create(@RequestBody OfferRequest request) {
         return ResponseEntity.ok(offerService.create(request));
+    }
+
+    @PutMapping ("/update")
+    public ResponseEntity<OfferResponse> update(@RequestBody OfferUpdateRequest request) {
+        return ResponseEntity.ok(offerService.update(request));
     }
 
     @GetMapping("/one/{categoryId}")

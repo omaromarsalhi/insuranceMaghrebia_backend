@@ -14,7 +14,7 @@ class FormBuilderAgent:
         # Configure Gemini
         self.api_key = ""
         genai.configure(api_key=self.api_key)
-        self.model = genai.GenerativeModel()
+        self.model = genai.GenerativeModel(model_name='models/gemini-2.0-flash')
 
         # Initialize memory with LlamaIndex
         self.memory = ChatMemoryBuffer.from_defaults(token_limit=4000)
@@ -47,6 +47,13 @@ class FormBuilderAgent:
         return assistant_response
 
 agent = FormBuilderAgent()
+# user_input="""take this form and put it in memory:
+# "fields":[{"label":"First Name 1","type":"text","order":1,"required":true,
+#            "placeholder":"Enter your first name","regex":"/^[a-zA-Z0-9\\s]{1,50}$/",
+#            "javaRegex":"^[a-zA-Z0-9\s]{1,50}$","regexErrorMessage":"Invalid characters",
+#            "rangeStart":0,"rangeEnd":10,"selectOptions":[],"rangeValid":true}]}"""
+# response = agent.chat(user_input)
+# print(f"Agent: {response}")
 
 # if __name__ == "__main__":
 #     agent = FormBuilderAgent()
@@ -60,6 +67,14 @@ agent = FormBuilderAgent()
 #
 #         response = agent.chat(user_input)
 #         print(f"Agent: {response}")
+
+
+
+# take this form and put it in memory:
+# "fields":[{"label":"First Name 1","type":"text","order":1,"required":true,
+# "placeholder":"Enter your first name","regex":"/^[a-zA-Z0-9\\s]{1,50}$/",
+# "javaRegex":"^[a-zA-Z0-9\\s]{1,50}$","regexErrorMessage":"Invalid characters",
+# "rangeStart":0,"rangeEnd":10,"selectOptions":[],"rangeValid":true}]}
 
 # hwo can you help me today
 

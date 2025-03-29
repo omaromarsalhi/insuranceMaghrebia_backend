@@ -1,6 +1,7 @@
 package com.maghrebia.offer.service;
 
 import com.maghrebia.offer.dto.*;
+import com.maghrebia.offer.exception.EntityNotFoundException;
 import com.maghrebia.offer.mapper.OfferMapper;
 import com.maghrebia.offer.model.Offer;
 import com.maghrebia.offer.model.OfferForm;
@@ -28,16 +29,17 @@ public class OfferService {
 
     public OfferResponse create(OfferRequest offer) {
         var savedOffer = offerRepository.save(OfferMapper.toEntity(offer));
-        return OfferResponse.builder()
-                .offerId(savedOffer.getOfferId())
-                .name(savedOffer.getName())
-                .header(savedOffer.getHeader())
-                .category(offer.category())
-                .imageUri(offer.imageUri())
-                .labels(offer.labels())
-                .formId(savedOffer.getFormId())
-                .build();
+        return OfferMapper.toDto(savedOffer);
     }
+
+    public OfferResponse update(OfferUpdateRequest offer) {
+        if(offerRepository.existsById(offer.offerId())) {
+            var savedOffer = offerRepository.save(OfferMapper.toUpdateEntity(offer));
+            return OfferMapper.toDto(savedOffer);
+        }
+        else throw new EntityNotFoundException("offer does not exist");
+    }
+
 
     public OfferResponse getOne(String categoryId) {
         var category = offerCategoryService.getOfferCategoryById(categoryId);
@@ -59,7 +61,7 @@ public class OfferService {
 
     public OfferGeneralResponse delete(OfferDeletionRequest request) {
         try {
-            if (request.isForm())
+            if (request.isOffer())
                 mongoTemplate.remove(Query.query(Criteria.where("_id").is(request.offerId())), Offer.class);
             if (request.isForm() && request.isOffer())
                 mongoTemplate.remove(Query.query(Criteria.where("_id").is(request.formId())), OfferForm.class);
