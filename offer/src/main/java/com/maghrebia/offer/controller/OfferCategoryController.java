@@ -4,7 +4,9 @@ package com.maghrebia.offer.controller;
 import com.maghrebia.offer.dto.CategoryRequest;
 import com.maghrebia.offer.dto.CategoryResponse;
 import com.maghrebia.offer.model.OfferCategory;
+import com.maghrebia.offer.model.enums.CategoryTarget;
 import com.maghrebia.offer.service.OfferCategoryService;
+import jakarta.ws.rs.QueryParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,8 +27,13 @@ public class OfferCategoryController {
     }
 
     @GetMapping("getAll")
-    public ResponseEntity<List<CategoryResponse>> getAllOfferCategories() {
-        return ResponseEntity.ok(offerCategoryService.getAllOfferCategories());
+    public ResponseEntity<List<CategoryResponse>> getAll() {
+        return ResponseEntity.ok(offerCategoryService.getAll());
+    }
+
+    @GetMapping("getAllByTarget/{target}")
+    public ResponseEntity<List<CategoryResponse>> getAllByTarget(@PathVariable CategoryTarget target) {
+        return ResponseEntity.ok(offerCategoryService.getAllByTarget(target));
     }
 
     @GetMapping("getOne/{id}")
@@ -34,9 +41,9 @@ public class OfferCategoryController {
         return ResponseEntity.ok(offerCategoryService.getOfferCategoryById(id));
     }
 
-    @PutMapping("update/{id}")
-    public ResponseEntity<CategoryResponse> updateOfferCategory(@PathVariable String id, @RequestBody OfferCategory offerCategoryDetails) {
-        return ResponseEntity.ok(offerCategoryService.updateOfferCategory(id, offerCategoryDetails));
+    @PutMapping("update")
+    public ResponseEntity<CategoryResponse> updateOfferCategory(@RequestBody OfferCategory offerCategoryDetails) {
+        return ResponseEntity.ok(offerCategoryService.updateOfferCategory( offerCategoryDetails));
     }
 
     @DeleteMapping("/{id}")

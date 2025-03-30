@@ -27,9 +27,9 @@ public class OfferController {
         return ResponseEntity.ok(offerService.update(request));
     }
 
-    @GetMapping("/one/{categoryId}")
-    public ResponseEntity<OfferResponse> getOne(@PathVariable String categoryId) {
-        return ResponseEntity.ok(offerService.getOne(categoryId));
+    @GetMapping("/getAllByCategoryId/{categoryId}")
+    public ResponseEntity<List<OfferWithTagsResponse>> getAllByCategoryId(@PathVariable String categoryId) {
+        return ResponseEntity.ok(offerService.getAllByCategoryId(categoryId));
     }
 
 

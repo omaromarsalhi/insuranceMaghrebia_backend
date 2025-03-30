@@ -3,6 +3,7 @@ package com.maghrebia.offer.mapper;
 import com.maghrebia.offer.dto.OfferRequest;
 import com.maghrebia.offer.dto.OfferResponse;
 import com.maghrebia.offer.dto.OfferUpdateRequest;
+import com.maghrebia.offer.dto.OfferWithTagsResponse;
 import com.maghrebia.offer.dto.helpers.*;
 import com.maghrebia.offer.model.*;
 import com.maghrebia.offer.model.records.*;
@@ -149,6 +150,18 @@ public class OfferMapper {
                 .tags(entity.getTags())
                 .packages(packages)
                 .createdAt(entity.getCreatedAt())
+                .build();
+    }
+
+
+    public static OfferWithTagsResponse toTagDto(Offer entity) {
+
+        return OfferWithTagsResponse.builder()
+                .offerId(entity.getOfferId())
+                .name(entity.getName())
+                .imageUri(entity.getImageUri())
+                .category(entity.getCategory().name())
+                .tags(entity.getTags())
                 .build();
     }
 

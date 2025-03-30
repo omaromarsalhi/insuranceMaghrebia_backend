@@ -7,6 +7,7 @@ import com.maghrebia.offer.model.Offer;
 import com.maghrebia.offer.model.OfferForm;
 import com.maghrebia.offer.model.PurchasedOffer;
 import com.maghrebia.offer.model.records.FilteredCategory;
+import com.maghrebia.offer.repository.OfferCategoryRepository;
 import com.maghrebia.offer.repository.OfferRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -16,6 +17,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @AllArgsConstructor
@@ -25,6 +27,7 @@ public class OfferService {
     private final OfferRepository offerRepository;
     private final OfferCategoryService offerCategoryService;
     private final MongoTemplate mongoTemplate;
+    private final OfferCategoryRepository offerCategoryRepository;
 
 
     public OfferResponse create(OfferRequest offer) {
@@ -33,23 +36,20 @@ public class OfferService {
     }
 
     public OfferResponse update(OfferUpdateRequest offer) {
-        if(offerRepository.existsById(offer.offerId())) {
+        if (offerRepository.existsById(offer.offerId())) {
             var savedOffer = offerRepository.save(OfferMapper.toUpdateEntity(offer));
             return OfferMapper.toDto(savedOffer);
-        }
-        else throw new EntityNotFoundException("offer does not exist");
+        } else throw new EntityNotFoundException("offer does not exist");
     }
 
 
-    public OfferResponse getOne(String categoryId) {
-        var category = offerCategoryService.getOfferCategoryById(categoryId);
-        var filteredCategory = FilteredCategory.builder()
-                .categoryId(category.categoryId())
-                .categoryTarget(category.categoryTarget().name())
-                .name(category.name())
-                .build();
-        var offer = offerRepository.findOneByCategory(filteredCategory);
-        return OfferMapper.toDto(offer);
+    public List<OfferWithTagsResponse> getAllByCategoryId(String categoryId) {
+        if (offerCategoryRepository.existsById(categoryId)) {
+            var offerList = offerRepository.findAllByCategory_CategoryId(categoryId);
+            return offerList.stream()
+                    .filter(Offer::isActive)
+                    .map(OfferMapper::toTagDto).toList();
+        } else throw new EntityNotFoundException("category does not exist");
     }
 
     public List<OfferResponse> getAll() {
@@ -93,7 +93,7 @@ public class OfferService {
     }
 
     public OfferResponse getByOfferId(String offerId) {
-        var offer=offerRepository.findById(offerId).orElse(null);
+        var offer = offerRepository.findById(offerId).orElse(null);
         return OfferMapper.toDto(offer);
     }
 }
