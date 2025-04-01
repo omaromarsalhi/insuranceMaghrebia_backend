@@ -1,4 +1,4 @@
-package com.maghrebia.quotegenerator.model.helper;
+package com.maghrebia.quotegenerator.dto;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;

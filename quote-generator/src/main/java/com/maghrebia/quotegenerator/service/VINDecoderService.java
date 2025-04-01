@@ -1,8 +1,8 @@
 package com.maghrebia.quotegenerator.service;
 
 import com.maghrebia.quotegenerator.model.VehicleInfo;
-import com.maghrebia.quotegenerator.model.helper.NHTSAVinResponse;
-import com.maghrebia.quotegenerator.model.helper.VinResult;
+import com.maghrebia.quotegenerator.dto.NHTSAVinResponse;
+import com.maghrebia.quotegenerator.dto.VinResult;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.ResponseEntity;
