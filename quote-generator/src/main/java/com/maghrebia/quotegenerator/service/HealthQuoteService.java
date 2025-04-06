@@ -2,12 +2,10 @@ package com.maghrebia.quotegenerator.service;
 
 import com.maghrebia.quotegenerator.dto.*;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 import static com.maghrebia.quotegenerator.service.RiskConstants.*;
 
@@ -35,7 +33,12 @@ public class HealthQuoteService {
 
 
     private float calculateAnnualPremium(HealthInsuranceRequest request) {
+
         float basePremium = getBasePremium(request.planType());
+
+        if (request.age() < 50 && request.age() > 40) basePremium *= 1.1f;
+        else if (request.age() > 50) basePremium *= 1.2f;
+
         float riskFactor = 1.0f;
 
         riskFactor += calculateMedicalRisk(request);
@@ -50,11 +53,14 @@ public class HealthQuoteService {
             whoApiResponses = whoService.getWHOStats(Gender.FEMALE);
 
         riskFactor += calculateNationalRisk(whoApiResponses);
-
         float deductibleDiscount = DEDUCTIBLE_DISCOUNTS.getOrDefault(request.deductible(), 0.0f);
 
         float premium = basePremium * riskFactor * (1 - deductibleDiscount);
         premium += calculateAddOns(request.addOns());
+
+        float vaccinationDiscount = calculateVaccinationImpact(request);
+        premium *= (1 - vaccinationDiscount);
+
 
         return premium;
     }
@@ -154,6 +160,12 @@ public class HealthQuoteService {
             case "4–7x per week" -> risk -= 0.10f;
         }
 
+        switch (request.travelFrequency()) {
+            case "Rarely" -> risk += 0.0f;
+            case "1–2x/year" -> risk += 0.15f;
+            case "Monthly" -> risk += 0.1f;
+        }
+
         return risk;
     }
 
@@ -174,6 +186,23 @@ public class HealthQuoteService {
         return addOns.stream()
                 .map(addon -> ADDON_PRICES.getOrDefault(addon, 0.0f))
                 .reduce(0.0f, Float::sum);
+    }
+
+    private float calculateVaccinationImpact(HealthInsuranceRequest request) {
+        float discount = 0f;
+        List<String> regionalRisks = REGIONAL_DISEASE_RISKS.getOrDefault(
+                request.governorate(),
+                List.of()
+        );
+
+        for (String vaccine : request.vaccinations()) {
+            discount += VACCINATION_DISCOUNTS.getOrDefault(vaccine, 0f);
+            if (regionalRisks.contains(vaccine)) {
+                discount += 0.015f;
+            }
+        }
+
+        return Math.min(discount, 0.1f);
     }
 
 }

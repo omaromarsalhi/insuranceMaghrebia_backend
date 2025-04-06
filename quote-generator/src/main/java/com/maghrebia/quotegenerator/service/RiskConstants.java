@@ -53,4 +53,36 @@ public class RiskConstants {
             "SA_0000001403", 0.20f, // Mental health: Conservative ±20%
             "MH_25", 0.40f
     );
+
+    public static final Map<String, Float> VACCINATION_DISCOUNTS = Map.of(
+            "Flu", 0.02f,          // 2% discount
+            "COVID-19", 0.03f,     // 3% discount
+            "Hepatitis B", 0.04f,  // 4% discount (high regional impact)
+            "MMR", 0.015f,
+            "Tuberculosis", 0.025f
+    );
+
+    public static final Map<String, List<String>> REGIONAL_DISEASE_RISKS = Map.ofEntries(
+            Map.entry("Tunis", List.of("Flu", "COVID-19", "Respiratory Infections")),
+            Map.entry("Ariana", List.of("Flu", "COVID-19")),
+            Map.entry("Ben Arous", List.of("Flu", "COVID-19")),
+            Map.entry("Manouba", List.of("Flu", "COVID-19")),
+            Map.entry("Sousse", List.of("Flu", "COVID-19", "Tuberculosis")),
+            Map.entry("Sfax", List.of("Flu", "Respiratory Infections")),
+            Map.entry("Gabès", List.of("Respiratory Infections")),
+            Map.entry("Monastir", List.of("Flu", "COVID-19")),
+            Map.entry("Kasserine", List.of("Hepatitis B", "Leishmaniasis")),
+            Map.entry("Gafsa", List.of("Hepatitis B", "Tuberculosis")),
+            Map.entry("Tataouine", List.of("Hepatitis B", "Leishmaniasis")),
+            Map.entry("Médenine", List.of("Hepatitis B", "Tuberculosis")),
+            Map.entry("Kairouan", List.of("Leishmaniasis", "MMR")),
+            Map.entry("Nabeul", List.of("Flu", "COVID-19")),
+            Map.entry("Bizerte", List.of("Flu", "Respiratory Infections")),
+            Map.entry("Jendouba", List.of("Leishmaniasis", "Tuberculosis")),
+            Map.entry("Béja", List.of("Hepatitis B", "Leishmaniasis")),
+            Map.entry("Siliana", List.of("Hepatitis B", "Leishmaniasis")),
+            Map.entry("Tozeur", List.of("Hepatitis B")),
+            Map.entry("Kebili", List.of("Hepatitis B"))
+    );
+
 }
