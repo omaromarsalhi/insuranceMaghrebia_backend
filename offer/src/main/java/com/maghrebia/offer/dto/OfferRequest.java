@@ -34,6 +34,8 @@ public record OfferRequest(
 
         @Valid List<@Valid OfferLabelDto> labels,
 
+        List<String> tags,
+
         List<BenefitTypeDto> benefits,
 
         List<OfferPackageDto> packages,

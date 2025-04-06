@@ -1,9 +1,6 @@
 package com.maghrebia.offer.service;
 
-import com.maghrebia.offer.dto.OfferFormRequest;
-import com.maghrebia.offer.dto.OfferFormResponse;
-import com.maghrebia.offer.dto.OfferRequest;
-import com.maghrebia.offer.dto.OfferResponse;
+import com.maghrebia.offer.dto.*;
 import com.maghrebia.offer.mapper.OfferFormMapper;
 import com.maghrebia.offer.mapper.OfferMapper;
 import com.maghrebia.offer.model.OfferForm;
@@ -22,6 +19,11 @@ public class OfferFormService {
 
     public OfferFormResponse create(OfferFormRequest request) {
         var savedForm = offerFormRepository.save(OfferFormMapper.toEntity(request));
+        return OfferFormMapper.toResponse(savedForm);
+    }
+
+    public OfferFormResponse update(OfferFormUpdateRequest request) {
+        var savedForm = offerFormRepository.save(OfferFormMapper.toUpdateEntity(request));
         return OfferFormMapper.toResponse(savedForm);
     }
 

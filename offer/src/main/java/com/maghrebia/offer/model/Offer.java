@@ -44,6 +44,8 @@ public class Offer {
 
     private List<BenefitType> benefits;
 
+    private List<String> tags;
+
     private List<OfferPackage> packages;
 
     private String formId;

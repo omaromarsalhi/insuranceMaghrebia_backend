@@ -1,10 +1,7 @@
 package com.maghrebia.offer.controller;
 
 
-import com.maghrebia.offer.dto.OfferFormRequest;
-import com.maghrebia.offer.dto.OfferFormResponse;
-import com.maghrebia.offer.dto.OfferRequest;
-import com.maghrebia.offer.dto.OfferResponse;
+import com.maghrebia.offer.dto.*;
 import com.maghrebia.offer.service.OfferFormService;
 import com.maghrebia.offer.service.OfferService;
 import jakarta.validation.Valid;
@@ -24,6 +21,11 @@ public class OfferFormController {
     @PostMapping("/create")
     public ResponseEntity<OfferFormResponse> create(@RequestBody  OfferFormRequest request) {
         return ResponseEntity.ok(offerFormService.create(request));
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<OfferFormResponse> update(@RequestBody OfferFormUpdateRequest request) {
+        return ResponseEntity.ok(offerFormService.update(request));
     }
 
     @GetMapping("/{formId}")

@@ -2,6 +2,8 @@ package com.maghrebia.offer.mapper;
 
 import com.maghrebia.offer.dto.OfferRequest;
 import com.maghrebia.offer.dto.OfferResponse;
+import com.maghrebia.offer.dto.OfferUpdateRequest;
+import com.maghrebia.offer.dto.OfferWithTagsResponse;
 import com.maghrebia.offer.dto.helpers.*;
 import com.maghrebia.offer.model.*;
 import com.maghrebia.offer.model.records.*;
@@ -32,9 +34,39 @@ public class OfferMapper {
                 .imageUri(request.imageUri())
                 .category(filteredCategory)
                 .labels(labels)
+                .isActive(true)
                 .benefits(benefits)
+                .tags(request.tags())
                 .packages(packages)
                 .formId(request.formId())
+                .build();
+
+    }
+
+    public static Offer toUpdateEntity(OfferUpdateRequest request) {
+        List<OfferLabel> labels = request.labels().stream()
+                .map(OfferMapper::toOfferLabelEntity)
+                .toList();
+
+        var benefits = request.benefits().stream().map(OfferMapper::toBenefitEntity).toList();
+
+        var packages = request.packages().stream().map(OfferMapper::toPackageEntity).toList();
+
+        var filteredCategory = toFilteredCategoryEntity(request.category());
+
+        return Offer.builder()
+                .offerId(request.offerId())
+                .name(request.name())
+                .header(request.header())
+                .imageUri(request.imageUri())
+                .category(filteredCategory)
+                .labels(labels)
+                .isActive(request.isActive())
+                .benefits(benefits)
+                .packages(packages)
+                .tags(request.tags())
+                .formId(request.formId())
+                .createdAt(request.createdAt())
                 .build();
 
     }
@@ -112,9 +144,24 @@ public class OfferMapper {
                 .imageUri(entity.getImageUri())
                 .formId(entity.getFormId())
                 .category(filteredCategory)
+                .isActive(entity.isActive())
                 .benefits(benefits)
                 .labels(labels)
+                .tags(entity.getTags())
                 .packages(packages)
+                .createdAt(entity.getCreatedAt())
+                .build();
+    }
+
+
+    public static OfferWithTagsResponse toTagDto(Offer entity) {
+
+        return OfferWithTagsResponse.builder()
+                .offerId(entity.getOfferId())
+                .name(entity.getName())
+                .imageUri(entity.getImageUri())
+                .category(entity.getCategory().name())
+                .tags(entity.getTags())
                 .build();
     }
 

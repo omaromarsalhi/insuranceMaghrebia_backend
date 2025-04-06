@@ -2,8 +2,10 @@ package com.maghrebia.offer.service;
 
 import com.maghrebia.offer.dto.CategoryRequest;
 import com.maghrebia.offer.dto.CategoryResponse;
+import com.maghrebia.offer.exception.EntityNotFoundException;
 import com.maghrebia.offer.mapper.CategoryMapper;
 import com.maghrebia.offer.model.OfferCategory;
+import com.maghrebia.offer.model.enums.CategoryTarget;
 import com.maghrebia.offer.repository.OfferCategoryRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,8 +25,15 @@ public class OfferCategoryService {
         return CategoryMapper.toCategoryResponse(savedCategory);
     }
 
-    public List<CategoryResponse> getAllOfferCategories() {
+    public List<CategoryResponse> getAll() {
         var allCategories = offerCategoryRepository.findAll();
+        return allCategories.stream()
+                .map(CategoryMapper::toCategoryResponse)
+                .toList();
+    }
+
+    public List<CategoryResponse> getAllByTarget(CategoryTarget target) {
+        var allCategories = offerCategoryRepository.findByCategoryTarget(target);
         return allCategories.stream()
                 .map(CategoryMapper::toCategoryResponse)
                 .toList();
@@ -35,13 +44,14 @@ public class OfferCategoryService {
         return CategoryMapper.toCategoryResponse(savedCategory);
     }
 
-    public CategoryResponse updateOfferCategory(String id, OfferCategory offerCategoryDetails) {
-        OfferCategory offerCategory = offerCategoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("OfferCategory not found with id: " + id));
+    public CategoryResponse updateOfferCategory(OfferCategory offerCategoryDetails) {
+        OfferCategory offerCategory = offerCategoryRepository.findById(offerCategoryDetails.getCategoryId())
+                .orElseThrow(() -> new EntityNotFoundException("OfferCategory not found"));
 
         offerCategory.setName(offerCategoryDetails.getName());
         offerCategory.setDescription(offerCategoryDetails.getDescription());
         offerCategory.setCategoryTarget(offerCategoryDetails.getCategoryTarget());
+        offerCategory.setImageUri(offerCategoryDetails.getImageUri());
 
         var savedCategory = offerCategoryRepository.save(offerCategory);
         return CategoryMapper.toCategoryResponse(savedCategory);
