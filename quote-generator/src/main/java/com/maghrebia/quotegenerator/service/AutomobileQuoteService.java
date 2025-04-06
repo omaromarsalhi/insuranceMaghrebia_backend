@@ -4,15 +4,10 @@ import com.maghrebia.quotegenerator.dto.*;
 import com.maghrebia.quotegenerator.exception.InvalidDataException;
 import com.maghrebia.quotegenerator.model.VehicleInfo;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -206,14 +201,14 @@ public class AutomobileQuoteService {
 
     public void verifyVin(VehicleInfo vehicleInfo, AutoInsuranceRequest autoInsuranceRequest) {
 
+        if (!vehicleInfo.getVehicleType().equalsIgnoreCase(autoInsuranceRequest.vehicleType()))
+            throw new InvalidDataException("Vehicle Type does not match");
+
         if (!vehicleInfo.getMake().equalsIgnoreCase(autoInsuranceRequest.vehicleMake()))
-            throw new InvalidDataException("Vehicle make does not match");
+            throw new InvalidDataException("Vehicle Make does not match");
 
         if (!vehicleInfo.getModel().equalsIgnoreCase(autoInsuranceRequest.vehicleModel()))
-            throw new InvalidDataException("Vehicle model does not match");
-
-        if (!vehicleInfo.getVehicleType().equalsIgnoreCase(autoInsuranceRequest.vehicleType()))
-            throw new InvalidDataException("Vehicle type does not match");
+            throw new InvalidDataException("Vehicle Model does not match");
 
     }
 }

@@ -28,7 +28,7 @@ public class WeatherService {
     public WeatherData getWeatherInfo(Double lat, Double lng) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate currentDate = LocalDate.now();
+        LocalDate currentDate = LocalDate.now().minusMonths(1);
         LocalDate oneYearAgo = currentDate.minusYears(1);
         String formattedCurrentDate = currentDate.format(formatter);
         String formattedOneYearAgoDate = oneYearAgo.format(formatter);
