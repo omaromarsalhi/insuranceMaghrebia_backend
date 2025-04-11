@@ -30,6 +30,8 @@ public class OfferFormService {
 
     public OfferFormResponse getById(String formId) {
         var form = offerFormRepository.findById(formId).orElse(null);
+        System.out.println(formId);
+        System.out.println(form);
         return OfferFormMapper.toResponse(form);
     }
 }

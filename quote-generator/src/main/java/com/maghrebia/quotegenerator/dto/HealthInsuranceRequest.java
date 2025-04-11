@@ -12,7 +12,6 @@ public record HealthInsuranceRequest(
         String occupation,
         List<String> preExistingConditions,
         List<String> familyHistory,
-        String medications,
         String hospitalizations,
         String chronicIllnesses,
         String surgeries,
@@ -23,10 +22,7 @@ public record HealthInsuranceRequest(
         String planType,
         int deductible,
         List<String> addOns,
-        String existingInsurance,
-        String employerInsurance,
         String travelFrequency,
-        List<String> vaccinations,
-        boolean gdprConsent
+        List<String> vaccinations
 ) {
 }
