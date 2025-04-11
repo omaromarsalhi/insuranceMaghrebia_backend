@@ -18,7 +18,9 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class TrackingService {
+
     private final TrackingRepository trackingRepository;
+
     public UserAction saveUserAction(String userId, Action action) {
         Optional<UserAction> existingUserAction = trackingRepository.findByuserId(userId);
         UserAction userAction = existingUserAction.orElseGet(() ->

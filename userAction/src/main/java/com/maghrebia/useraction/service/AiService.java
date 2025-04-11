@@ -16,6 +16,7 @@ public class AiService {
 
 
     public ReportResponse getAiRecommendations(String userId) {
+
         String url = FLASK_API_URL + userId;
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, null, String.class);
         try {

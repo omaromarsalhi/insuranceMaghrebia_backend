@@ -59,16 +59,7 @@ public class ComplaintService {
     }
 
 
-    public void deleteComplaint(String complaintId) {
-        try {
-            if (!complaintRepository.existsById(complaintId)) {
-                throw new ComplaintNotFoundException("Complaint not found with ID: " + complaintId);
-            }
-            complaintRepository.deleteById(complaintId);
-        } catch (DataAccessException e) {
-            throw new RuntimeException("Database error while deleting complaint", e);
-        }
-    }
+
 
     public List<Complaint> getAllComplaints() {
         try {
@@ -105,21 +96,7 @@ public class ComplaintService {
         }
     }
 
-    public Complaint updateComplaint(Complaint complaint) {
-        try {
-            if (complaint == null || !StringUtils.hasText(complaint.getComplaintId())) {
-                throw new InvalidComplaintException("Invalid complaint data for update");
-            }
 
-            if (!complaintRepository.existsById(complaint.getComplaintId())) {
-                throw new ComplaintNotFoundException("Complaint not found with ID: " + complaint.getComplaintId());
-            }
-
-            return complaintRepository.save(complaint);
-        } catch (DataAccessException e) {
-            throw new RuntimeException("Database error while updating complaint", e);
-        }
-    }
 
     public List<Complaint> getComplaintsByType(ComplaintType complaintType) {
         try {
@@ -144,5 +121,29 @@ public class ComplaintService {
             throw new RuntimeException("Complaint not found with id: " + userId);
         }
     }
+    public void deleteComplaint(String complaintId) {
+        try {
+            if (!complaintRepository.existsById(complaintId)) {
+                throw new ComplaintNotFoundException("Complaint not found with ID: " + complaintId);
+            }
+            complaintRepository.deleteById(complaintId);
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database error while deleting complaint", e);
+        }
+    }
+    public Complaint updateComplaint(Complaint complaint) {
+        try {
+            if (complaint == null || !StringUtils.hasText(complaint.getComplaintId())) {
+                throw new InvalidComplaintException("Invalid complaint data for update");
+            }
 
+            if (!complaintRepository.existsById(complaint.getComplaintId())) {
+                throw new ComplaintNotFoundException("Complaint not found with ID: " + complaint.getComplaintId());
+            }
+
+            return complaintRepository.save(complaint);
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database error while updating complaint", e);
+        }
+    }
 }

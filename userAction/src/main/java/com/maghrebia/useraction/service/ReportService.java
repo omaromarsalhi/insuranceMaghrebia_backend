@@ -3,6 +3,7 @@ import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.maghrebia.useraction.Repository.ReportRepository;
+import com.maghrebia.useraction.entity.Action;
 import com.maghrebia.useraction.entity.ActionStrategy;
 import com.maghrebia.useraction.entity.ReportResponse;
 import com.itextpdf.layout.Document;
@@ -30,14 +31,27 @@ public class ReportService {
 //        }
 //    }
     public ReportResponse saveReportResponse(String userId){
+//        ReportResponse lastReport = reportRepository.findTopByUserIdOrderByCreatedAtDesc(userId);
+//        LocalDateTime lastDate = lastReport != null ? lastReport.getCreatedAt() : LocalDateTime.MIN;
+
+        // Récupérer les actions après la date du dernier rapport
+//        List<Action> recentActions = actionRepository.findByUserIdAndCreatedAtAfter(userId, lastDate);
+
+//        if (recentActions.isEmpty()) {
+//            throw new RuntimeException("Aucune action récente pour générer un rapport.");
+//        }
         ReportResponse reportResponse =  aiService.getAiRecommendations(userId);
         reportResponse.setUserId(userId);
         reportResponse.setCreatedAt(LocalDateTime.now());
         return reportRepository.save(reportResponse);
     }
 
+
     public List<ReportResponse> getReportsByUserId(String userId){
         return reportRepository.findByUserId(userId);
+    }
+    public ReportResponse getReportbyId(String reportId){
+        return reportRepository.findById(reportId).get();
     }
 
     public byte[] generatePdfReport(ReportResponse reportResponse) throws Exception {

@@ -20,5 +20,5 @@ public class UserAction {
     private String id;
     private String userId;
     private List<Action> actions;
-    private Map<LocalDate, Integer> dailyScores = new HashMap<>();//le score de chaque jour
+    private Map<LocalDate, Integer> dailyScores = new HashMap<>();
 }

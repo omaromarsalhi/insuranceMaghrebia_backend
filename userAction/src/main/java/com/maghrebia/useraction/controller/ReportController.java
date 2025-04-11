@@ -42,4 +42,11 @@ public class ReportController {
     public ResponseEntity<?> getRepportsByUserId(@PathVariable String userId) {
         return ResponseEntity.ok(reportService.getReportsByUserId(userId));
     }
+
+
+    @GetMapping("/getReportResponse/{reportId}")
+    public ResponseEntity<?> getRepportResponse(@PathVariable String reportId) {
+        System.out.println(reportId);
+        return ResponseEntity.ok(reportService.getReportbyId(reportId));
+    }
 }
