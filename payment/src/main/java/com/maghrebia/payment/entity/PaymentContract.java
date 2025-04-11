@@ -3,7 +3,6 @@ package com.maghrebia.payment.entity;
 import com.maghrebia.payment.entity.enums.PaymentStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -38,6 +37,8 @@ public class PaymentContract {
 
     private PaymentStatus paymentStatus;
 
+    private String fullName;
+
     private boolean isArchived=false;
 
     @CreatedDate
@@ -48,6 +49,8 @@ public class PaymentContract {
 
     @DBRef
     private List<PaymentPlan> paymentPlans;
+
+
 
 
 }

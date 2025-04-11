@@ -1,13 +1,12 @@
 package com.maghrebia.payment.service;
 
-import com.maghrebia.payment.entity.IndexTracker;
+import com.maghrebia.payment.dto.PaymentContractResponse;
 import com.maghrebia.payment.entity.PaymentContract;
 import com.maghrebia.payment.entity.PaymentPlan;
 import com.maghrebia.payment.entity.enums.PaymentStatus;
 import com.maghrebia.payment.entity.enums.PlanDuration;
 import com.maghrebia.payment.exceptions.InvalidAmountException;
 import com.maghrebia.payment.exceptions.PaymentContractNotFoundException;
-import com.maghrebia.payment.repository.IndexTrackerRepository;
 import com.maghrebia.payment.repository.PaymentContractRepository;
 import com.maghrebia.payment.repository.PaymentPlanRepository;
 import lombok.AllArgsConstructor;
@@ -24,9 +23,11 @@ public class PaymentContractService {
 
     private  final PaymentPlanRepository paymentPlanRepository;
 
-    private final IndexTrackerRepository indexTrackerRepository;
 
-    public String createPaymentContract(PaymentContract contract) {
+
+
+    public PaymentContractResponse createPaymentContract(PaymentContract contract) {
+        System.out.println("i am in create payment contract first one ");
         contract.setContractCreatedAt(new Date());
         contract.setPaymentStatus(PaymentStatus.Pending);
 
@@ -40,7 +41,10 @@ public class PaymentContractService {
         ));
 
          paymentRepository.save(savedContract);
-        return savedContract.getContractPaymentId();
+        return PaymentContractResponse.builder()
+                .contractPaymentId(savedContract.getContractPaymentId())
+                .paymentPlans(savedContract.getPaymentPlans())
+                .build();
     }
 
     public List<PaymentContract> getAllPayments() {
@@ -74,14 +78,10 @@ public class PaymentContractService {
 
         return paymentRepository.save(payment);
     }
-    public PaymentContract updatePaymentStatus(String id) {
+    public PaymentContract updatePaymentStatus(String id,String hashBlock) {
 
         PaymentContract payment = paymentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Payment not found with id: " + id));
-
-        IndexTracker indexTracker = indexTrackerRepository.findById("payment_plan_index")
-                .orElseThrow(() -> new RuntimeException("Index tracker not found"));
-        int newIndex = indexTracker.getIndex() + 1;
 
 
         List<PaymentPlan> paymentPlans = paymentPlanRepository.findByPaymentContractId(id);
@@ -105,8 +105,7 @@ public class PaymentContractService {
         firstTranche.setPaymentStatus(PaymentStatus.Paid);
         firstTranche.setAmountPaid(firstTranche.getAmountDue());
         firstTranche.setPaymentDate(new Date());
-        firstTranche.setHashBlock(firstTranche.getHashBlock());
-        firstTranche.setIndex(newIndex);
+        firstTranche.setHashBlock(hashBlock);
 
         allTranchesPaid = paymentPlans.stream()
                 .allMatch(plan -> plan.getPaymentStatus() == PaymentStatus.Paid);
@@ -139,7 +138,9 @@ public class PaymentContractService {
                     .amountDue(amountDue)
                     .amountPaid(0.0)
                     .paymentStatus(PaymentStatus.Pending)
-                    .dueDate(Date.from(dueDate.atStartOfDay(ZoneId.systemDefault()).toInstant()))
+                    .dueDate(
+                            Date.from(dueDate.atStartOfDay
+                                    (ZoneId.systemDefault()).toInstant()))
                     .paymentDate(null)
                     .paymentContractId(paymentId)
                     .build();

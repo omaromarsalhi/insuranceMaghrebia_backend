@@ -1,5 +1,6 @@
 package com.maghrebia.payment.controller;
 
+import com.maghrebia.payment.dto.PaymentContractResponse;
 import com.maghrebia.payment.entity.PaymentContract;
 import com.maghrebia.payment.service.PaymentContractService;
 import jakarta.validation.Valid;
@@ -19,11 +20,11 @@ public class PaymentContractController {
 
     private final PaymentContractService paymentContractService;
 
-        @PostMapping
-        public ResponseEntity<String>  createContract(@Valid @RequestBody PaymentContract contract) {
-            String paymentContractId = paymentContractService.createPaymentContract(contract);
-            return ResponseEntity.ok(paymentContractId);
 
+        @PostMapping
+        public ResponseEntity<PaymentContractResponse>  createContract(@Valid @RequestBody PaymentContract contract) {
+            PaymentContractResponse paymentContractId = paymentContractService.createPaymentContract(contract);
+            return ResponseEntity.ok(paymentContractId);
         }
 
     @GetMapping("/Payments")
@@ -51,8 +52,8 @@ public class PaymentContractController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updatePaymentContract(@PathVariable String id) {
-        paymentContractService.updatePaymentStatus(id);
+    public ResponseEntity<String> updatePaymentContract(@PathVariable String id,@RequestBody String hashBlock) {
+        paymentContractService.updatePaymentStatus(id,hashBlock);
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body("{\"message\": \"Payment contract status updated successfully.\"}");

@@ -16,10 +16,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public class Blockchain implements Serializable{
 
     @JsonProperty("paymentId")
-    private int paymentId;
+    private String paymentId;
 
     @JsonProperty("amount")
-    private int amount;
+    private Long amount;
 
     @JsonProperty("timestamp")
     private long timestamp;

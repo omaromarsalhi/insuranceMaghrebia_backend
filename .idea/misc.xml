@@ -14,15 +14,20 @@
         <option value="$PROJECT_DIR$/payment/pom.xml" />
         <option value="$PROJECT_DIR$/BlockChain/pom.xml" />
         <option value="$PROJECT_DIR$/blockchain/pom.xml" />
+        <option value="$PROJECT_DIR$/signature-processing/pom.xml" />
+        <option value="$PROJECT_DIR$/wallet/pom.xml" />
+        <option value="$PROJECT_DIR$/Wallet/pom.xml" />
+        <option value="$PROJECT_DIR$/wallet-ins/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
       <set>
         <option value="$PROJECT_DIR$/BlockChain/pom.xml" />
+        <option value="$PROJECT_DIR$/wallet/pom.xml" />
       </set>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="openjdk-22" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="corretto-17" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
 </project>

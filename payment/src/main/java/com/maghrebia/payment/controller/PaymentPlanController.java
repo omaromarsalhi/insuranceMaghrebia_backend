@@ -18,8 +18,8 @@ public class PaymentPlanController {
     private final PaymentPlanService paymentPlanService;
 
     @PutMapping("/{id}")
-    public ResponseEntity<PaymentPlan> updatePaymentPlan(@PathVariable String id) {
-        PaymentPlan updatedPayment = paymentPlanService.updatePaymentPlan(id);
+    public ResponseEntity<PaymentPlan> updatePaymentPlan(@PathVariable String id, @RequestBody String hashblock ) {
+        PaymentPlan updatedPayment = paymentPlanService.updatePaymentPlan(id,hashblock);
         return ResponseEntity.ok(updatedPayment);
     }
 

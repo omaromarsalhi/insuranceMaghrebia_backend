@@ -18,18 +18,16 @@ public class PaymentDueDateChecker {
 
     private PaymentPlanRepository paymentPlanRepository;
 
-    @Scheduled(cron = "0 0 0 * * ?")
+    @Scheduled(cron = "0/2 0 * * * ?")
     public void checkDuePayments() {
         LocalDate today = LocalDate.now();
         Date todayDate = Date.from(today.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
-        // Find plans where dueDate has passed and status is still Pending
         List<PaymentPlan> overduePlans = paymentPlanRepository.findByDueDateBeforeAndPaymentStatus(
                 todayDate,
                 PaymentStatus.Pending
         );
 
-        // Update status to Overdue
         for (PaymentPlan plan : overduePlans) {
             plan.setPaymentStatus(PaymentStatus.Overdue);
             paymentPlanRepository.save(plan);

@@ -19,26 +19,28 @@ public class PaymentPlanService {
 
     private  final PaymentContractRepository paymentRepository;
 
-    public PaymentPlan updatePaymentPlan(String id) {
+    public PaymentPlan updatePaymentPlan(String id, String hashBlock) {
 
             PaymentPlan paymentPlan = paymentPlanRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("PaymentPlan not found with id: " + id));
-            if(paymentPlan.getPaymentStatus()== PaymentStatus.Paid){
+
+        PaymentContract contract = paymentRepository.findById(paymentPlan.getPaymentContractId())
+                    .orElseThrow(() -> new RuntimeException("Contract not found"));
+
+
+        if(paymentPlan.getPaymentStatus()== PaymentStatus.Paid){
                 throw new PaymentAlreadyCompletedException("Your payment for this tranche has been  already successfully completed.");
             }
 
             paymentPlan.setPaymentDate(new Date());
             paymentPlan.setAmountPaid(paymentPlan.getAmountDue());
+            paymentPlan.setHashBlock(hashBlock);
 
-            if (paymentPlan.getDueDate().before(new Date())) {
+        if (paymentPlan.getDueDate().before(new Date())) {
                 paymentPlan.setPaymentStatus(PaymentStatus.Overdue);
             } else {
                 paymentPlan.setPaymentStatus(PaymentStatus.Paid);
             }
-
-            PaymentContract contract = paymentRepository.findById(paymentPlan.getPaymentContractId())
-                    .orElseThrow(() -> new RuntimeException("Contract not found"));
-
             boolean allPlansPaid = paymentPlanRepository.findByPaymentContractId(contract.getContractPaymentId())
                     .stream()
                     .allMatch(p -> p.getPaymentStatus() == PaymentStatus.Paid);
@@ -52,7 +54,9 @@ public class PaymentPlanService {
         }
 
     public List<PaymentPlan> getAllPaymentsPlan(String contractId) {
-
-       return paymentPlanRepository.findByPaymentContractId(contractId);
+        System.out.println( "the id "+contractId);
+        List<PaymentPlan> paymentPlan= paymentPlanRepository.findByPaymentContractId(contractId);
+        System.out.println(paymentPlan);
+       return paymentPlan;
     }
 }

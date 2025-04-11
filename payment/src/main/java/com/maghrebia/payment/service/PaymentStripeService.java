@@ -19,9 +19,11 @@ public class PaymentStripeService {
 
     public PaymentIntentResponse createPaymentIntent(PaymentIntentDto paymentIntentDto) throws StripeException {
         stripeConfig.initializeStripe();
+        System.out.println(" payment Intent at the beginnig  ");
 
         Map<String, Object> params = new HashMap<>();
         params.put("amount", paymentIntentDto.getAmount());
+        System.out.println("the total amount is "+paymentIntentDto.getAmount());
         params.put("currency", paymentIntentDto.getCurrency());
 
         List<String> paymentMethodTypes = List.of("card");
@@ -30,7 +32,6 @@ public class PaymentStripeService {
         params.put("capture_method", "manual"); // Authorize but don't capture
 
         PaymentIntent paymentIntent = PaymentIntent.create(params);
-
         return new PaymentIntentResponse(paymentIntent.getClientSecret());
     }
 
