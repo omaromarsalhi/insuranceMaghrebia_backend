@@ -9,10 +9,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -39,10 +37,20 @@ public class TrackingService {
         userAction.getDailyScores().merge(today, actionScore, Integer::sum);
         return trackingRepository.save(userAction);
     }
+    
     public Map<LocalDate, Integer> getUserScoresPerDay(String userId) {
         UserAction userAction = trackingRepository.findByuserId(userId).get();
         return userAction != null ? userAction.getDailyScores() : null;
     }
+
+    public List<Action> getActionsAfterDate(String userId, LocalDateTime date) {
+        return trackingRepository.findByuserId(userId)
+                .map(userAction -> userAction.getActions().stream()
+                        .filter(action -> action.getCreatedAt().isAfter(date))
+                        .collect(Collectors.toList()))
+                .orElse(Collections.emptyList());
+    }
+
 }
 
 

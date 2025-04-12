@@ -21,8 +21,12 @@ public class ReportResponse {
     private String userAnalysis;
     @JsonProperty("classification")
     private String classification;
+    @JsonProperty("percentages")
+    private Map<String, Integer> percentages;
     @JsonProperty("actions")
     private Map<String, List<ActionStrategy>> actions;
     private LocalDateTime createdAt;
+    @JsonProperty("activityList")
+    private List<ActionList> actionsList;
     private String userId;
 }

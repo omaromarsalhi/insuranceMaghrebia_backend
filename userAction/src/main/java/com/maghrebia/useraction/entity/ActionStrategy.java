@@ -13,4 +13,6 @@ import lombok.Setter;
 public class ActionStrategy {
     @JsonProperty("description")
     private String description;
+    @JsonProperty("actionType")
+    private String actionType;
 }

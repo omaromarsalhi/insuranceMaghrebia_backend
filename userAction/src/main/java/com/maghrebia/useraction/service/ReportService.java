@@ -19,29 +19,20 @@ import java.util.Map;
 public class ReportService {
 
     private final ReportRepository reportRepository;
+    private final TrackingService trackingService;
     private final AiService aiService;
 
-//    public ReportResponse getAiRecommendations(String userId) {
-//        String url = FLASK_API_URL + userId;
-//        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, null, String.class);
-//        try {
-//            return objectMapper.readValue(response.getBody(), ReportResponse.class);
-//        } catch (Exception e) {
-//            throw new RuntimeException("Erreur lors de la conversion de la réponse de l'IA : " + e.getMessage(), e);
-//        }
-//    }
+
     public ReportResponse saveReportResponse(String userId){
-//        ReportResponse lastReport = reportRepository.findTopByUserIdOrderByCreatedAtDesc(userId);
-//        LocalDateTime lastDate = lastReport != null ? lastReport.getCreatedAt() : LocalDateTime.MIN;
-
-        // Récupérer les actions après la date du dernier rapport
-//        List<Action> recentActions = actionRepository.findByUserIdAndCreatedAtAfter(userId, lastDate);
-
-//        if (recentActions.isEmpty()) {
-//            throw new RuntimeException("Aucune action récente pour générer un rapport.");
-//        }
-        ReportResponse reportResponse =  aiService.getAiRecommendations(userId);
+        ReportResponse lastReport = reportRepository.findTopByUserIdOrderByCreatedAtDesc(userId);
+        List<Action> recentActions = trackingService.getActionsAfterDate(userId, lastReport.getCreatedAt());
+        if (recentActions.isEmpty()) {
+            throw new RuntimeException("Aucune action récente pour générer un rapport.");
+        }
+        ReportResponse reportResponse =  aiService.getAiRecommendations(recentActions);
+        System.out.println(reportResponse);
         reportResponse.setUserId(userId);
+        //reportResponse.setActionsList(recentActions);
         reportResponse.setCreatedAt(LocalDateTime.now());
         return reportRepository.save(reportResponse);
     }
