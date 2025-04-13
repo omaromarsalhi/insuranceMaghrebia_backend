@@ -101,5 +101,10 @@ public class ComplaintController {
         complaintService.updateStatus(idComplaint, status);
         return ResponseEntity.ok("Status updated successfully!");
     }
+    @PostMapping("")
+    public ResponseEntity<?> test() {
+        System.out.println("hihihihi");
+        return ResponseEntity.ok(Collections.singletonMap("message", "Status updated successfully!"));
+    }
 
 }

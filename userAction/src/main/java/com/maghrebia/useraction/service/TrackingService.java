@@ -37,7 +37,7 @@ public class TrackingService {
         userAction.getDailyScores().merge(today, actionScore, Integer::sum);
         return trackingRepository.save(userAction);
     }
-    
+
     public Map<LocalDate, Integer> getUserScoresPerDay(String userId) {
         UserAction userAction = trackingRepository.findByuserId(userId).get();
         return userAction != null ? userAction.getDailyScores() : null;
