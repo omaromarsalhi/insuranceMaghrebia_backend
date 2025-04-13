@@ -149,7 +149,7 @@ public class AutomobileQuoteService {
     }
 
     private boolean isUrbanArea(AddressInfo address) {
-        return !(address.municipality() == null && address.streetName() == null && address.streetNumber() == null);
+        return !(address.streetName() == null && address.streetNumber() == null);
     }
 
     private float calculateBasePremium(VehicleInfo vehicle) {

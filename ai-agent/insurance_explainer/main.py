@@ -66,7 +66,6 @@ async def talk_to_ai(user_message: dict) -> dict:
         if response.startswith("```json"):
             cleaned_response = response.replace("```json", "").replace("```", "").strip()
             parsed_json = json.loads(cleaned_response)
-            print(parsed_json)
         return {
             "type": "ai",
             "content": parsed_json,
@@ -153,6 +152,8 @@ async def websocket_endpoint(websocket: WebSocket):
                     else:
 
                         received_data_from_api = fetch_geoweather_data(user_message['value'])
+                        print(received_data_from_api)
+
                         for factor in weather_list:
                             ai_response = await talk_to_ai(
                                 {'factor': factor, 'value': get_weather_features(received_data_from_api, factor)})

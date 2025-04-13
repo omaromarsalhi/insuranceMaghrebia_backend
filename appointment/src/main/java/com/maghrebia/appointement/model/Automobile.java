@@ -1,23 +1,25 @@
-package com.maghrebia.quotegenerator.model;
+package com.maghrebia.appointement.model;
 
+
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
+@Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Builder
-@Document(collection = "offer")
-public class AutoInsurance {
+@Table(name = "automobile")
+public class Automobile {
 
     @Id
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String autoId;
 
     private String licenseNumber;
 
@@ -37,5 +39,7 @@ public class AutoInsurance {
 
     private String coverageType;
 
-    private String location;
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    private Location location;
+
 }

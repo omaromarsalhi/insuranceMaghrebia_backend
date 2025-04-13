@@ -47,6 +47,11 @@ spring:
           predicates:
             - Path=/api/v1/health/**
 
+        - id: appointment
+          uri: lb://APPOINTMENT
+          predicates:
+            - Path=/api/v1/appointments/**
+
 
 
 
