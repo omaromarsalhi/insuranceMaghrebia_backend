@@ -35,6 +35,21 @@ public class AutomobileQuoteService {
                 .build();
     }
 
+    public GeoWeatherData getGeoWeatherData(AddressInfo addressInfo){
+
+        WeatherData weatherData = weatherService.getWeatherInfo(addressInfo.boundingBox().northEast().lat(),
+                addressInfo.boundingBox().northEast().lng());
+
+        FilteredWeatherdata filteredWeatherdata = weatherService.getAverages(weatherData.daily());
+        return GeoWeatherData.builder()
+                .isUrbanArea(isUrbanArea(addressInfo))
+                .averageMaxTmp(filteredWeatherdata.averageMaxTmp())
+                .averageMinTmp(filteredWeatherdata.averageMinTmp())
+                .averagePrecipitation(filteredWeatherdata.averagePrecipitation())
+                .averageWind(filteredWeatherdata.averageWind())
+                .build();
+    }
+
 
     private float convertToBillingPeriod(float annualPremium, BillingPeriod period) {
         return switch (period) {

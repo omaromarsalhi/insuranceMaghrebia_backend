@@ -1,10 +1,15 @@
 import google.generativeai as gemini
-from insurance_explainer.prompt import prompt, INSURANCE_RULES
+from insurance_explainer.auto_variables import prompt, INSURANCE_RULES
 import asyncio
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
 
 class ChatBotManager:
     def __init__(self):
-        self.api_key = ""
+        self.api_key = os.getenv("GOOGLE_API_KEY")
         gemini.configure(api_key=self.api_key)
         self.model = gemini.GenerativeModel(model_name='models/gemini-2.0-flash')
 
@@ -29,6 +34,8 @@ class ChatBotManager:
 
         except Exception as e:
             return f"AI Error: {str(e)}"
+
+
 
 
 # user_input = {

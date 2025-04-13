@@ -35,6 +35,16 @@ spring:
         - id: quote-generator
           uri: lb://QUOTE-GENERATOR
           predicates:
+            - Path=/api/v1/vin/**
+
+        - id: quote-generator
+          uri: lb://QUOTE-GENERATOR
+          predicates:
+            - Path=/api/v1/geoweather/**
+
+        - id: quote-generator
+          uri: lb://QUOTE-GENERATOR
+          predicates:
             - Path=/api/v1/health/**
 
 
