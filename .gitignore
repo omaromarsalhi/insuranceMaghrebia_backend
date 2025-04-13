@@ -8,6 +8,7 @@ target/
 !**/src/test/**/target/
 
 /uploadedImages
+/ai-agent/.env
 
 ### STS ###
 .apt_generated
@@ -36,4 +37,3 @@ build/
 
 ### VS Code ###
 .vscode/
-/ai-agent/.env
