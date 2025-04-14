@@ -1,24 +1,22 @@
 import asyncio
 import configparser
 import os
-from itertools import count
 
 from llama_index.core.memory import ChatMemoryBuffer
 
-
 from MyMistralAI import MyMistralAI
-from fastApi.data_agent.DataAgent import DataAgent
-
+from fastApi.retriever_agent.RetrieverAgent import RetrieverAgent
+from fastApi.sql_agent.SQLAgent import SQLAgent
 from workflow import (
     ProgressEvent,
     ToolRequestEvent,
     ToolApprovedEvent, OrchestratorAgent,
 )
 
-
 config = configparser.ConfigParser()
 config.read("../config.ini")
 os.environ["MISTRAL_API_KEY"] = config.get('API', 'mistral_key')
+
 
 def get_initial_state() -> dict:
     return {
@@ -35,7 +33,7 @@ async def main():
     llm = MyMistralAI()
     memory = ChatMemoryBuffer.from_defaults(llm=llm)
     initial_state = get_initial_state()
-    agent_configs = [DataAgent()]
+    agent_configs = [SQLAgent()]
     workflow = OrchestratorAgent(timeout=None)
     # draw a diagram of the workflow
     # draw_all_possible_flows(workflow, filename="workflow.html")
@@ -84,12 +82,9 @@ async def main():
         print(Fore.BLUE + f"AGENT >> {result['response']}" + Style.RESET_ALL)
 
         # update the memory with only the new chat history
-        memory = ChatMemoryBuffer.from_defaults(llm=llm)
-        for i in result["chat_history"]:
-                memory.put(i)
-        # for i, msg in enumerate(result["chat_history"]):
-        #     if i >= len(memory.get()):
-        #         memory.put(msg)
+        for i, msg in enumerate(result["chat_history"]):
+            if i >= len(memory.get()):
+                memory.put(msg)
 
         user_msg = input("USER >> ")
         if user_msg.strip().lower() in ["exit", "quit", "bye"]:

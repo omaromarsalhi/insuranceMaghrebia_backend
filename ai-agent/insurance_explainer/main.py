@@ -189,7 +189,7 @@ async def websocket_endpoint(websocket: WebSocket):
 if __name__ == "__main__":
     uvicorn.run(
         "main:app",
-        host="0.0.0.0",  # Listen on all network interfaces
-        port=9000,  # Custom port
-        reload=True  # Optional: Auto-reload
+        host="0.0.0.0",
+        port=9000,
+        reload=True
     )

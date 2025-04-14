@@ -4,10 +4,10 @@ from llama_index.core.objects import SQLTableNodeMapping, SQLTableSchema, Object
 from llama_index.embeddings.google_genai import GoogleGenAIEmbedding
 from llama_index.llms.google_genai import GoogleGenAI
 
-from fastApi.data_agent.Config import Config
-from fastApi.data_agent.Database import Database
-from fastApi.data_agent.prompt import custom_prompt
-from sql_db_search.Nl2SqlPrompts import response_prompt
+from fastApi.sql_agent.prompt import custom_prompt
+from fastApi.utils import Database
+from fastApi.utils import Config
+
 
 class Nl2SqlEngine:
     """Handles the LlamaIndex setup and query execution."""
@@ -20,9 +20,9 @@ class Nl2SqlEngine:
 
 
         tables = database.get_tables()
-        sql_database = SQLDatabase(database.engine)
+        self.sql_database = SQLDatabase(database.engine)
 
-        table_node_mapping = SQLTableNodeMapping(sql_database)
+        table_node_mapping = SQLTableNodeMapping(self.sql_database)
         table_schema_objs = [SQLTableSchema(table_name=table) for table in tables]
 
 
@@ -33,10 +33,11 @@ class Nl2SqlEngine:
         )
 
         self.query_engine = SQLTableRetrieverQueryEngine(
-            sql_database=sql_database,
-            table_retriever=self.obj_index.as_retriever(similarity_top_k=3),
             text_to_sql_prompt=custom_prompt,
-            response_synthesis_prompt=response_prompt
+            sql_database=self.sql_database,
+            synthesize_response=False,
+            table_retriever=self.obj_index.as_retriever(similarity_top_k=3),
+            sql_only=True
         )
 
 
@@ -44,6 +45,6 @@ class Nl2SqlEngine:
         """Query the LlamaIndex engine and return the response."""
         try:
             # return self.query_engine.query(prompt)
-            return self.query_engine.query(prompt)
+            return self.query_engine.query(prompt).response
         except ValueError as e:
             return "Something went wrong, please try again."

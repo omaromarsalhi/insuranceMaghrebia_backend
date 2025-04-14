@@ -1,6 +1,7 @@
 from sqlalchemy import create_engine, inspect
-
-from fastApi.data_agent.Config import Config
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.orm import sessionmaker
+from fastApi.utils.Config import Config
 
 
 class Database:
@@ -12,8 +13,6 @@ class Database:
         self.db_port = config.get('DATABASE', 'port')
         self.db_name = config.get('DATABASE', 'db_name')
         self.engine = self.create_engine()
-        print(self.db_name)
-        print(self.db_host)
 
     def create_engine(self):
         """Create and return a SQLAlchemy engine."""
@@ -25,3 +24,9 @@ class Database:
         """Get all table names from the database."""
         inspector = inspect(self.engine)
         return inspector.get_table_names()
+
+    def get_engine(self):
+        return create_async_engine(
+            f'postgresql+asyncpg://{self.db_user}:{self.db_password}@'
+            f'{self.db_host}:{self.db_port}/{self.db_name}'
+        )

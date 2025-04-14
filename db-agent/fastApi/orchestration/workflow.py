@@ -2,13 +2,9 @@ import asyncio
 import configparser
 import os
 from typing import Any
-
 from llama_index.core.base.llms.types import MessageRole
-from llama_index.llms.cohere import Cohere
 from pydantic import BaseModel, ConfigDict, Field
-
 from llama_index.core.llms import ChatMessage, LLM
-
 from llama_index.core.program.function_program import get_function_tool
 from llama_index.core.tools import (
     BaseTool,
@@ -54,7 +50,7 @@ class TransferToAgent(BaseModel):
 
 
 class RequestTransfer(BaseModel):
-    """Used to signal that either you don't have the tools to complete the task, or you've finished your task and want to transfer to another agent."""
+    """Used to signal that  you've finished your task and want to transfer to another agent."""
 
 
 # ---- Events used to orchestrate the workflow ----
@@ -97,14 +93,47 @@ class ProgressEvent(Event):
 
 # ---- Workflow ----
 
+# DEFAULT_ORCHESTRATOR_PROMPT = (
+#     "You are on orchestration agent.\n"
+#     "Your job is to decide which agent to run based on the current state of the user and what they've asked to do.\n"
+#     "You do not need to figure out dependencies between agents; the agents will handle that themselves.\n"
+#     "Here the the agents you can choose from:\n{agent_context_str}\n\n"
+#     "Here is the current user state:\n{user_state_str}\n\n"
+#     "Please assist the user and transfer them as needed."
+# )
+
 DEFAULT_ORCHESTRATOR_PROMPT = (
-    "You are on orchestration agent.\n"
-    "Your job is to decide which agent to run based on the current state of the user and what they've asked to do.\n"
-    "You do not need to figure out dependencies between agents; the agents will handle that themselves.\n"
-    "Here the the agents you can choose from:\n{agent_context_str}\n\n"
-    "Here is the current user state:\n{user_state_str}\n\n"
-    "Please assist the user and transfer them as needed."
+    "You are an orchestration agent. Strict operational rules:\n"
+    "1. SILENT PROTOCOL: Never provide explanations or confirmations\n"
+    "2. TASK COMPLETION: Return only TRANSFER_TO command when successful\n"
+    "3. ERROR HANDLING: Return error codes ONLY when intervention needed\n\n"
+
+    "Agent selection parameters:\n"
+    "Available agents:\n{agent_context_str}\n"
+    "Current user state:\n{user_state_str}\n\n"
+
+    "Response Requirements:\n"
+    "- SUCCESS: TRANSFER_TO:[agent_name]\n"
+    "- ERROR: ERROR_CODE:[code] ERROR_MSG:[brief reason]\n"
+    "- NO OTHER OUTPUT ALLOWED\n\n"
+
+    "Example successful response:\n"
+    "TRANSFER_TO:SQL_Execution_Agent\n\n"
+
+    "Example error response:\n"
+    "ERROR_CODE:403 ERROR_MSG:Missing database connection"
 )
+
+# DEFAULT_ORCHESTRATOR_PROMPT = (
+#     "STRICT WORKFLOW: 1) Always first use SQL Query Generator to convert natural language to SQL. "
+#     "2) If SQL generation succeeds, immediately pass raw SQL to SQL Execution Agent. "
+#     "DO NOT: Execute queries directly, combine steps, or deviate from this sequence. "
+#     "ERROR HANDLING: Return SQL Agent errors immediately without proceeding to execution."
+#     "TOOL USAGE: Only use RetrieverAgent after successful SQL generation from SQLAgent."
+#     "Here the the agents you can choose from:\n{agent_context_str}\n\n"
+#     "Here is the current user state:\n{user_state_str}\n\n"
+# )
+
 DEFAULT_TOOL_REJECT_STR = "The tool call was not approved, likely due to a mistake or preconditions not being met."
 
 
@@ -130,7 +159,6 @@ class OrchestratorAgent(Workflow):
         user_msg = ev.get("user_msg")
         agent_configs = ev.get("agent_configs", default=[])
         llm: LLM = ev.get("llm", default=MyMistralAI())
-        # llm: LLM = ev.get("llm", default=Gemini(model_name="models/gemini-2.0-flash-exp"))
 
         chat_history = ev.get("chat_history", default=[])
         initial_state = ev.get("initial_state", default={})
@@ -342,7 +370,7 @@ class OrchestratorAgent(Workflow):
         user_state = await ctx.get("user_state")
         user_state_str = "\n".join([f"{k}: {v}" for k, v in user_state.items()])
 
-        current_agent_name = await ctx.get("active_agent", default="None")
+
         system_prompt = self.orchestrator_prompt.format(
             agent_context_str=agent_context_str, user_state_str=user_state_str
         )
@@ -356,12 +384,15 @@ class OrchestratorAgent(Workflow):
         # convert the TransferToAgent pydantic model to a tool
         tools = [get_function_tool(TransferToAgent)]
 
+
         await asyncio.sleep(2)
         response = await llm.achat_with_tools(tools, chat_history=llm_input)
 
         tool_calls = llm.get_tool_calls_from_response(
             response, error_on_no_tool_call=False
         )
+
+        print('tools: ',tool_calls)
 
         # if no tool calls were made, the orchestrator probably needs more information
         if len(tool_calls) == 0:
@@ -375,6 +406,7 @@ class OrchestratorAgent(Workflow):
 
         tool_call = tool_calls[0]
         selected_agent = tool_call.tool_kwargs["agent_name"]
+        print("agent name: ", selected_agent)
         await ctx.set("active_speaker", selected_agent)
         await ctx.set("active_agent", selected_agent)
 
