@@ -5,6 +5,7 @@ import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -29,4 +30,6 @@ public class ReportResponse {
     @JsonProperty("activityList")
     private List<ActionList> actionsList;
     private String userId;
+    private Map<LocalDate, Integer> dailyScores;
+    private float engagementEvolution;
 }

@@ -10,9 +10,12 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,20 +26,39 @@ public class ReportService {
     private final AiService aiService;
 
 
-    public ReportResponse saveReportResponse(String userId){
+    public ReportResponse saveReportResponse(String userId, LocalDate startDate, LocalDate endDate) {
         ReportResponse lastReport = reportRepository.findTopByUserIdOrderByCreatedAtDesc(userId);
-        List<Action> recentActions = trackingService.getActionsAfterDate(userId, lastReport.getCreatedAt());
-        if (recentActions.isEmpty()) {
-            throw new RuntimeException("Aucune action récente pour générer un rapport.");
+        if (startDate == null || endDate == null) {
+
+            if (lastReport == null) {
+                throw new RuntimeException("Aucun rapport précédent trouvé pour déterminer la date de début.");
+            }
+            startDate = lastReport.getCreatedAt().toLocalDate();
+            endDate = LocalDate.now();
+
         }
-        ReportResponse reportResponse =  aiService.getAiRecommendations(recentActions);
-        System.out.println(reportResponse);
+
+        List<Action> actionsInRange = trackingService.getActionsBetweenDates(userId, startDate, endDate);
+        if (actionsInRange.isEmpty()) {
+            throw new RuntimeException("Aucune action dans la période spécifiée pour générer un rapport.");
+        }
+
+        ReportResponse reportResponse = aiService.getAiRecommendations(actionsInRange);
         reportResponse.setUserId(userId);
-        //reportResponse.setActionsList(recentActions);
         reportResponse.setCreatedAt(LocalDateTime.now());
+        Map<LocalDate, Integer> filteredScores = trackingService.getUserScoresPerDay(userId, startDate, endDate);
+        reportResponse.setDailyScores(filteredScores);
+
+
+        if (lastReport != null) {
+            Map<LocalDate, Integer> lastScores = trackingService.getUserScoresPerDay(userId, null, null);
+            int evolution = calculateEngagementEvolution(lastScores, filteredScores);
+            reportResponse.setEngagementEvolution(evolution);
+        } else {
+            reportResponse.setEngagementEvolution(0);
+        }
         return reportRepository.save(reportResponse);
     }
-
 
     public List<ReportResponse> getReportsByUserId(String userId){
         return reportRepository.findByUserId(userId);
@@ -71,4 +93,15 @@ public class ReportService {
         document.close();
         return baos.toByteArray();
     }
+
+    private int calculateEngagementEvolution(Map<LocalDate, Integer> lastScores, Map<LocalDate, Integer> currentScores) {
+        int lastTotal = lastScores.values().stream().mapToInt(Integer::intValue).sum();
+        int currentTotal = currentScores.values().stream().mapToInt(Integer::intValue).sum();
+        if (lastTotal == 0) {
+            return 100;
+        }
+
+        return (int) (((double) (currentTotal - lastTotal) / lastTotal) * 100);
+    }
+
 }

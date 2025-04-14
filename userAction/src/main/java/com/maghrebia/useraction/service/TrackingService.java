@@ -32,16 +32,28 @@ public class TrackingService {
         userAction.getActions().add(action);
 
         int actionScore = EngagementScoring.getTimeBasedScore(action.getEventType(),action.getTimeSpent());
-        System.out.println(actionScore);
         LocalDate today = action.getCreatedAt().toLocalDate();
         userAction.getDailyScores().merge(today, actionScore, Integer::sum);
         return trackingRepository.save(userAction);
     }
 
-    public Map<LocalDate, Integer> getUserScoresPerDay(String userId) {
-        UserAction userAction = trackingRepository.findByuserId(userId).get();
-        return userAction != null ? userAction.getDailyScores() : null;
+    public Map<LocalDate, Integer> getUserScoresPerDay(String userId, LocalDate startDate, LocalDate endDate) {
+        Optional<UserAction> optionalUserAction = trackingRepository.findByuserId(userId);
+        if (optionalUserAction.isEmpty()) {
+            return null;
+        }
+
+        Map<LocalDate, Integer> allScores = optionalUserAction.get().getDailyScores();
+
+        if (startDate == null || endDate == null) {
+            return allScores;
+        }
+
+        return allScores.entrySet().stream()
+                .filter(entry -> !entry.getKey().isBefore(startDate) && !entry.getKey().isAfter(endDate))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
+
 
     public List<Action> getActionsAfterDate(String userId, LocalDateTime date) {
         return trackingRepository.findByuserId(userId)
@@ -50,7 +62,20 @@ public class TrackingService {
                         .collect(Collectors.toList()))
                 .orElse(Collections.emptyList());
     }
+    public List<Action> getActionsBetweenDates(String userId, LocalDate start, LocalDate end) {
+        Optional<UserAction> optionalUserAction = trackingRepository.findByuserId(userId);
 
+        if (optionalUserAction.isEmpty()) {
+            return List.of();
+        }
+
+        return optionalUserAction.get().getActions().stream()
+                .filter(action -> {
+                    LocalDate timestamp = action.getCreatedAt().toLocalDate();
+                    return timestamp != null && !timestamp.isBefore(start) && !timestamp.isAfter(end);
+                })
+                .collect(Collectors.toList());
+    }
 }
 
 

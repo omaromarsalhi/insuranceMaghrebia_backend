@@ -5,11 +5,15 @@ import com.maghrebia.useraction.entity.ReportResponse;
 import com.maghrebia.useraction.service.ReportService;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 
 @RestController
@@ -34,8 +38,12 @@ public class ReportController {
     }
 
     @PostMapping("/{userId}")
-    public ResponseEntity<?> saveReportResponse(@PathVariable String userId) {
-        return ResponseEntity.ok(reportService.saveReportResponse(userId));
+    public ResponseEntity<?> saveReportResponse(
+            @PathVariable String userId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate endDate) {
+
+        return ResponseEntity.ok(reportService.saveReportResponse(userId, startDate, endDate));
     }
 
     @GetMapping("/{userId}")
