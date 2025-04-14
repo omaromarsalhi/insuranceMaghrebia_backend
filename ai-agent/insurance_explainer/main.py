@@ -62,6 +62,7 @@ async def talk_to_ai(user_message: dict) -> dict:
     """Function to communicate with AI using session-specific memory"""
     try:
         response = await client.chat(**user_message)
+        print(response)
 
         if response.startswith("```json"):
             cleaned_response = response.replace("```json", "").replace("```", "").strip()
