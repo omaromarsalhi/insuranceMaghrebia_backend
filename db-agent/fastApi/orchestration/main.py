@@ -5,7 +5,6 @@ import os
 from llama_index.core.memory import ChatMemoryBuffer
 
 from MyMistralAI import MyMistralAI
-from fastApi.retriever_agent.RetrieverAgent import RetrieverAgent
 from fastApi.sql_agent.SQLAgent import SQLAgent
 from workflow import (
     ProgressEvent,

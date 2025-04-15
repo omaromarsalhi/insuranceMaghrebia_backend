@@ -69,7 +69,7 @@ from fastApi.utils.Database import Database
 #     asyncio.run(main())
 
 
-config = Config('config.ini')
+config = Config('fastApi/utils/config.ini')
 database = Database(config)
 
 query = "SELECT * FROM appointment LIMIT 1;"

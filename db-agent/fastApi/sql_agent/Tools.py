@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from llama_index.core.workflow import Context
 from sqlalchemy import text
 from fastApi.sql_agent.Nl2SqlEngine import Nl2SqlEngine
@@ -6,6 +8,8 @@ from fastApi.utils.Config import Config
 from fastApi.utils.Database import Database
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import sessionmaker
+
+from fastApi.utils.utils import serialize
 
 
 async def check_connection(ctx: Context):
@@ -111,11 +115,13 @@ async def execute(ctx: Context) -> str:
                 result = await session.execute(text(query))
 
                 if query.strip().upper().startswith("SELECT"):
-                    print([dict(row) for row in result.mappings()])
-                    return "Operation completed successfully"
-
-                await session.commit()
-                return "Operation completed successfully"
+                    query_result = [dict(row) for row in result.mappings()]
+                    query_result = serialize(query_result)
+                    await ctx.set("executed_query_results", query_result)
+                    return f"SUCCESS: Retrieved {len(query_result)} rows"
+                else:
+                    await session.commit()
+                    return "SUCCESS: Write operation completed"
 
     except Exception as e:
         if session:
