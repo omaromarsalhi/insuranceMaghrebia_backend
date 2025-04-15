@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -27,4 +28,8 @@ public class Candidate {
     @CreatedDate
     private LocalDateTime applicationDate;
     private CandidateStatus status;
+    private String score;
+    private List<String> strengths;
+    private List<String> weaknesses;
+    private String recommendation;
 }
