@@ -17,7 +17,7 @@ public class Location {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer autoId;
+    private Integer locationId;
 
     String streetNumber;
     String streetName;

@@ -392,8 +392,6 @@ class OrchestratorAgent(Workflow):
             response, error_on_no_tool_call=False
         )
 
-        print('tools: ',tool_calls)
-
         # if no tool calls were made, the orchestrator probably needs more information
         if len(tool_calls) == 0:
             chat_history.append(response.message)
@@ -406,9 +404,7 @@ class OrchestratorAgent(Workflow):
 
         tool_call = tool_calls[0]
         selected_agent = tool_call.tool_kwargs["agent_name"]
-        print("agent name: ", selected_agent)
         await ctx.set("active_speaker", selected_agent)
-        await ctx.set("active_agent", selected_agent)
 
         ctx.write_event_to_stream(
             ProgressEvent(msg=f"Transferring to agent {selected_agent}")

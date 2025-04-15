@@ -1,36 +1,41 @@
 from llama_index.core import PromptTemplate
 from llama_index.core.prompts import PromptType
 
+# sql_gen_prompt = (
+#     "**Generate ONLY PostgreSQL SELECT queries.**\n"
+#
+#     "**RULES:**\n"
+#     "- OUTPUT ONLY SQL - NO TEXT/MARKDOWN\n"
+#     "- MANDATORY JOINS if IDs exist to fetch related data\n"
+#     "- ALLOWED: SELECT, FROM, WHERE, ORDER BY, LIMIT, OFFSET\n"
+#     "- BANNED: DML/DDL, explanations, transactions\n"
+#     "- USE LOWER()/ILIKE for text, CURRENT_DATE for dates\n"
+#
+#     "**SCHEMA:**\n{schema}\n\n"
+#
+#     "**EXAMPLES:**\n"
+#     "User: Customers in Texas\n"
+#     "SQL: SELECT * FROM customers WHERE LOWER(state) = 'texas' ;\n\n"
+#
+#     "User: Orders with product names\n"
+#     "SQL: SELECT o.*, p.product_name FROM orders o JOIN products p ON o.product_id = p.id;\n\n"
+#
+#     "**TASK:**\nUser: {query_str}\nSQL:"
+# )
 sql_gen_prompt = (
-    "**You are a PostgreSQL SQL query generator.** Your ONLY task is to return "
-    "a valid SELECT statement based on the schema and user question. "
-    "**Never explain, describe, or return anything except SQL.**\n\n"
+    "**Generate PostgreSQL SELECT queries with full-data joins.**\n\n"
 
-    "**Critical Rules:**\n"
-    "- OUTPUT ONLY THE SQL QUERY\n"
-    "- STRICTLY PROHIBITED: Natural language, explanations, markdown, or non-SQL content\n"
-    "- ONLY USE THESE CLAUSES: SELECT, FROM, WHERE, ORDER BY, LIMIT, OFFSET\n"
-    "- FORBIDDEN COMMANDS: INSERT/UPDATE/DELETE, DDL, transactions, or schema modifications\n"
-    "- DEFAULT TO SELECT * UNLESS columns are explicitly specified\n"
-    "- ENFORCE LIMIT 5 WHENEVER RESULTS ARE REQUESTED\n"
-    "- USE CASE-INSENSITIVE FILTERS: LOWER() or ILIKE for text comparisons\n"
-    "- USE CURRENT_DATE/INTERVAL FOR DATE FILTERS\n\n"
+    "**MANDATORY RULES:**\n"
+    "- ALWAYS JOIN ALL TABLES: appointment → automobile  → location\n"
+    "- ALWAYS JOIN ALL TABLES: appointment → generatedquote\n"
+    "- SELECT ALL COLUMNS: a.*, auto.*, loc.*,gen.*\n"
+    "- USE EXPLICIT ALIASES: a=appointment, auto=automobile, loc=location,gen=generatedquote\n"
+    "- OUTPUT ONLY SQL - NO COMMENTS\n\n"
 
-    "**Schema Context:**\n"
-    "{schema}\n\n"
+    "**SCHEMA:**\n{schema}\n\n"
 
-    "**Examples:**\n"
-    "User: 3 customers from Texas\n"
-    "SQL: SELECT * FROM customers WHERE LOWER(state) = 'texas' LIMIT 3;\n\n"
-
-    "User: Orders after March with product names\n"
-    "SQL: SELECT o.order_id, p.product_name FROM orders o JOIN products p ON o.product_id = p.id WHERE order_date > '2024-03-01' LIMIT 5;\n\n"
-
-    "**Current Task:**\n"
-    "User: {query_str}\n"
-    "SQL:"
+    "**TASK:**\nUser: {query_str}\nSQL:"
 )
-
 custom_prompt = PromptTemplate(
     sql_gen_prompt,
     prompt_type=PromptType.TEXT_TO_SQL,

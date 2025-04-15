@@ -31,7 +31,8 @@ public class Appointment {
     @Enumerated(EnumType.STRING)
     private OfferType offerType;
 
-    private String offerDetailsId;
+    @OneToOne(cascade = CascadeType.PERSIST)
+    private Automobile automobile;
 
     @ManyToOne(targetEntity = GeneratedQuote.class,cascade = CascadeType.PERSIST)
     private GeneratedQuote generatedQuote;

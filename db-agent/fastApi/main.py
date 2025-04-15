@@ -9,6 +9,7 @@ import os
 from colorama import Fore
 from fastapi import FastAPI
 from llama_index.core.memory import ChatMemoryBuffer
+from starlette.middleware.cors import CORSMiddleware
 from starlette.websockets import WebSocket, WebSocketDisconnect
 
 from fastApi.orchestration.MyMistralAI import MyMistralAI
@@ -34,6 +35,14 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 class SessionManager:
     def __init__(self):
@@ -50,6 +59,10 @@ class SessionManager:
 
     def get_session(self, session_id):
         return self.sessions.get(session_id)
+
+    def remove_session(self, session_id):
+        if session_id in self.sessions:
+            del self.sessions[session_id]
 
 
 session_manager = SessionManager()
@@ -93,11 +106,6 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str):
             async for event in handler.stream_events():
                 if isinstance(event, ProgressEvent):
                     print(Fore.GREEN + f"SYSTEM >> {event.msg}")
-                # if isinstance(event, ProgressEvent):
-                #     await websocket.send_json({
-                #         "type": "progress",
-                #         "message": event.msg
-                #     })
 
             # Get user input after processing events
             await websocket.send_json({"type": "ready"})
@@ -115,10 +123,14 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str):
 
             # Get and send result
             result = await session['handler']
-
-            retrieved_data = await session['handler'].ctx.get('executed_query_results')
+            print(Fore.BLUE + f"AGENT >> {result['response']}" )
             await websocket.send_json({
                 "type": "result",
+                "content": result['response']
+            })
+            retrieved_data = await session['handler'].ctx.get('executed_query_results')
+            await websocket.send_json({
+                "type": "data",
                 "content": retrieved_data
             })
             await session['handler'].ctx.set('executed_query_results','')
@@ -130,8 +142,8 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str):
         print(f"Client {session_id} disconnected: code={e.code}, reason={e.reason}")
     except Exception as e:
         await websocket.close(code=1011, reason=f"Error: {str(e)}")
-    # finally:
-    #     session_manager.remove_session(session_id)
+    finally:
+        session_manager.remove_session(session_id)
 
 
 if __name__ == "__main__":

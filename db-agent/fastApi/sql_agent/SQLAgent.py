@@ -71,5 +71,3 @@ class SQLAgent(AgentConfig):
             system_prompt=data_agent_prompt,
             tools=tools
         )
-
-

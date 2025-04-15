@@ -1,7 +1,9 @@
 package com.maghrebia.appointement.dto;
 
 
+import lombok.Builder;
 
+@Builder
 public record LocationDto(
         String streetNumber,
         String streetName,

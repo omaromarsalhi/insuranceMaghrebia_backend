@@ -15,7 +15,7 @@ class Nl2SqlEngine:
     def __init__(self, config: Config, database: Database):
 
         self.gemini_key = config.get('API', 'gemini_key')
-        Settings.llm = GoogleGenAI(api_key=self.gemini_key)
+        Settings.llm = GoogleGenAI(api_key=self.gemini_key,temperature=0.0)
         Settings.embed_model = GoogleGenAIEmbedding(api_key=self.gemini_key)
 
 

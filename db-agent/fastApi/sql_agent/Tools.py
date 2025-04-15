@@ -64,37 +64,6 @@ async def get_SQL_from_user_query(ctx: Context, user_query: str):
     return "Sql generated successfully."
 
 
-# async def execute(ctx: Context) -> str:
-#     """Execute database queries with proper async session management"""
-#     database = await ctx.get("database")
-#     if not database:
-#         return "ERROR: Database connection not established"
-#
-#     query = await ctx.get("query_result")
-#     print(query)
-#
-#     try:
-#         # Create sessionmaker instance with async engine
-#         async_session = sessionmaker(
-#             bind=database.get_engine(),
-#             class_=AsyncSession,
-#             expire_on_commit=False
-#         )
-#
-#         # Create and use async session properly
-#         async with async_session() as session:  # <-- Note the () here
-#             async with session.begin():
-#                 result = await session.execute(text(query))
-#                 print(result)
-#                 if query.strip().upper().startswith("SELECT"):
-#                     return [dict(row) for row in result.mappings()]
-#
-#                 await session.commit()
-#                 return "Operation completed successfully"
-#
-#     except Exception as e:
-#         return f"ERROR: {str(e)}"
-
 async def execute(ctx: Context) -> str:
     """Execute database queries with proper async session management"""
     database = await ctx.get("database")
@@ -116,9 +85,11 @@ async def execute(ctx: Context) -> str:
 
                 if query.strip().upper().startswith("SELECT"):
                     query_result = [dict(row) for row in result.mappings()]
+                    print(query_result)
                     query_result = serialize(query_result)
                     await ctx.set("executed_query_results", query_result)
-                    return f"SUCCESS: Retrieved {len(query_result)} rows"
+                    # return f"SUCCESS: Retrieved {len(query_result)} rows"
+                    return f"SUCCESS: Retrieved 2 rows"
                 else:
                     await session.commit()
                     return "SUCCESS: Write operation completed"

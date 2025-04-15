@@ -11,6 +11,7 @@ import com.maghrebia.appointement.model.Location;
 
 public class AppointmentMapper {
 
+
     public static AppointmentDto toDto(Appointment appointment) {
         return AppointmentDto.builder()
                 .firstName(appointment.getFirstName())
@@ -19,6 +20,20 @@ public class AppointmentMapper {
                 .phone(appointment.getPhone())
                 .dob(appointment.getDob())
                 .cin(appointment.getCin())
+                .build();
+    }
+
+    public static AppointmentDto toDto(Appointment appointment, AutomobileDto automobile,GeneratedQuoteDto generatedQuote) {
+        return AppointmentDto.builder()
+                .firstName(appointment.getFirstName())
+                .lastName(appointment.getLastName())
+                .email(appointment.getEmail())
+                .phone(appointment.getPhone())
+                .dob(appointment.getDob())
+                .cin(appointment.getCin())
+                .offerType(appointment.getOfferType())
+                .offerDetails(automobile)
+                .generatedQuote(generatedQuote)
                 .build();
     }
 
@@ -31,6 +46,7 @@ public class AppointmentMapper {
         appointment.setDob(dto.dob());
         appointment.setCin(dto.cin());
         appointment.setOfferType(dto.offerType());
+        appointment.setAutomobile(toOfferDetailsEntity(dto.offerDetails()));
         appointment.setGeneratedQuote(toGeneratedQuoteEntity(dto.generatedQuote()));
         return appointment;
     }
@@ -49,6 +65,21 @@ public class AppointmentMapper {
         automobile.setDefensiveDrivingCourse(dto.defensiveDrivingCourse());
         automobile.setLocation(toLocationEntity(dto.addressInfo()));
         return automobile;
+    }
+
+
+    public static AutomobileDto toOfferDetailsDto(Automobile entity) {
+        return AutomobileDto.builder()
+                .accidentHistory(entity.getAccidentHistory())
+                .coverageType(entity.getCoverageType())
+                .drivingExperience(entity.getDrivingExperience())
+                .licenseNumber(entity.getLicenseNumber())
+                .trafficViolations(entity.getTrafficViolations())
+                .vehicleModel(entity.getVehicleModel())
+                .vehicleType(entity.getVehicleType())
+                .defensiveDrivingCourse(entity.getDefensiveDrivingCourse())
+                .addressInfo(toLocationDto(entity.getLocation()))
+                .build();
     }
 
     public static Location toLocationEntity(LocationDto dto) {
@@ -75,6 +106,25 @@ public class AppointmentMapper {
     }
 
 
+    public static LocationDto toLocationDto(Location entity) {
+        return LocationDto.builder()
+                .streetNumber(entity.getStreetNumber())
+                .streetName(entity.getStreetName())
+                .municipality(entity.getMunicipality())
+                .countrySubdivision(entity.getCountrySubdivision())
+                .countrySubdivisionName(entity.getCountrySubdivisionName())
+                .countrySubdivisionCode(entity.getCountrySubdivisionCode())
+                .postalCode(entity.getPostalCode())
+                .extendedPostalCode(entity.getExtendedPostalCode())
+                .countryCode(entity.getCountryCode())
+                .country(entity.getCountry())
+                .countryCodeISO3(entity.getCountryCodeISO3())
+                .freeformAddress(entity.getFreeformAddress())
+                .localName(entity.getLocalName())
+                .build();
+    }
+
+
     public static GeneratedQuote toGeneratedQuoteEntity(GeneratedQuoteDto dto) {
         GeneratedQuote generatedQuote = new GeneratedQuote();
         generatedQuote.setAmount(dto.amount());
@@ -84,5 +134,17 @@ public class AppointmentMapper {
         generatedQuote.setValidTo(dto.validTo());
         generatedQuote.setBaseAnnualPremium(dto.baseAnnualPremium());
         return generatedQuote;
+    }
+
+    public static GeneratedQuoteDto toGeneratedQuoteDto(GeneratedQuote entity) {
+        return GeneratedQuoteDto.builder()
+                .amount(entity.getAmount())
+                .currency(entity.getCurrency())
+                .billingPeriod(entity.getBillingPeriod())
+                .validFrom(entity.getValidFrom())
+                .validTo(entity.getValidTo())
+                .baseAnnualPremium(entity.getBaseAnnualPremium())
+                .validTo(entity.getValidTo())
+                .build();
     }
 }
