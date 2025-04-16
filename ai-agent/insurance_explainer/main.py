@@ -1,4 +1,5 @@
 import uvicorn
+from duckdb.experimental.spark.sql.functions import upper
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 import json
@@ -61,6 +62,7 @@ manager = ConnectionManager()
 async def talk_to_ai(user_message: dict) -> dict:
     """Function to communicate with AI using session-specific memory"""
     try:
+        print(user_message)
         response = await client.chat(**user_message)
         print(response)
 
@@ -100,6 +102,17 @@ def fetch_geoweather_data(address_info: dict):
         print(e)
 
 
+def fetch_who_data(gender: str):
+    try:
+        url = f"http://localhost:8888/api/v1/who/{gender.upper()}"
+        response = requests.get(url)
+        response.raise_for_status()
+        data = response.json()
+        return data
+    except Exception as e:
+        print(e)
+
+
 def get_safety_features(vin_data):
     return {
         'abs': vin_data['abs'],
@@ -109,17 +122,20 @@ def get_safety_features(vin_data):
         'daytimeRunningLights': vin_data['daytimeRunningLights'],
     }
 
+
 round(1.1404371584699455, 2)
+
+
 def get_weather_features(geoweather_data, factor):
     if factor == weather_list[0]:
-        return {'averagePrecipitation': round(geoweather_data['averagePrecipitation'],3)}
+        return {'averagePrecipitation': round(geoweather_data['averagePrecipitation'], 3)}
     elif factor == weather_list[1]:
         return {
-            'averageMinTmp': round(geoweather_data['averageMinTmp'],3),
-            'averageMaxTmp': round(geoweather_data['averageMaxTmp'],3)
+            'averageMinTmp': round(geoweather_data['averageMinTmp'], 3),
+            'averageMaxTmp': round(geoweather_data['averageMaxTmp'], 3)
         }
     elif factor == weather_list[2]:
-        return {'averageWind': round(geoweather_data['averageWind'],3)}
+        return {'averageWind': round(geoweather_data['averageWind'], 3)}
 
 
 @app.websocket("/ws")
@@ -130,6 +146,7 @@ async def websocket_endpoint(websocket: WebSocket):
         while True:
             try:
                 data = await websocket.receive_json()
+                print(data)
                 user_message = data.get("content", "")
                 condition = user_message.get("condition", "")
                 user_message.pop("condition", None)
@@ -138,7 +155,13 @@ async def websocket_endpoint(websocket: WebSocket):
                     ai_response = await talk_to_ai(user_message)
                     await manager.send_personal_json(ai_response, session_id)
                 else:
-                    if user_message['factor'] == 'vin':
+                    if user_message["typeQ"] == "health" and user_message["factor"] == "gender":
+                        received_data_from_api = fetch_who_data(user_message['value'])
+                        ai_response = await talk_to_ai({'factor': 'whoDataIntegration', 'value': received_data_from_api,
+                                                        'typeQ': user_message["typeQ"]})
+                        await manager.send_personal_json(ai_response, session_id)
+
+                    elif user_message['factor'] == 'vin':
 
                         received_data_from_api = fetch_vin_data(user_message['value'])
 
@@ -159,7 +182,6 @@ async def websocket_endpoint(websocket: WebSocket):
                             ai_response = await talk_to_ai(
                                 {'factor': factor, 'value': get_weather_features(received_data_from_api, factor)})
                             await manager.send_personal_json(ai_response, session_id)
-
 
                         value = 'It is an urban area' if received_data_from_api[
                             'isUrbanArea'] else 'No, it is not an urban area'

@@ -1,10 +1,10 @@
-from tkinter.ttk import Style
-
 import uvicorn
 from contextlib import asynccontextmanager
 import uuid
-import configparser
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from colorama import Fore
 from fastapi import FastAPI
@@ -17,19 +17,15 @@ from fastApi.orchestration.workflow import OrchestratorAgent, ProgressEvent
 from fastApi.sql_agent.SQLAgent import SQLAgent
 
 # Load configuration
-config = configparser.ConfigParser()
-config.read("config.ini")
-os.environ["MISTRAL_API_KEY"] = config.get('API', 'mistral_key')
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Initialize resources
-    app.state.llm = MyMistralAI()
+
+    app.state.llm = MyMistralAI(api_key=os.getenv("mistral_key"))
     app.state.agent_configs = [SQLAgent()]
     app.state.sessions = {}
     yield
-    # Clean up resources
     app.state.sessions.clear()
 
 

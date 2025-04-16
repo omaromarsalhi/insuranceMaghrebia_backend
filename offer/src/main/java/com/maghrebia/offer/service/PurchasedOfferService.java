@@ -25,11 +25,9 @@ public class PurchasedOfferService {
     public String create(PurchasedOfferRequest request) {
         var testResult = verifyPurchasedOfferData(request);
         if (testResult) {
-            System.out.println("done");
             purchasedOfferRepository.save(PurchasedOfferMapper.toEntity(request));
             return "success";
         }
-        System.out.println("failed");
         return "error";
     }
 
