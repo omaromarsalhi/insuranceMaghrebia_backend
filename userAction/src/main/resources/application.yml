@@ -4,3 +4,15 @@ spring:
   application:
     name: userAction
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: latifabenzaied23@gmail.com
+    password: bbrc gosv vjqa cean
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+

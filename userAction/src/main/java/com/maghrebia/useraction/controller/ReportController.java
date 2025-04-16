@@ -1,7 +1,9 @@
 package com.maghrebia.useraction.controller;
 
 import com.maghrebia.useraction.entity.Action;
+import com.maghrebia.useraction.entity.EmailRequest;
 import com.maghrebia.useraction.entity.ReportResponse;
+import com.maghrebia.useraction.service.EmailService;
 import com.maghrebia.useraction.service.ReportService;
 import lombok.RequiredArgsConstructor;
 
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
 
 
 @RestController
@@ -23,6 +26,7 @@ import java.time.LocalDateTime;
 public class ReportController {
 
     private final ReportService reportService;
+    private final EmailService emailService;
 
     @PostMapping("/generate")
     public ResponseEntity<byte[]> generateReport(@RequestBody ReportResponse reportResponse) {
@@ -42,7 +46,6 @@ public class ReportController {
             @PathVariable String userId,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate endDate) {
-
         return ResponseEntity.ok(reportService.saveReportResponse(userId, startDate, endDate));
     }
 
@@ -54,7 +57,11 @@ public class ReportController {
 
     @GetMapping("/getReportResponse/{reportId}")
     public ResponseEntity<?> getRepportResponse(@PathVariable String reportId) {
-        System.out.println(reportId);
         return ResponseEntity.ok(reportService.getReportbyId(reportId));
+    }
+    @PostMapping("/send")
+    public ResponseEntity<?> sendEmail(@RequestBody EmailRequest emailRequest) {
+        emailService.sendEmail(emailRequest);
+        return ResponseEntity.ok(Collections.singletonMap("message", "Email sended"));
     }
 }
