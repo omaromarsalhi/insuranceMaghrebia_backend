@@ -1,0 +1,21 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017
+      auto-index-creation: true
+      database: hr
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: contact.maghrebia1@gmail.com
+    password: ubwqsmqqurawemqa
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+server:
+  port: 9005
+  servlet:
+    context-path: /api/v1/
