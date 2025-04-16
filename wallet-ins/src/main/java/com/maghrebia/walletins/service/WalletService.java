@@ -3,11 +3,13 @@ package com.maghrebia.walletins.service;
 
 import com.maghrebia.walletins.dto.mapper.WalletResponseMapper;
 import com.maghrebia.walletins.dto.mapper.WalletTransactionMapper;
+import com.maghrebia.walletins.dto.mapper.response.WalletTransactionResponse;
 import com.maghrebia.walletins.entity.TransactionType;
 import com.maghrebia.walletins.entity.Wallet;
 import com.maghrebia.walletins.entity.WalletResponse;
 import com.maghrebia.walletins.entity.WalletTransaction;
 import com.maghrebia.walletins.repository.WalletRepository;
+import com.maghrebia.walletins.repository.WalletTransactionRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,18 +21,29 @@ import java.util.List;
 public class WalletService {
 
     private  final WalletRepository walletRepository;
+    private final WalletTransactionRepository transactionRepository;
 
-    public WalletResponse create(Wallet payload, double premiumPaid) {
+    public WalletResponse create(Wallet payload) {
 
         Wallet existingWallet = walletRepository.findWalletByUserId(payload.getUserId());
         if (existingWallet != null) {
-            throw new RuntimeException("User Wallet Already created");
+//            throw new RuntimeException("User Wallet Already created");
+            return buildWalletResponse(existingWallet);
         }
 
-        Wallet newWallet = createNewWallet(payload, premiumPaid);
+        Wallet newWallet = createNewWallet(payload);
 
         newWallet = walletRepository.save(newWallet);
 
+        WalletTransaction transaction = createInitialTransaction(
+                newWallet,
+                newWallet.getBalance(),
+                newWallet.getRewardsBalance()).get(0);
+        transaction.setWalletId(newWallet.getWalletId());
+        transactionRepository.save(transaction);
+
+        newWallet.setTransactions(List.of(transaction));
+        walletRepository.save(newWallet);
         return buildWalletResponse(newWallet);
     }
 
@@ -47,14 +60,9 @@ public class WalletService {
         }
     }
 
-    private Wallet createNewWallet(Wallet payload, double premiumPaid) {
+    private Wallet createNewWallet(Wallet payload) {
+        double premiumPaid=1;
         validateWalletPayload(payload,premiumPaid);
-
-
-        Wallet existingWallet = walletRepository.findWalletByUserId(payload.getUserId());
-        if (existingWallet != null) {
-            throw new RuntimeException("User Wallet Already created");
-        }
 
         double reward = premiumPaid * 0.05;
         if(payload.getSource()!=TransactionType.DEPOSIT)
@@ -73,19 +81,14 @@ public class WalletService {
     }
 
     private List<WalletTransaction> createInitialTransaction(Wallet payload, double premiumPaid, double reward) {
-        return List.of(WalletTransactionMapper.toTransaction(premiumPaid,reward,payload.getSource(),payload.getWalletId()));
+        return List.of(WalletTransactionMapper.toTransaction
+                (
+                        premiumPaid,
+                        reward,
+                        payload.getSource(),
+                        payload.getWalletId()));
     }
 
-
-//    private WalletResponse buildWalletResponse(Wallet wallet) {
-//        return WalletResponse.builder()
-//                .balance(wallet.getBalance())
-//                .currency(wallet.getCurrency())
-//                .fullName(wallet.getFullName())
-//                .rewardsBalance(wallet.getRewardsBalance())
-//                .source(wallet.getSource())
-//                .build();
-//    }
     private WalletResponse buildWalletResponse(Wallet wallet) {
         return WalletResponseMapper.toWalletResponse(wallet);
     }
@@ -145,16 +148,13 @@ public class WalletService {
 
         double reward = premiumPaid * 0.05;
         double newReward = reward + foundWallet.getRewardsBalance();
-        double newBalance = foundWallet.getBalance() + (payload.getSource() == TransactionType.REFUND ? premiumPaid : 0);
+        double newBalance = foundWallet.getBalance() + (payload.getSource() == TransactionType.CLAIM_PAYOUT ? premiumPaid : 0);
 
         TransactionType type = payload.getSource();
 
         List<WalletTransaction> transactionList =foundWallet.getTransactions() !=null?
                 foundWallet.getTransactions():new ArrayList<>();
 
-
-            WalletTransaction transaction = WalletTransactionMapper.toTransaction(premiumPaid,reward,type,id);
-            transactionList.add(transaction);
 
         if (type == TransactionType.CLAIM_PAYOUT) {
             foundWallet.setBalance(newBalance);
@@ -166,11 +166,15 @@ public class WalletService {
             }
             foundWallet.setBalance(foundWallet.getBalance() - premiumPaid);
         }
-
-            foundWallet.setSource(payload.getSource());
-            foundWallet.setTransactions(transactionList);
+        WalletTransaction transaction = WalletTransactionMapper.toTransaction(premiumPaid,reward,type,id);
+        transactionList.add(transaction);
+        foundWallet.setSource(payload.getSource());
+        foundWallet.setTransactions(transactionList);
 
         walletRepository.save(foundWallet);
+
+        transaction.setWalletId(foundWallet.getWalletId());
+        transactionRepository.save(transaction);
 
         return buildWalletResponse(foundWallet);
         }
@@ -181,12 +185,25 @@ public class WalletService {
               .map(WalletResponseMapper::toWalletResponse)
               .toList();
     }
-    public WalletResponse getOne(String userId) {
+    public WalletResponse getOne(String userId,boolean includeTransactions) {
         Wallet foundWallet =walletRepository.findWalletByUserId(userId);
         if(foundWallet==null)
             throw new RuntimeException("Wallet Not Found");
-        return WalletResponseMapper.toWalletResponse(foundWallet);
+        WalletResponse.WalletResponseBuilder responseBuilder =
+                WalletResponse.builder()
+                        .walletId(foundWallet.getWalletId())
+                        .userId(foundWallet.getUserId())
+                        .balance(foundWallet.getBalance());
+        if (includeTransactions) {
+            List<WalletTransaction> transactions =
+                    transactionRepository.findByWalletId(foundWallet.getWalletId());
+            responseBuilder.transactions(transactions);
+        }
+
+
+        return WalletResponseMapper.toWalletResponse(foundWallet,includeTransactions);
     }
+
 
 
 }

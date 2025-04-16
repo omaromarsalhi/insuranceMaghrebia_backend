@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/v1/Wallet")
@@ -16,12 +17,11 @@ public class WalletController {
 
     private final WalletService walletService;
 
-    @PostMapping("{premiumPaid}")
+    @PostMapping()
     public ResponseEntity<WalletResponse> create(
-            @RequestBody Wallet payload,
-            @PathVariable float premiumPaid
+            @RequestBody Wallet payload
     ) {
-        WalletResponse walletResponse = walletService.create(payload,premiumPaid);
+        WalletResponse walletResponse = walletService.create(payload);
         return ResponseEntity.ok(walletResponse);
     }
 
@@ -31,8 +31,11 @@ public class WalletController {
     }
 
     @GetMapping("{userId}")
-    public WalletResponse getOne(@PathVariable String userId) {
-        return walletService.getOne(userId);
+    public WalletResponse getOne(
+            @PathVariable String userId,
+            @RequestParam(required= false, defaultValue = "false") boolean includeTransactions
+    ) {
+        return walletService.getOne(userId,includeTransactions);
     }
 
     @PatchMapping("{id}")

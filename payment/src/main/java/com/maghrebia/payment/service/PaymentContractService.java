@@ -3,6 +3,7 @@ package com.maghrebia.payment.service;
 import com.maghrebia.payment.dto.PaymentContractResponse;
 import com.maghrebia.payment.entity.PaymentContract;
 import com.maghrebia.payment.entity.PaymentPlan;
+import com.maghrebia.payment.entity.enums.PaymentMethod;
 import com.maghrebia.payment.entity.enums.PaymentStatus;
 import com.maghrebia.payment.entity.enums.PlanDuration;
 import com.maghrebia.payment.exceptions.InvalidAmountException;
@@ -26,8 +27,7 @@ public class PaymentContractService {
 
 
 
-    public PaymentContractResponse createPaymentContract(PaymentContract contract) {
-        System.out.println("i am in create payment contract first one ");
+    public PaymentContractResponse createPaymentContract(PaymentContract contract, PaymentMethod paymentMethod) {
         contract.setContractCreatedAt(new Date());
         contract.setPaymentStatus(PaymentStatus.Pending);
 
@@ -37,7 +37,8 @@ public class PaymentContractService {
                 savedContract.getTotalAmount(),
                 savedContract.getPlanDuration(),
                 savedContract.getContractCreatedAt(),
-                savedContract.getContractPaymentId()
+                savedContract.getContractPaymentId(),
+                paymentMethod
         ));
 
          paymentRepository.save(savedContract);
@@ -45,7 +46,53 @@ public class PaymentContractService {
                 .contractPaymentId(savedContract.getContractPaymentId())
                 .paymentPlans(savedContract.getPaymentPlans())
                 .build();
+//        return buildResponse(savedContract);
     }
+    private List<PaymentPlan> generatePaymentPlans(double totalAmount, String planDuration,
+                                                   Date createdAtDate, String paymentId,
+                                                   PaymentMethod paymentMethod) {
+        validateAmount(totalAmount);
+        int numberOfMonths = getNumberOfMonths(planDuration);
+        double amountDue = totalAmount / numberOfMonths;
+        LocalDate createdAtLocalDate = convertToLocalDate(createdAtDate);
+
+        List<PaymentPlan> paymentPlans = new ArrayList<>();
+
+        for (int i = 1; i <= numberOfMonths; i++) {
+            PaymentPlan plan = buildPaymentPlan(
+                    i,
+                    amountDue,
+                    createdAtLocalDate.plusMonths(i),
+                    paymentId,
+                    paymentMethod == PaymentMethod.WALLET && i == 1
+            );
+            paymentPlans.add(plan);
+        }
+
+        return paymentPlanRepository.saveAll(paymentPlans);
+    }
+
+    private PaymentPlan buildPaymentPlan(int month, double amountDue, LocalDate dueDate,
+                                         String paymentId, boolean markAsPaid) {
+        PaymentPlan.PaymentPlanBuilder builder = PaymentPlan.builder()
+                .month(month)
+                .amountDue(amountDue)
+                .paymentContractId(paymentId)
+                .dueDate(convertToDate(dueDate));
+
+        if (markAsPaid) {
+            builder.amountPaid(amountDue)
+                    .paymentStatus(PaymentStatus.Paid)
+                    .paymentDate(new Date());
+        } else {
+            builder.amountPaid(0.0)
+                    .paymentStatus(PaymentStatus.Pending)
+                    .paymentDate(null);
+        }
+
+        return builder.build();
+    }
+
 
     public List<PaymentContract> getAllPayments() {
         return paymentRepository.findAllWithoutPaymentPlans();
@@ -119,43 +166,42 @@ public class PaymentContractService {
         return paymentRepository.save(payment);
     }
 
-    private List<PaymentPlan> generatePaymentPlans(double totalAmount, String planDuration, Date createdAtDate , String paymentId) {
-        if (totalAmount <= 0) {
-            throw new InvalidAmountException("Total amount must be greater than 0");        }
-        List<PaymentPlan> paymentPlans = new ArrayList<>();
-        int numberOfMonths = getNumberOfMonths(planDuration);
-        double amountDue = totalAmount / numberOfMonths;
+//    private List<PaymentPlan> generatePaymentPlans(
+//            double totalAmount, String planDuration, Date createdAtDate , String paymentId
+//    ) {
+//
+//        validateAmount(totalAmount);
+//        List<PaymentPlan> paymentPlans = new ArrayList<>();
+//        int numberOfMonths = getNumberOfMonths(planDuration);
+//        double amountDue = totalAmount / numberOfMonths;
+//
+//        LocalDate createdAtLocalDate = createdAtDate.toInstant()
+//                .atZone(ZoneId.systemDefault())
+//                .toLocalDate();
+//
+//        for (int i = 1; i <= numberOfMonths; i++) {
+//            LocalDate dueDate = createdAtLocalDate.plusMonths(i);
+//
+//            PaymentPlan plan = PaymentPlan.builder()
+//                    .month(i)
+//                    .amountDue(amountDue)
+//                    .amountPaid(0.0)
+//                    .paymentStatus(PaymentStatus.Pending)
+//                    .dueDate(
+//                            Date.from(dueDate.atStartOfDay
+//                                    (ZoneId.systemDefault()).toInstant()))
+//                    .paymentDate(null)
+//                    .paymentContractId(paymentId)
+//                    .build();
+//
+//            paymentPlans.add(plan);
+//        }
+//
+//        paymentPlanRepository.saveAll(paymentPlans);
+//
+//        return paymentPlans;
+//    }
 
-        LocalDate createdAtLocalDate = createdAtDate.toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate();
-
-        for (int i = 1; i <= numberOfMonths; i++) {
-            LocalDate dueDate = createdAtLocalDate.plusMonths(i);
-
-            PaymentPlan plan = PaymentPlan.builder()
-                    .month(i)
-                    .amountDue(amountDue)
-                    .amountPaid(0.0)
-                    .paymentStatus(PaymentStatus.Pending)
-                    .dueDate(
-                            Date.from(dueDate.atStartOfDay
-                                    (ZoneId.systemDefault()).toInstant()))
-                    .paymentDate(null)
-                    .paymentContractId(paymentId)
-                    .build();
-
-            paymentPlans.add(plan);
-        }
-
-        paymentPlanRepository.saveAll(paymentPlans);
-
-        return paymentPlans;
-    }
-
-    private int getNumberOfMonths(String planDuration) {
-        return PlanDuration.fromLabel(planDuration).getMonths();
-    }
 
     public void archivePaymentContract(PaymentContract paymentContract){
         PaymentContract archivedPaymentContract= paymentRepository.findById(paymentContract.getContractPaymentId())
@@ -163,6 +209,31 @@ public class PaymentContractService {
         archivedPaymentContract.setArchived(true);
         paymentRepository.save(archivedPaymentContract);
     }
+    private PaymentContractResponse buildResponse(PaymentContract contract) {
+        return PaymentContractResponse.builder()
+                .contractPaymentId(contract.getContractPaymentId())
+                .paymentPlans(contract.getPaymentPlans())
+                .build();
+    }
+
+    private int getNumberOfMonths(String planDuration) {
+        return PlanDuration.fromLabel(planDuration).getMonths();
+    }
+
+    private void validateAmount(double totalAmount) {
+        if (totalAmount <= 0) {
+            throw new InvalidAmountException("Total amount must be greater than 0");
+        }
+    }
+    private LocalDate convertToLocalDate(Date date) {
+        return date.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+    }
+    private Date convertToDate(LocalDate localDate) {
+        return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    }
+
 
 
 

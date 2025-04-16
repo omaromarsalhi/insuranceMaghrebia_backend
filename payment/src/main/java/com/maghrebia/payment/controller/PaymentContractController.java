@@ -2,6 +2,7 @@ package com.maghrebia.payment.controller;
 
 import com.maghrebia.payment.dto.PaymentContractResponse;
 import com.maghrebia.payment.entity.PaymentContract;
+import com.maghrebia.payment.entity.enums.PaymentMethod;
 import com.maghrebia.payment.service.PaymentContractService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -22,8 +23,11 @@ public class PaymentContractController {
 
 
         @PostMapping
-        public ResponseEntity<PaymentContractResponse>  createContract(@Valid @RequestBody PaymentContract contract) {
-            PaymentContractResponse paymentContractId = paymentContractService.createPaymentContract(contract);
+        public ResponseEntity<PaymentContractResponse>  createContract(
+                @Valid @RequestBody PaymentContract contract,
+                @RequestParam(required = true)PaymentMethod paymentMethod
+                ) {
+            PaymentContractResponse paymentContractId = paymentContractService.createPaymentContract(contract,paymentMethod);
             return ResponseEntity.ok(paymentContractId);
         }
 

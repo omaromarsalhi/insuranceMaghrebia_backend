@@ -1,5 +1,6 @@
 package com.maghrebia.payment.entity;
 
+import com.maghrebia.payment.entity.enums.PaymentMethod;
 import com.maghrebia.payment.entity.enums.PaymentStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -40,6 +41,8 @@ public class PaymentContract {
     private String fullName;
 
     private boolean isArchived=false;
+
+    private PaymentMethod paymentMethod;
 
     @CreatedDate
     private Date contractCreatedAt;

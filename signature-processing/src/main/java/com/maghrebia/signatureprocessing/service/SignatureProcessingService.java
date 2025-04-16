@@ -13,9 +13,6 @@ public class SignatureProcessingService {
     private final String SIGNATURE_URL = "http://localhost:8000/signature/search-signature";
 
     public ResponseEntity<String> verifyService(SignatureRequest signatureRequest) {
-
-
-
         HttpEntity<SignatureRequest> entity = new HttpEntity<>(signatureRequest);
 
         return restTemplate.exchange(
