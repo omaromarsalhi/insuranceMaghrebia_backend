@@ -31,7 +31,7 @@ public class AutoInsurance {
 
     private String accidentHistory;
 
-    private List<String> trafficViolations;
+    private Boolean trafficViolations;
 
     private Boolean defensiveDrivingCourse;
 

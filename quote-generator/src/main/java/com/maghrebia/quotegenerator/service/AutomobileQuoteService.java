@@ -35,6 +35,21 @@ public class AutomobileQuoteService {
                 .build();
     }
 
+    public GeoWeatherData getGeoWeatherData(AddressInfo addressInfo){
+
+        WeatherData weatherData = weatherService.getWeatherInfo(addressInfo.boundingBox().northEast().lat(),
+                addressInfo.boundingBox().northEast().lng());
+
+        FilteredWeatherdata filteredWeatherdata = weatherService.getAverages(weatherData.daily());
+        return GeoWeatherData.builder()
+                .isUrbanArea(isUrbanArea(addressInfo))
+                .averageMaxTmp(filteredWeatherdata.averageMaxTmp())
+                .averageMinTmp(filteredWeatherdata.averageMinTmp())
+                .averagePrecipitation(filteredWeatherdata.averagePrecipitation())
+                .averageWind(filteredWeatherdata.averageWind())
+                .build();
+    }
+
 
     private float convertToBillingPeriod(float annualPremium, BillingPeriod period) {
         return switch (period) {
@@ -134,7 +149,7 @@ public class AutomobileQuoteService {
     }
 
     private boolean isUrbanArea(AddressInfo address) {
-        return !(address.municipality() == null && address.streetName() == null && address.streetNumber() == null);
+        return !(address.streetName() == null && address.streetNumber() == null);
     }
 
     private float calculateBasePremium(VehicleInfo vehicle) {

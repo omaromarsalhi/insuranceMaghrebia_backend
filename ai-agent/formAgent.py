@@ -1,5 +1,5 @@
 import os
-import google.generativeai as genai
+import google.generativeai as gemini
 from llama_index.core.memory import ChatMemoryBuffer
 from llama_index.core.llms import ChatMessage
 from dotenv import load_dotenv
@@ -12,9 +12,9 @@ from prompts import form_generate_prompt
 class FormBuilderAgent:
     def __init__(self):
         # Configure Gemini
-        self.api_key = ""
-        genai.configure(api_key=self.api_key)
-        self.model = genai.GenerativeModel(model_name='models/gemini-2.0-flash')
+        self.api_key = "AIzaSyDMo3webqzrN0M5VcNC56aaI8NkgeFT0WU"
+        gemini.configure(api_key=self.api_key)
+        self.model = gemini.GenerativeModel(model_name='models/gemini-2.0-flash')
 
         # Initialize memory with LlamaIndex
         self.memory = ChatMemoryBuffer.from_defaults(token_limit=4000)

@@ -18,6 +18,7 @@ public class HealthQuoteService {
     private final WHOService whoService;
 
     public QuoteResponse calculate(HealthInsuranceRequest request) {
+        System.out.println(request);
 
         float annualPremium = calculateAnnualPremium(request);
 
@@ -195,12 +196,13 @@ public class HealthQuoteService {
                 List.of()
         );
 
-        for (String vaccine : request.vaccinations()) {
-            discount += VACCINATION_DISCOUNTS.getOrDefault(vaccine, 0f);
-            if (regionalRisks.contains(vaccine)) {
-                discount += 0.015f;
+        if (request.vaccinations() != null)
+            for (String vaccine : request.vaccinations()) {
+                discount += VACCINATION_DISCOUNTS.getOrDefault(vaccine, 0f);
+                if (regionalRisks.contains(vaccine)) {
+                    discount += 0.015f;
+                }
             }
-        }
 
         return Math.min(discount, 0.1f);
     }

@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/offerappointmentsdb
+    username: postgres
+    password: OMAR
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+
+
+
+server:
+  port: 9004
+
+
+
+springdoc:
+  default-produces-media-type: application/json

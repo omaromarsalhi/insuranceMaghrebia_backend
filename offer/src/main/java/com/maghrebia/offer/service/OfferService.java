@@ -37,7 +37,9 @@ public class OfferService {
 
     public OfferResponse update(OfferUpdateRequest offer) {
         if (offerRepository.existsById(offer.offerId())) {
-            var savedOffer = offerRepository.save(OfferMapper.toUpdateEntity(offer));
+            var entity= OfferMapper.toUpdateEntity(offer);
+            System.out.println(entity);
+            var savedOffer = offerRepository.save(entity);
             return OfferMapper.toDto(savedOffer);
         } else throw new EntityNotFoundException("offer does not exist");
     }
