@@ -8,50 +8,30 @@ spring:
           enabled: true
       routes:
         - id: offer
-          uri: lb://OFFER
+          uri: lb:http://OFFER
           predicates:
             - Path=/api/v1/offer-categories/**
 
         - id: offer
-          uri: lb://OFFER
+          uri: lb:http://OFFER
           predicates:
             - Path=/api/v1/offers/**
 
         - id: offer
-          uri: lb://OFFER
-          predicates:
-            - Path=/api/v1/offer_forms/**
-
-        - id: offer
-          uri: lb://OFFER
+          uri: lb:http://OFFER
           predicates:
             - Path=/api/v1/images/**
 
+
         - id: quote-generator
-          uri: lb://QUOTE-GENERATOR
+          uri: lb:http://QUOTE-GENERATOR
           predicates:
             - Path=/api/v1/automobile/**
 
         - id: quote-generator
-          uri: lb://QUOTE-GENERATOR
-          predicates:
-            - Path=/api/v1/vin/**
-
-        - id: quote-generator
-          uri: lb://QUOTE-GENERATOR
-          predicates:
-            - Path=/api/v1/geoweather/**
-
-        - id: quote-generator
-          uri: lb://QUOTE-GENERATOR
+          uri: lb:http://QUOTE-GENERATOR
           predicates:
             - Path=/api/v1/health/**
-
-        - id: appointment
-          uri: lb://APPOINTMENT
-          predicates:
-            - Path=/api/v1/appointments/**
-
 
 
 
