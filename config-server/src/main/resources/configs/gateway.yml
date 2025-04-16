@@ -27,6 +27,11 @@ spring:
           predicates:
             - Path=/api/v1/images/**
 
+        - id: offer
+          uri: lb://OFFER
+          predicates:
+            - Path=/api/v1/purchased_offers/**
+
         - id: quote-generator
           uri: lb://QUOTE-GENERATOR
           predicates:
