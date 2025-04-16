@@ -1,17 +1,17 @@
+import os
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import sessionmaker
 from fastApi.utils.Config import Config
 
 
 class Database:
     """Handles database connections and setup."""
-    def __init__(self, config: Config):
-        self.db_host = config.get('DATABASE', 'host')
-        self.db_user = config.get('DATABASE', 'user')
-        self.db_password = config.get('DATABASE', 'password')
-        self.db_port = config.get('DATABASE', 'port')
-        self.db_name = config.get('DATABASE', 'db_name')
+    def __init__(self):
+        self.db_host = os.getenv('host')
+        self.db_user = os.getenv('DATABASE', 'user')
+        self.db_password = os.getenv('DATABASE', 'password')
+        self.db_port = os.getenv('DATABASE', 'port')
+        self.db_name = os.getenv('DATABASE', 'db_name')
         self.engine = self.create_engine()
 
     def create_engine(self):

@@ -12,7 +12,7 @@ from prompts import form_generate_prompt
 class FormBuilderAgent:
     def __init__(self):
         # Configure Gemini
-        self.api_key = "AIzaSyDMo3webqzrN0M5VcNC56aaI8NkgeFT0WU"
+        self.api_key = os.getenv('gemini_key')
         gemini.configure(api_key=self.api_key)
         self.model = gemini.GenerativeModel(model_name='models/gemini-2.0-flash')
 

@@ -1,15 +1,15 @@
 import google.generativeai as gemini
+from dotenv import load_dotenv
+
 from insurance_explainer.auto_variables import prompt, INSURANCE_RULES
 import asyncio
-from dotenv import load_dotenv
 import os
 
 load_dotenv()
 
-
 class ChatBotManager:
     def __init__(self):
-        self.api_key = os.getenv("GOOGLE_API_KEY")
+        self.api_key = os.getenv("gemini_key")
         gemini.configure(api_key=self.api_key)
         self.model = gemini.GenerativeModel(model_name='models/gemini-2.0-flash')
 

@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from dotenv import load_dotenv
 from llama_index.core.workflow import Context
 from sqlalchemy import text
 from fastApi.sql_agent.Nl2SqlEngine import Nl2SqlEngine
@@ -8,7 +9,6 @@ from fastApi.utils.Config import Config
 from fastApi.utils.Database import Database
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import sessionmaker
-
 from fastApi.utils.utils import serialize
 
 
@@ -31,10 +31,9 @@ async def connect_to_db(ctx: Context) -> str:
     Returns:
         str: A message confirming the success of the database connection.
     """
-    config = Config()
     ctx.write_event_to_stream(ProgressEvent(msg="connecting to the database..."))
-    database = Database(config)
-    await ctx.set("config", config)
+    load_dotenv()
+    database = Database()
     await ctx.set("database", database)
     return "Database connection established."
 

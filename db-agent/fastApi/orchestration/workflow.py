@@ -2,6 +2,8 @@ import asyncio
 import configparser
 import os
 from typing import Any
+
+from dotenv import load_dotenv
 from llama_index.core.base.llms.types import MessageRole
 from pydantic import BaseModel, ConfigDict, Field
 from llama_index.core.llms import ChatMessage, LLM
@@ -23,10 +25,9 @@ from llama_index.core.workflow.events import InputRequiredEvent, HumanResponseEv
 from fastApi.orchestration.MyMistralAI import MyMistralAI
 from fastApi.orchestration.utils import FunctionToolWithContext
 
-config = configparser.ConfigParser()
-config.read("config.ini")
+load_dotenv()
+
 # os.environ["GOOGLE_API_KEY"] = config.get('API', 'gemini_key')
-os.environ["MISTRAL_API_KEY"] = config.get('API', 'mistral_key')
 
 
 # ---- Pydantic models for config/llm prediction ----
