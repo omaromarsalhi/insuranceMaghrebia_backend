@@ -34,7 +34,7 @@ class HumanoidAssistant:
         }
 
         self.backend_config = {
-            "base_url": "http://localhost:8091/api/v1/report",
+            "base_url": "http://localhost:9041/api/v1/report",
             "headers": {"Content-Type": "application/json"}
         }
     
