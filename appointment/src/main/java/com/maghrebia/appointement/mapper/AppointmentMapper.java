@@ -14,6 +14,7 @@ public class AppointmentMapper {
 
     public static AppointmentDto toDto(Appointment appointment) {
         return AppointmentDto.builder()
+                .appointmentId(appointment.getAppointmentId())
                 .firstName(appointment.getFirstName())
                 .lastName(appointment.getLastName())
                 .email(appointment.getEmail())
@@ -25,6 +26,7 @@ public class AppointmentMapper {
 
     public static AppointmentDto toDto(Appointment appointment, AutomobileDto automobile,GeneratedQuoteDto generatedQuote) {
         return AppointmentDto.builder()
+                .appointmentId(appointment.getAppointmentId())
                 .firstName(appointment.getFirstName())
                 .lastName(appointment.getLastName())
                 .email(appointment.getEmail())
@@ -53,7 +55,6 @@ public class AppointmentMapper {
 
 
     public static Automobile toOfferDetailsEntity(AutomobileDto dto) {
-        System.out.println(dto);
         Automobile automobile = new Automobile();
         automobile.setAccidentHistory(dto.accidentHistory());
         automobile.setCoverageType(dto.coverageType());
@@ -70,6 +71,7 @@ public class AppointmentMapper {
 
     public static AutomobileDto toOfferDetailsDto(Automobile entity) {
         return AutomobileDto.builder()
+                .autoId(entity.getAutoId())
                 .accidentHistory(entity.getAccidentHistory())
                 .coverageType(entity.getCoverageType())
                 .drivingExperience(entity.getDrivingExperience())

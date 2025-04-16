@@ -128,11 +128,14 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str):
                 "type": "result",
                 "content": result['response']
             })
-            retrieved_data = await session['handler'].ctx.get('executed_query_results')
-            await websocket.send_json({
-                "type": "data",
-                "content": retrieved_data
-            })
+            try:
+                retrieved_data = await session['handler'].ctx.get('executed_query_results')
+                await websocket.send_json({
+                    "type": "data",
+                    "content": retrieved_data
+                })
+            except Exception as e:
+                print(e)
             await session['handler'].ctx.set('executed_query_results','')
 
             # Update memory
@@ -141,6 +144,7 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str):
     except WebSocketDisconnect as e:
         print(f"Client {session_id} disconnected: code={e.code}, reason={e.reason}")
     except Exception as e:
+        print(f"Client {session_id} disconnected: error={e}")
         await websocket.close(code=1011, reason=f"Error: {str(e)}")
     finally:
         session_manager.remove_session(session_id)

@@ -18,6 +18,7 @@ async def check_connection(ctx: Context):
     Returns:
         bool: True if a valid database connection is established, otherwise False.
     """
+    ctx.write_event_to_stream(ProgressEvent(msg="check for database connection..."))
     database = await ctx.get("database", None)
     if database is None:
         return False
@@ -30,7 +31,7 @@ async def connect_to_db(ctx: Context) -> str:
     Returns:
         str: A message confirming the success of the database connection.
     """
-    config = Config("../config.ini")
+    config = Config()
     ctx.write_event_to_stream(ProgressEvent(msg="connecting to the database..."))
     database = Database(config)
     await ctx.set("config", config)
@@ -44,6 +45,7 @@ async def init_nl2sql_engine(ctx: Context) -> str:
     Returns:
         str: A message confirming the initialization of the NL2SQL engine.
     """
+    ctx.write_event_to_stream(ProgressEvent(msg="initializing the query engine..."))
     config = await ctx.get("config")
     database = await ctx.get("database")
     nl2sql_engine = Nl2SqlEngine(config, database)
@@ -59,9 +61,13 @@ async def get_SQL_from_user_query(ctx: Context, user_query: str):
            str: The generated SQL query as a string.
    """
     nl2sql_engine = await ctx.get("nl2sql_engine")
+    ctx.write_event_to_stream(ProgressEvent(msg="generating SQL query..."))
     query_result = nl2sql_engine.query(user_query)
-    await ctx.set('query_result', query_result)
-    return "Sql generated successfully."
+    print(query_result)
+    if 'select' in query_result.lower():
+        await ctx.set('query_result', query_result)
+        return "Sql generated successfully."
+    return "no sql query generated."
 
 
 async def execute(ctx: Context) -> str:
@@ -71,7 +77,6 @@ async def execute(ctx: Context) -> str:
         return "ERROR: Database connection not established"
 
     query = await ctx.get("query_result")
-    print(query)
     session = None
     try:
         async_session = sessionmaker(
@@ -81,15 +86,18 @@ async def execute(ctx: Context) -> str:
         )
         async with async_session() as session:
             async with session.begin():
+                ctx.write_event_to_stream(ProgressEvent(msg="executing database query..."))
                 result = await session.execute(text(query))
 
                 if query.strip().upper().startswith("SELECT"):
                     query_result = [dict(row) for row in result.mappings()]
-                    print(query_result)
-                    query_result = serialize(query_result)
-                    await ctx.set("executed_query_results", query_result)
-                    # return f"SUCCESS: Retrieved {len(query_result)} rows"
-                    return f"SUCCESS: Retrieved 2 rows"
+                    if len(query_result)>0:
+                        print(query_result)
+                        query_result = serialize(query_result)
+                        await ctx.set("executed_query_results", query_result)
+                        return f"SUCCESS: data selected successfully"
+                    return f"Failure: no data selected"
+
                 else:
                     await session.commit()
                     return "SUCCESS: Write operation completed"

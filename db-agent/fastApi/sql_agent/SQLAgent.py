@@ -3,7 +3,6 @@ from fastApi.sql_agent.Tools import check_connection, connect_to_db, init_nl2sql
 from fastApi.orchestration.utils import FunctionToolWithContext
 from fastApi.orchestration.workflow import AgentConfig
 
-
 class SQLAgent(AgentConfig):
     def __init__(self):
         name = "End-to-End SQL Processor"
@@ -43,6 +42,11 @@ class SQLAgent(AgentConfig):
         ┌───────────────────────┐    ┌───────────────────────┐    ┌───────────────────────┐
         │  Generated SQL Query  │ →  │  Execution Results    │ →  │  Final Formatted Data │
         └───────────────────────┘    └───────────────────────┘    └───────────────────────┘
+
+        ### Final Output Requirement:
+        After processing is completed, output a single sentence summarizing the overall result. For example:
+        - On success: "SUCCESS: The SQL query was executed and returned the expected results."
+        - On error: "ERROR: <Description of the error encountered>."
 
         ### Examples:
         User: "Show 5 Texas customers"

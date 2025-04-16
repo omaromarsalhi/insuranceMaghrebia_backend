@@ -4,6 +4,7 @@ import lombok.Builder;
 
 @Builder
 public record AutomobileDto(
+        Integer autoId,
         String vin,
         String licenseNumber,
         Integer drivingExperience,

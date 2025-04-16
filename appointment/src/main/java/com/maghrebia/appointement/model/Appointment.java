@@ -18,8 +18,8 @@ import java.time.LocalDateTime;
 public class Appointment {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String appointmentId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer appointmentId;
 
     private String firstName;
     private String lastName;
@@ -32,8 +32,10 @@ public class Appointment {
     private OfferType offerType;
 
     @OneToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "automobile_id")
     private Automobile automobile;
 
     @ManyToOne(targetEntity = GeneratedQuote.class,cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "generatedQuote_id")
     private GeneratedQuote generatedQuote;
 }

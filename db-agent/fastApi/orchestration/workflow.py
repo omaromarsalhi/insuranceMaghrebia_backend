@@ -24,7 +24,7 @@ from fastApi.orchestration.MyMistralAI import MyMistralAI
 from fastApi.orchestration.utils import FunctionToolWithContext
 
 config = configparser.ConfigParser()
-config.read("../config.ini")
+config.read("config.ini")
 # os.environ["GOOGLE_API_KEY"] = config.get('API', 'gemini_key')
 os.environ["MISTRAL_API_KEY"] = config.get('API', 'mistral_key')
 

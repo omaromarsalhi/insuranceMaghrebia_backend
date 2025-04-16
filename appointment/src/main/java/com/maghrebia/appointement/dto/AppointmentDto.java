@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 
 
 public record AppointmentDto(
+        Integer appointmentId,
         String firstName,
         String lastName,
         String email,

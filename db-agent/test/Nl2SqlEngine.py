@@ -5,8 +5,8 @@ from llama_index.embeddings.google_genai import GoogleGenAIEmbedding
 from llama_index.llms.google_genai import GoogleGenAI
 
 from fastApi.sql_agent.prompt import custom_prompt
-from fastApi.utils import Database
-from fastApi.utils import Config
+from fastApi.utils.Config import Config
+from fastApi.utils.Database import Database
 
 
 class Nl2SqlEngine:
@@ -48,3 +48,9 @@ class Nl2SqlEngine:
             return self.query_engine.query(prompt).response
         except ValueError as e:
             return "Something went wrong, please try again."
+
+
+config = Config()
+db = Database(config)
+engine=Nl2SqlEngine(config,db)
+print(engine.query("give me the appointments that are in Springfield"))

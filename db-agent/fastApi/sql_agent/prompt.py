@@ -23,19 +23,40 @@ from llama_index.core.prompts import PromptType
 #     "**TASK:**\nUser: {query_str}\nSQL:"
 # )
 sql_gen_prompt = (
-    "**Generate PostgreSQL SELECT queries with full-data joins.**\n\n"
+    "**Generate PostgreSQL SELECT queries with full joins.**\n\n"
 
     "**MANDATORY RULES:**\n"
-    "- ALWAYS JOIN ALL TABLES: appointment → automobile  → location\n"
-    "- ALWAYS JOIN ALL TABLES: appointment → generatedquote\n"
-    "- SELECT ALL COLUMNS: a.*, auto.*, loc.*,gen.*\n"
-    "- USE EXPLICIT ALIASES: a=appointment, auto=automobile, loc=location,gen=generatedquote\n"
-    "- OUTPUT ONLY SQL - NO COMMENTS\n\n"
+    "- Convert all user input and string values to lowercase.\n"
+    "- Output SQL must be fully lowercase.\n"
+    "- Always return data starting from `appointment`.\n"
+    "- Always join the following:\n"
+    "    • appointment AS a → automobile AS auto → location AS loc\n"
+    "    • appointment AS a → generatedquote AS gen\n"
+    "- Select all columns: a.*, auto.*, loc.*, gen.*\n"
+    "- Use these explicit aliases:\n"
+    "    • a = appointment\n"
+    "    • auto = automobile\n"
+    "    • loc = location\n"
+    "    • gen = generatedquote\n"
+    "- If a filter field is not found in `appointment`, search joined tables and include necessary joins.\n"
+    "- Use lowercase comparison for string values:\n"
+    "    • Example: WHERE lower(field_name) = 'value'\n"
+    "- Only output the final SQL – no extra explanation or comments.\n\n"
+
+    "**FORMAT:**\n"
+    "Question: Natural language input\n"
+    "SQLQuery: SQL query to execute (PostgreSQL syntax)\n"
+    "SQLResult: [The simulated result]\n"
+    "Answer: Final concise answer\n\n"
 
     "**SCHEMA:**\n{schema}\n\n"
 
-    "**TASK:**\nUser: {query_str}\nSQL:"
+    "Question: {query_str}\n"
+    "SQLQuery:"
 )
+
+
+
 custom_prompt = PromptTemplate(
     sql_gen_prompt,
     prompt_type=PromptType.TEXT_TO_SQL,

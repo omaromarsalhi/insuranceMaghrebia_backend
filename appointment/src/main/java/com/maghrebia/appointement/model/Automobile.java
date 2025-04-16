@@ -18,8 +18,8 @@ import java.util.List;
 public class Automobile {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String autoId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer autoId;
 
     private String licenseNumber;
 
@@ -40,6 +40,7 @@ public class Automobile {
     private String coverageType;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "location_id")
     private Location location;
 
 }
