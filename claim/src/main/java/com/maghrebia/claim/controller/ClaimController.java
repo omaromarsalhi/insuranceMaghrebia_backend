@@ -5,6 +5,7 @@ import com.maghrebia.claim.data_transfer.mapper.ClaimMapper;
 import com.maghrebia.claim.entity.Claim;
 import com.maghrebia.claim.entity.ClaimStatus;
 import com.maghrebia.claim.service.ClaimService;
+import com.maghrebia.claim.service.FastApiClient;
 import com.maghrebia.claim.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,7 @@ public class ClaimController {
     final ClaimService claimService;
     final ClaimMapper claimMapper;
     final ImageService imageService;
+    final FastApiClient fastApiClient;
 
     @PostMapping
     public ResponseEntity<Void> addClaim(@RequestBody CreateClaimDTO dto) {
@@ -29,6 +31,7 @@ public class ClaimController {
         claim.setSubmitDate(LocalDateTime.now());
         ArrayList<String> paths = new ArrayList<>();
         for(String image: dto.getImages() ) {
+
             paths.add(imageService.saveImage(image));
         }
         claim.setImages(paths);
@@ -56,5 +59,16 @@ public class ClaimController {
             @PathVariable String id
     ) {
         return ResponseEntity.accepted().body(claimService.findById(id, includeImages, includeResponses));
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Void> patchClaim(
+            @RequestParam(required = false) Boolean isClosed,
+            @PathVariable String id
+            ){
+        if(isClosed != null) {
+            claimService.toggleClosed(id, isClosed);
+        }
+        return ResponseEntity.accepted().build();
     }
 }
