@@ -10,7 +10,7 @@ import org.springframework.web.client.RestTemplate;
 @AllArgsConstructor
 public class SignatureProcessingService {
     private final RestTemplate restTemplate = new RestTemplate();
-    private final String SIGNATURE_URL = "http://localhost:8000/signature/search-signature";
+    private final String SIGNATURE_URL = "http://localhost:8000/api/compare-signature";
 
     public ResponseEntity<String> verifyService(SignatureRequest signatureRequest) {
         HttpEntity<SignatureRequest> entity = new HttpEntity<>(signatureRequest);

@@ -166,41 +166,6 @@ public class PaymentContractService {
         return paymentRepository.save(payment);
     }
 
-//    private List<PaymentPlan> generatePaymentPlans(
-//            double totalAmount, String planDuration, Date createdAtDate , String paymentId
-//    ) {
-//
-//        validateAmount(totalAmount);
-//        List<PaymentPlan> paymentPlans = new ArrayList<>();
-//        int numberOfMonths = getNumberOfMonths(planDuration);
-//        double amountDue = totalAmount / numberOfMonths;
-//
-//        LocalDate createdAtLocalDate = createdAtDate.toInstant()
-//                .atZone(ZoneId.systemDefault())
-//                .toLocalDate();
-//
-//        for (int i = 1; i <= numberOfMonths; i++) {
-//            LocalDate dueDate = createdAtLocalDate.plusMonths(i);
-//
-//            PaymentPlan plan = PaymentPlan.builder()
-//                    .month(i)
-//                    .amountDue(amountDue)
-//                    .amountPaid(0.0)
-//                    .paymentStatus(PaymentStatus.Pending)
-//                    .dueDate(
-//                            Date.from(dueDate.atStartOfDay
-//                                    (ZoneId.systemDefault()).toInstant()))
-//                    .paymentDate(null)
-//                    .paymentContractId(paymentId)
-//                    .build();
-//
-//            paymentPlans.add(plan);
-//        }
-//
-//        paymentPlanRepository.saveAll(paymentPlans);
-//
-//        return paymentPlans;
-//    }
 
 
     public void archivePaymentContract(PaymentContract paymentContract){

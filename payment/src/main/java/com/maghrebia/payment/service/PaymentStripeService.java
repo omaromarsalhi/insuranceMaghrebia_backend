@@ -29,7 +29,7 @@ public class PaymentStripeService {
         List<String> paymentMethodTypes = List.of("card");
         params.put("payment_method_types", paymentMethodTypes);
         params.put("payment_method", paymentIntentDto.getPaymentMethodId());
-        params.put("capture_method", "manual"); // Authorize but don't capture
+        params.put("capture_method", "manual");
 
         PaymentIntent paymentIntent = PaymentIntent.create(params);
         return new PaymentIntentResponse(paymentIntent.getClientSecret());
