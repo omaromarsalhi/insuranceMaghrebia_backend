@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+<<<<<<< HEAD
   <component name="Black">
     <option name="sdkName" value="Python 3.12 (insuranceMaghrebia_backend)" />
   </component>
@@ -23,6 +24,9 @@
     </option>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_22" default="true" project-jdk-name="jbr-17" project-jdk-type="JavaSDK">
+=======
+  <component name="ProjectRootManager">
+>>>>>>> aba9580b4955b85edb796c9e8bddaf0f996053f1
     <output url="file://$PROJECT_DIR$/out" />
   </component>
 </project>
