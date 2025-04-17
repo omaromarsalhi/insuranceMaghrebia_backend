@@ -12,10 +12,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 import json
+import uvicorn
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:4200"],
+    allow_origins=["http://localhost:4300"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -40,12 +41,6 @@ the result should be in simple json form.
 the language used should be french
 """
 model = genai.GenerativeModel('gemini-2.0-flash')  # or 'gemini-pro-vision' for image-specific tasks
-
-#Load the image
-image_path = "./images/image.png"  # Adjust path if needed
-image = Image.open(image_path)
-
-
 
 
 class ImageRequest(BaseModel):
@@ -78,4 +73,7 @@ async def process_image(request: ImageRequest):
             status_code=400,
             detail=f"Error processing image: {str(e)}"
         )
+        
+if __name__ == "__main__":
+    uvicorn.run(app, host="127.0.0.1", port=8000)
 #Generate a detailed description

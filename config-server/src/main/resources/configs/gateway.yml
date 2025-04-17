@@ -78,6 +78,20 @@ spring:
           predicates:
             - Path=/api/v1/complaint/**
 
+        - id: claim
+          uri: lb:http://CLAIM
+          predicates:
+            - Path=/api/v1/claim/**
+
+        - id: incidentType
+          uri: lb:http://CLAIM
+          predicates:
+            - Path=/api/v1/incident_type/**
+
+        - id: response
+          uri: lb:http://CLAIM
+          predicates:
+            - Path=/api/v1/response/**
 
 application:
   security:
