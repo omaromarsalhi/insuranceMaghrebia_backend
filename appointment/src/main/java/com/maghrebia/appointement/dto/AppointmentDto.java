@@ -19,6 +19,6 @@ public record AppointmentDto(
         Long cin,
         OfferType offerType,
         GeneratedQuoteDto generatedQuote,
-        AutomobileDto offerDetails
+        Object offerDetails
 ) {
 }

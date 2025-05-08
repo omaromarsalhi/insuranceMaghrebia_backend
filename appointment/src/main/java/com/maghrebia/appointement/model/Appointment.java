@@ -35,6 +35,10 @@ public class Appointment {
     @JoinColumn(name = "automobile_id")
     private Automobile automobile;
 
+    @OneToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "health_id")
+    private Health health;
+
     @ManyToOne(targetEntity = GeneratedQuote.class,cascade = CascadeType.PERSIST)
     @JoinColumn(name = "generatedQuote_id")
     private GeneratedQuote generatedQuote;

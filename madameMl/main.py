@@ -2,12 +2,21 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 import pandas as pd
 from joblib import load
+from fastapi.middleware.cors import CORSMiddleware
 
 # Load the pre-trained KNN model and preprocessor
 knn = load('knn_model.joblib')
 preprocessor = load('preprocessor.joblib')
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 class InsuranceData(BaseModel):
@@ -16,7 +25,6 @@ class InsuranceData(BaseModel):
     weight: int
     bmi: float
     hereditary_diseases: int
-    no_of_dependents: int
     smoker: int
     bloodpressure: int
     diabetes: int
