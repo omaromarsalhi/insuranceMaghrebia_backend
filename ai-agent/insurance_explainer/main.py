@@ -166,7 +166,7 @@ async def websocket_endpoint(websocket: WebSocket):
                         received_data_from_api = fetch_vin_data(user_message['value'])
 
                         for factor in vin_list[0:-1]:
-                            ai_response = await talk_to_ai({'factor': factor, 'value': received_data_from_api[factor]})
+                            ai_response = await talk_to_ai({'factor': factor, 'value': received_data_from_api[factor],'typeQ':user_message['typeQ']})
                             await manager.send_personal_json(ai_response, session_id)
 
                         ai_response = await talk_to_ai(
@@ -180,12 +180,12 @@ async def websocket_endpoint(websocket: WebSocket):
 
                         for factor in weather_list:
                             ai_response = await talk_to_ai(
-                                {'factor': factor, 'value': get_weather_features(received_data_from_api, factor)})
+                                {'factor': factor, 'value': get_weather_features(received_data_from_api, factor),'typeQ':user_message['typeQ']})
                             await manager.send_personal_json(ai_response, session_id)
 
                         value = 'It is an urban area' if received_data_from_api[
                             'isUrbanArea'] else 'No, it is not an urban area'
-                        ai_response = await talk_to_ai({'factor': 'geographic_factors', 'value': value})
+                        ai_response = await talk_to_ai({'factor': 'geographic_factors', 'value': value,'typeQ':user_message['typeQ']})
                         await manager.send_personal_json(ai_response, session_id)
 
 

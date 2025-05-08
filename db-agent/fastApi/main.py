@@ -3,9 +3,6 @@ from contextlib import asynccontextmanager
 import uuid
 import os
 from dotenv import load_dotenv
-
-load_dotenv()
-
 from colorama import Fore
 from fastapi import FastAPI
 from llama_index.core.memory import ChatMemoryBuffer
@@ -15,6 +12,8 @@ from starlette.websockets import WebSocket, WebSocketDisconnect
 from fastApi.orchestration.MyMistralAI import MyMistralAI
 from fastApi.orchestration.workflow import OrchestratorAgent, ProgressEvent
 from fastApi.sql_agent.SQLAgent import SQLAgent
+
+load_dotenv()
 
 # Load configuration
 

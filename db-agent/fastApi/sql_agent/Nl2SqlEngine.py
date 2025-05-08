@@ -15,7 +15,7 @@ from fastApi.utils import Config
 class Nl2SqlEngine:
     """Handles the LlamaIndex setup and query execution."""
 
-    def __init__(self, config: Config, database: Database):
+    def __init__(self, database: Database):
         load_dotenv()
         self.gemini_key = os.getenv('gemini_key')
         Settings.llm = GoogleGenAI(api_key=self.gemini_key,temperature=0.0)

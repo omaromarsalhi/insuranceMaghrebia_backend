@@ -8,10 +8,10 @@ class Database:
     """Handles database connections and setup."""
     def __init__(self):
         self.db_host = os.getenv('host')
-        self.db_user = os.getenv('DATABASE', 'user')
-        self.db_password = os.getenv('DATABASE', 'password')
-        self.db_port = os.getenv('DATABASE', 'port')
-        self.db_name = os.getenv('DATABASE', 'db_name')
+        self.db_user = os.getenv('user')
+        self.db_password = os.getenv( 'password')
+        self.db_port = os.getenv('port')
+        self.db_name = os.getenv('db_name')
         self.engine = self.create_engine()
 
     def create_engine(self):

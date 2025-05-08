@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 from prompts import form_generate_prompt
 
-
+load_dotenv()
 # Load environment variables
 
 class FormBuilderAgent:

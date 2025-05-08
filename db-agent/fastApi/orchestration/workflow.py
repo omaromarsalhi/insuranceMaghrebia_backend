@@ -25,6 +25,7 @@ from llama_index.core.workflow.events import InputRequiredEvent, HumanResponseEv
 from fastApi.orchestration.MyMistralAI import MyMistralAI
 from fastApi.orchestration.utils import FunctionToolWithContext
 
+
 load_dotenv()
 
 # os.environ["GOOGLE_API_KEY"] = config.get('API', 'gemini_key')
@@ -114,12 +115,7 @@ DEFAULT_ORCHESTRATOR_PROMPT = (
     "Current user state:\n{user_state_str}\n\n"
 
     "Response Requirements:\n"
-    "- SUCCESS: TRANSFER_TO:[agent_name]\n"
-    "- ERROR: ERROR_CODE:[code] ERROR_MSG:[brief reason]\n"
-    "- NO OTHER OUTPUT ALLOWED\n\n"
-
-    "Example successful response:\n"
-    "TRANSFER_TO:SQL_Execution_Agent\n\n"
+    "- SUCCESS: Query executed successfuly\n"
 
     "Example error response:\n"
     "ERROR_CODE:403 ERROR_MSG:Missing database connection"
@@ -159,7 +155,8 @@ class OrchestratorAgent(Workflow):
         active_speaker = await ctx.get("active_speaker", default="")
         user_msg = ev.get("user_msg")
         agent_configs = ev.get("agent_configs", default=[])
-        llm: LLM = ev.get("llm", default=MyMistralAI())
+
+        llm: LLM = ev.get("llm")
 
         chat_history = ev.get("chat_history", default=[])
         initial_state = ev.get("initial_state", default={})
@@ -376,6 +373,7 @@ class OrchestratorAgent(Workflow):
             agent_context_str=agent_context_str, user_state_str=user_state_str
         )
 
+
         # system_prompt = self.orchestrator_prompt.format(
         #     agent_context_str=agent_context_str, user_state_str=user_state_str
         # )
@@ -404,7 +402,11 @@ class OrchestratorAgent(Workflow):
             )
 
         tool_call = tool_calls[0]
-        selected_agent = tool_call.tool_kwargs["agent_name"]
+        try:
+            selected_agent = tool_call.tool_kwargs["agent_name"]
+        except KeyError:
+            selected_agent = 'End-to-End SQL Processor'
+        print('selected agnet name:',selected_agent)
         await ctx.set("active_speaker", selected_agent)
 
         ctx.write_event_to_stream(
