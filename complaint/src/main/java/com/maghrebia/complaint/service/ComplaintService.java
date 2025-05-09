@@ -22,7 +22,7 @@ import java.util.Optional;
 public class ComplaintService {
 
     private final ComplaintRepository complaintRepository;
-    private final UserRepository userRepository;
+/*    private final UserRepository userRepository;*/
     private final AiService aiService;
     private final UtilisService utilisService;
 
@@ -33,9 +33,9 @@ public class ComplaintService {
                 throw new IllegalArgumentException("User ID cannot be null/empty");
             }
 
-            if (userRepository.findById(userId) == null) {
+/*            if (userRepository.findById(userId) == null) {
                 throw new UserNotFoundException("User not found with ID: " + userId);
-            }
+            }*/
             if (complaint == null || !StringUtils.hasText(complaint.getComplaintDescription())) {
                 throw new InvalidComplaintException("Complaint description is required");
             }
@@ -80,9 +80,9 @@ public class ComplaintService {
 
     public List<Complaint> getComplaintByUserId(String userId) {
         try {
-            if (!userRepository.existsById(userId)) {
+/*            if (!userRepository.existsById(userId)) {
                 throw new UserNotFoundException("User not found with ID: " + userId);
-            }
+            }*/
 
             List<Complaint> complaints = complaintRepository.findAllByUserId(userId);
 
@@ -95,8 +95,6 @@ public class ComplaintService {
             throw new RuntimeException("Database error while fetching user complaints", e);
         }
     }
-
-
 
     public List<Complaint> getComplaintsByType(ComplaintType complaintType) {
         try {
