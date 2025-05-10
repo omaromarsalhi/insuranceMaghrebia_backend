@@ -32,7 +32,6 @@ public class AppointmentService {
 
         Appointment appointmentEntity = AppointmentMapper.toEntity(appointment);
 //        appointmentEntity.setAutomobile(savedAutomobile);
-        System.out.println(appointmentEntity);
         appointmentRepository.save(appointmentEntity);
     }
     public List<AppointmentDto> getAppointments() {
