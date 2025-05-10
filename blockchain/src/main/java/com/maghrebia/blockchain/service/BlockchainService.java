@@ -19,7 +19,7 @@ import org.springframework.web.client.RestTemplate;
 public class BlockchainService {
 
     private final RestTemplate restTemplate = new RestTemplate();
-    private final String BLOCKCHAIN_API_URL = "http://localhost:3000/blockchain";
+    private final String BLOCKCHAIN_API_URL = "https://cf15-41-226-79-183.ngrok-free.app/blockchain";
 
     public Blockchain getPayment(String paymentId) {
         // Update the URL to use paymentId instead of index

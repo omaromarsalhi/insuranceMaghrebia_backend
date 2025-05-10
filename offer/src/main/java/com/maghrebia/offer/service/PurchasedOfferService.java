@@ -3,6 +3,7 @@ package com.maghrebia.offer.service;
 
 import com.maghrebia.offer.dto.PurchasedOfferRequest;
 import com.maghrebia.offer.mapper.PurchasedOfferMapper;
+import com.maghrebia.offer.model.PurchasedOffer;
 import com.maghrebia.offer.repository.OfferFormRepository;
 import com.maghrebia.offer.repository.PurchasedOfferRepository;
 import lombok.AllArgsConstructor;
@@ -22,13 +23,12 @@ public class PurchasedOfferService {
     private final OfferFormRepository offerFormRepository;
 
 
-    public String create(PurchasedOfferRequest request) {
+    public PurchasedOffer create(PurchasedOfferRequest request) {
         var testResult = verifyPurchasedOfferData(request);
         if (testResult) {
-            purchasedOfferRepository.save(PurchasedOfferMapper.toEntity(request));
-            return "success";
+            return purchasedOfferRepository.save(PurchasedOfferMapper.toEntity(request));
         }
-        return "error";
+        throw new RuntimeException("Invalid data");
     }
 
     private boolean verifyPurchasedOfferData(PurchasedOfferRequest request) {

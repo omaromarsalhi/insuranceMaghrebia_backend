@@ -7,7 +7,8 @@ public enum PlanDuration {
     ONE_MONTH(1, "1 month"),
     THREE_MONTHS(3, "3 months"),
     SIX_MONTHS(6, "6 months"),
-    ONE_YEAR(12, "1 year");
+    TWO_YEARS(24,"24 months"),
+    ONE_YEAR(12, "12 months");
 
     private final int months;
     private final String label;
