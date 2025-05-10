@@ -65,7 +65,7 @@ def extract_text_from_pdf(pdf_file):
 
 def analyze_with_gemini(resume_text, job: ModelRequest):
     """Analyze resume using Gemini API directly"""
-    model = genai.GenerativeModel('gemini-1.5-pro-latest')
+    model = genai.GenerativeModel('gemini-2.0-flash')
     
     job_type_rules = {
         "FULL_TIME": "Prioritize professional experience and production-grade projects",
