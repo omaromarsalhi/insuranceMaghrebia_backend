@@ -13,6 +13,6 @@ public class User {
     @Id
     private String id;
     @Indexed
-    private String firstName;
-    private String lastName;
+    private String firstname;
+    private String lastname;
 }
