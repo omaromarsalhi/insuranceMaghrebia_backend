@@ -62,6 +62,26 @@ spring:
           predicates:
             - Path=/api/v1/appointments/**
 
+        - id: payment
+          uri: lb://PAYMENT
+          predicates:
+            - Path=/api/v1/payment-contracts/**
+
+        - id: payment
+          uri: lb://PAYMENT
+          predicates:
+            - Path=/api/v1/payment-plan/**
+
+        - id: wallet-ins
+          uri: lb://WALLET-INS
+          predicates:
+            - Path=/api/v1/Wallet/**
+
+        - id: blockchain
+          uri: lb://BLOCKCHAIN
+          predicates:
+            - Path=/api/v1/blockchain/**
+
 
 
 
