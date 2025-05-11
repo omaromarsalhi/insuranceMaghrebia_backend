@@ -25,12 +25,21 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="appointement" target="17" />
+      <module name="blockchain" target="17" />
+      <module name="hr" target="17" />
       <module name="marketplace" target="17" />
+      <module name="offer" target="17" />
+      <module name="payment" target="17" />
+      <module name="quote-generator" target="17" />
+      <module name="signature-processing" target="17" />
       <module name="subscription" target="17" />
       <module name="tenderInvitation" target="17" />
       <module name="test" target="17" />
+      <module name="user" target="17" />
       <module name="userBehavior" target="17" />
       <module name="userTracking" target="17" />
+      <module name="wallet-ins" target="17" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
