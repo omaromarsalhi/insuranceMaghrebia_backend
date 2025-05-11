@@ -1,13 +1,7 @@
 package com.maghrebia.appointement.mapper;
 
-import com.maghrebia.appointement.dto.AppointmentDto;
-import com.maghrebia.appointement.dto.AutomobileDto;
-import com.maghrebia.appointement.dto.GeneratedQuoteDto;
-import com.maghrebia.appointement.dto.LocationDto;
-import com.maghrebia.appointement.model.Appointment;
-import com.maghrebia.appointement.model.Automobile;
-import com.maghrebia.appointement.model.GeneratedQuote;
-import com.maghrebia.appointement.model.Location;
+import com.maghrebia.appointement.dto.*;
+import com.maghrebia.appointement.model.*;
 
 public class AppointmentMapper {
 
@@ -24,7 +18,22 @@ public class AppointmentMapper {
                 .build();
     }
 
-    public static AppointmentDto toDto(Appointment appointment, AutomobileDto automobile,GeneratedQuoteDto generatedQuote) {
+    public static AppointmentDto toDto(Appointment appointment, HealthDto healthDto, GeneratedQuoteDto generatedQuote) {
+        return AppointmentDto.builder()
+                .appointmentId(appointment.getAppointmentId())
+                .firstName(appointment.getFirstName())
+                .lastName(appointment.getLastName())
+                .email(appointment.getEmail())
+                .phone(appointment.getPhone())
+                .dob(appointment.getDob())
+                .cin(appointment.getCin())
+                .offerType(appointment.getOfferType())
+                .offerDetails(healthDto)
+                .generatedQuote(generatedQuote)
+                .build();
+    }
+
+    public static AppointmentDto toDto(Appointment appointment, AutomobileDto automobile, GeneratedQuoteDto generatedQuote) {
         return AppointmentDto.builder()
                 .appointmentId(appointment.getAppointmentId())
                 .firstName(appointment.getFirstName())
@@ -48,13 +57,50 @@ public class AppointmentMapper {
         appointment.setDob(dto.dob());
         appointment.setCin(dto.cin());
         appointment.setOfferType(dto.offerType());
-        appointment.setAutomobile(toOfferDetailsEntity(dto.offerDetails()));
+        if (dto.offerType().equals(OfferType.AUTO)) {
+            if (dto.offerDetails() != null)
+                appointment.setAutomobile(toAutoEntity((AutomobileDto) dto.offerDetails()));
+            else
+                appointment.setAutomobile(null);
+        }
+
+        if (dto.offerType().equals(OfferType.HEALTH)) {
+            if (dto.offerDetails() != null)
+                appointment.setHealth(toHealthEntity(ObjectMapper.convertObjectToHealthDto(dto.offerDetails())));
+            else
+                appointment.setHealth(null);
+        }
+
         appointment.setGeneratedQuote(toGeneratedQuoteEntity(dto.generatedQuote()));
         return appointment;
     }
 
+    public static Health toHealthEntity(HealthDto dto) {
+        System.out.println(dto);
+        Health health = new Health();
+        health.setAge(dto.age());
+        health.setGender(dto.gender());
+        health.setBmi(dto.bmi());
+        health.setAlcohol(dto.alcohol());
+        health.setDeductible(dto.deductible());
+        health.setExercise(dto.exercise());
+        health.setAddOns(dto.addOns());
+        health.setGovernorate(dto.governorate());
+        health.setOccupation(dto.occupation());
+        health.setFamilyHistory(dto.familyHistory());
+        health.setSmoking(dto.smoking());
+        health.setChronicIllnesses(dto.chronicIllnesses());
+        health.setSurgeries(dto.surgeries());
+        health.setHospitalizations(dto.hospitalizations());
+        health.setTravelFrequency(dto.travelFrequency());
+        health.setVaccinations(dto.vaccinations());
+        health.setPlanType(dto.planType());
+        health.setPreExistingConditions(dto.preExistingConditions());
+        return health;
+    }
 
-    public static Automobile toOfferDetailsEntity(AutomobileDto dto) {
+
+    public static Automobile toAutoEntity(AutomobileDto dto) {
         Automobile automobile = new Automobile();
         automobile.setAccidentHistory(dto.accidentHistory());
         automobile.setCoverageType(dto.coverageType());
@@ -66,6 +112,29 @@ public class AppointmentMapper {
         automobile.setDefensiveDrivingCourse(dto.defensiveDrivingCourse());
         automobile.setLocation(toLocationEntity(dto.addressInfo()));
         return automobile;
+    }
+
+    public static HealthDto toHealthDto(Health entity) {
+        return HealthDto.builder()
+                .addOns(entity.getAddOns())
+                .governorate(entity.getGovernorate())
+                .occupation(entity.getOccupation())
+                .age(entity.getAge())
+                .bmi(entity.getBmi())
+                .alcohol(entity.getAlcohol())
+                .deductible(entity.getDeductible())
+                .exercise(entity.getExercise())
+                .hospitalizations(entity.getHospitalizations())
+                .preExistingConditions(entity.getPreExistingConditions())
+                .smoking(entity.getSmoking())
+                .chronicIllnesses(entity.getChronicIllnesses())
+                .surgeries(entity.getSurgeries())
+                .hospitalizations(entity.getHospitalizations())
+                .travelFrequency(entity.getTravelFrequency())
+                .vaccinations(entity.getVaccinations())
+                .planType(entity.getPlanType())
+                .preExistingConditions(entity.getPreExistingConditions())
+                .build();
     }
 
 

@@ -25,5 +25,7 @@ public class PurchasedOffer {
 
     private String offerId;
 
+    private String userId;
+
     private List<PurchasedOfferData> data;
 }

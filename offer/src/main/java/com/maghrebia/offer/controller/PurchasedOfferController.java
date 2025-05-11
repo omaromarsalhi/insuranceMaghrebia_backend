@@ -4,6 +4,7 @@ package com.maghrebia.offer.controller;
 import com.maghrebia.offer.dto.OfferFormRequest;
 import com.maghrebia.offer.dto.OfferFormResponse;
 import com.maghrebia.offer.dto.PurchasedOfferRequest;
+import com.maghrebia.offer.model.PurchasedOffer;
 import com.maghrebia.offer.service.PurchasedOfferService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ public class PurchasedOfferController {
     private final PurchasedOfferService purchasedOfferService;
 
     @PostMapping("/create")
-    public ResponseEntity<String> create(@RequestBody PurchasedOfferRequest request) {
+    public ResponseEntity<PurchasedOffer> create(@RequestBody PurchasedOfferRequest request) {
         return ResponseEntity.ok(purchasedOfferService.create(request));
     }
 }

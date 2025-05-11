@@ -18,6 +18,8 @@ public record PurchasedOfferRequest(
 
         String offerId,
 
+        String userId,
+
         List<PurchasedOfferDataDto> data
 ) {
 }

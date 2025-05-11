@@ -13,14 +13,29 @@ public class RiskConstants {
             "Premium", 1600.0f
     );
 
-    public static final List<String> RURAL_GOVERNORATES = List.of("Kasserine", "Gafsa", "Tataouine");
+    public static final List<String> RURAL_GOVERNORATES = List.of(
+            "Kasserine",
+            "Gafsa",
+            "Tataouine",
+            "Kebili",
+            "Siliana",
+            "Le Kef",
+            "Jendouba",
+            "Sidi Bouzid",
+            "Beja",
+            "Zaghouan",
+            "Tozeur"
+    );
 
     public static final Map<String, Float> ADDON_PRICES = Map.of(
             "Dental", 150.0f,
             "Vision", 100.0f,
-            "Epidemic Coverage", 200.0f,
-            "Mental Health", 80.0f
+            "Maternity/Paternity", 180.0f,
+            "Mental Health", 80.0f,
+            "Critical Illness", 220.0f,
+            "International", 250.0f
     );
+
 
     public static final Map<Integer, Float> DEDUCTIBLE_DISCOUNTS = Map.of(
             500, 0.0f,

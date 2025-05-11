@@ -1,3 +1,6 @@
+import os
+
+from dotenv import load_dotenv
 from llama_index.core import SQLDatabase, VectorStoreIndex, Settings
 from llama_index.core.indices.struct_store import SQLTableRetrieverQueryEngine, NLSQLTableQueryEngine
 from llama_index.core.objects import SQLTableNodeMapping, SQLTableSchema, ObjectIndex
@@ -12,9 +15,9 @@ from fastApi.utils import Config
 class Nl2SqlEngine:
     """Handles the LlamaIndex setup and query execution."""
 
-    def __init__(self, config: Config, database: Database):
-
-        self.gemini_key = config.get('API', 'gemini_key')
+    def __init__(self, database: Database):
+        load_dotenv()
+        self.gemini_key = os.getenv('gemini_key')
         Settings.llm = GoogleGenAI(api_key=self.gemini_key,temperature=0.0)
         Settings.embed_model = GoogleGenAIEmbedding(api_key=self.gemini_key)
 

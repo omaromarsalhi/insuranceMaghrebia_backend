@@ -27,6 +27,7 @@ public class OfferCategoryService {
 
     public List<CategoryResponse> getAll() {
         var allCategories = offerCategoryRepository.findAll();
+        System.out.println(allCategories);
         return allCategories.stream()
                 .map(CategoryMapper::toCategoryResponse)
                 .toList();

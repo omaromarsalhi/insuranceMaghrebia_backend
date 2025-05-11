@@ -16,23 +16,11 @@ import java.util.stream.Collectors;
 
 @Component
 public class PurchasedOfferMapper {
-//    public static PurchasedOfferResp toDto(PurchasedOffer entity) {
-//        return new PurchasedOfferRequest(
-//                entity.getFormId(),
-//                entity.getOfferId(),
-//                entity.getData().stream()
-//                        .map(data -> PurchasedOfferDataDto.builder()
-//                                .fieldLabel(data.fieldLabel())
-//                                .fieldValue(data.fieldValue())
-//                                .build())
-//                        .collect(Collectors.toList())
-//        );
-//    }
-
     public static PurchasedOffer toEntity(PurchasedOfferRequest request) {
         return PurchasedOffer.builder()
                 .formId(request.formId())
                 .offerId(request.offerId())
+                .userId(request.userId())
                 .data(request.data().stream()
                         .map(dto -> new PurchasedOfferData(dto.fieldLabel(), dto.fieldType(), dto.fieldValue()))
                         .collect(Collectors.toList()))

@@ -50,7 +50,7 @@ prompt = PromptTemplate(prompt_template_str)
 vin_list = ['grossVehicleWeightRating', 'modelYear', 'displacementL', 'safetyFeatures']
 weather_list = ['precipitation', 'temperatureVariation','windRisk']
 
-INSURANCE_RULES = {
+AUTO_INSURANCE_RULES = {
     "drivingExperience": {
         "calculation": "-5% per year of experience (max -20%)",
         "allowed_impacts": ["-5%", "-10%", "-15%", "-20%"],

@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from dotenv import load_dotenv
 from llama_index.core.workflow import Context
 from sqlalchemy import text
 from fastApi.sql_agent.Nl2SqlEngine import Nl2SqlEngine
@@ -8,7 +9,6 @@ from fastApi.utils.Config import Config
 from fastApi.utils.Database import Database
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import sessionmaker
-
 from fastApi.utils.utils import serialize
 
 
@@ -31,11 +31,11 @@ async def connect_to_db(ctx: Context) -> str:
     Returns:
         str: A message confirming the success of the database connection.
     """
-    config = Config()
     ctx.write_event_to_stream(ProgressEvent(msg="connecting to the database..."))
-    database = Database(config)
-    await ctx.set("config", config)
+    load_dotenv()
+    database = Database()
     await ctx.set("database", database)
+    print('database connection established')
     return "Database connection established."
 
 
@@ -46,10 +46,10 @@ async def init_nl2sql_engine(ctx: Context) -> str:
         str: A message confirming the initialization of the NL2SQL engine.
     """
     ctx.write_event_to_stream(ProgressEvent(msg="initializing the query engine..."))
-    config = await ctx.get("config")
     database = await ctx.get("database")
-    nl2sql_engine = Nl2SqlEngine(config, database)
+    nl2sql_engine = Nl2SqlEngine(database)
     await ctx.set("nl2sql_engine", nl2sql_engine)
+    print("NL2SQL engine initialized")
     return "NL2SQL engine initialized."
 
 
@@ -60,7 +60,11 @@ async def get_SQL_from_user_query(ctx: Context, user_query: str):
        Returns:
            str: The generated SQL query as a string.
    """
-    nl2sql_engine = await ctx.get("nl2sql_engine")
+    try:
+        nl2sql_engine = await ctx.get("nl2sql_engine")
+    except Exception as err:
+        print(err)
+        return 'no sql egine initialized'
     ctx.write_event_to_stream(ProgressEvent(msg="generating SQL query..."))
     query_result = nl2sql_engine.query(user_query)
     print(query_result)

@@ -8,30 +8,78 @@ spring:
           enabled: true
       routes:
         - id: offer
-          uri: lb:http://OFFER
+          uri: lb://OFFER
           predicates:
             - Path=/api/v1/offer-categories/**
 
         - id: offer
-          uri: lb:http://OFFER
+          uri: lb://OFFER
           predicates:
             - Path=/api/v1/offers/**
 
         - id: offer
-          uri: lb:http://OFFER
+          uri: lb://OFFER
+          predicates:
+            - Path=/api/v1/offer_forms/**
+
+        - id: offer
+          uri: lb://OFFER
           predicates:
             - Path=/api/v1/images/**
 
+        - id: offer
+          uri: lb://OFFER
+          predicates:
+            - Path=/api/v1/purchased_offers/**
 
         - id: quote-generator
-          uri: lb:http://QUOTE-GENERATOR
+          uri: lb://QUOTE-GENERATOR
           predicates:
             - Path=/api/v1/automobile/**
 
         - id: quote-generator
-          uri: lb:http://QUOTE-GENERATOR
+          uri: lb://QUOTE-GENERATOR
+          predicates:
+            - Path=/api/v1/vin/**
+
+        - id: quote-generator
+          uri: lb://QUOTE-GENERATOR
+          predicates:
+            - Path=/api/v1/geoweather/**
+
+        - id: quote-generator
+          uri: lb://QUOTE-GENERATOR
           predicates:
             - Path=/api/v1/health/**
+
+        - id: quote-generator
+          uri: lb://QUOTE-GENERATOR
+          predicates:
+            - Path=/api/v1/who/**
+
+        - id: appointment
+          uri: lb://APPOINTMENT
+          predicates:
+            - Path=/api/v1/appointments/**
+        - id: payment
+          uri: lb://PAYMENT
+          predicates:
+            - Path=/api/v1/payment-contracts/**
+
+        - id: payment
+          uri: lb://PAYMENT
+          predicates:
+            - Path=/api/v1/payment-plan/**
+
+        - id: wallet-ins
+          uri: lb://WALLET-INS
+          predicates:
+            - Path=/api/v1/Wallet/**
+
+        - id: blockchain
+          uri: lb://BLOCKCHAIN
+          predicates:
+            - Path=/api/v1/blockchain/**
 
         - id: AUTHENTICATION
           uri: lb:http://USER
