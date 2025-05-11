@@ -9,15 +9,12 @@ from PyPDF2 import PdfReader
 from io import BytesIO
 import uvicorn
 
-# Load environment variables
 load_dotenv()
 api_key = os.getenv("GEMINI_API_KEY")
 genai.configure(api_key=api_key)
 
-# Create FastAPI app
 app = FastAPI()
 
-# Pydantic schema for job metadata (keep existing structure)
 class ModelRequest(BaseModel):
     title: str
     description: str
@@ -36,15 +33,12 @@ async def analyze_resume(
     file: UploadFile = File(...)
     ):
     try:
-        # Parse job JSON from string
         job_dict = json.loads(modelRequest)
         job = ModelRequest(**job_dict)
 
-        # Process PDF in memory
         pdf_content = await file.read()
         pdf_text = extract_text_from_pdf(BytesIO(pdf_content))
 
-        # Generate analysis using Gemini directly
         response = analyze_with_gemini(pdf_text, job)
         
         return {"result": response}

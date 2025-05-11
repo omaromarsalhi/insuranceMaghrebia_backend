@@ -22,7 +22,6 @@ public interface ClaimMapper {
     }
 
     @Mapping(source = "incidentTypeId", target = "incidentType", qualifiedByName = "mapIncidentType")
-    @Mapping(source = "userId", target = "user", qualifiedByName = "mapUser")
     @Mapping(target = "images", ignore = true)
     Claim toEntity(CreateClaimDTO dto);
 }

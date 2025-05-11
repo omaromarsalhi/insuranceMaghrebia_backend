@@ -23,8 +23,7 @@ public class Claim {
     String id;
     @DBRef
     IncidentType incidentType;
-    @DBRef
-    User user;
+    String userId;
     @DBRef
     List<Response> responses = new ArrayList<>();
     String title;

@@ -18,8 +18,7 @@ import java.time.LocalDateTime;
 public class Response {
     @Id
     String id;
-    @DBRef
-    User user;
+    String userId;
     String response;
     LocalDateTime respondedAt;
 }

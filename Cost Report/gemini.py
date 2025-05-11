@@ -49,11 +49,9 @@ class ImageRequest(BaseModel):
 @app.post("/process-image/")
 async def process_image(request: ImageRequest):
     try:
-        # Decode Base64 and convert to PIL Image
         image_data = base64.b64decode(request.image)
         pil_image = Image.open(BytesIO(image_data))
         
-        # Process with Gemini
         response = model.generate_content(
             [
                 encadrement.strip(),
@@ -76,4 +74,3 @@ async def process_image(request: ImageRequest):
         
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)
-#Generate a detailed description

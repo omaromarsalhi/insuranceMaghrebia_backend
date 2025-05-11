@@ -8,6 +8,5 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring", uses = UserMapper.class)
 public interface ResponseMapper {
 
-    @Mapping(source = "userId", target = "user", qualifiedByName = "mapUser")
     Response toEntity(CreateResponseDTO dto);
 }

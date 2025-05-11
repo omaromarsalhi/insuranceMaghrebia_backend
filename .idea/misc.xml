@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-<<<<<<< HEAD
   <component name="Black">
-    <option name="sdkName" value="Python 3.12 (insuranceMaghrebia_backend)" />
+    <option name="sdkName" value="Python 3.12 (insuranceMaghrebia_backend) (2)" />
   </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="MavenProjectsManager">
@@ -10,23 +9,24 @@
       <list>
         <option value="$PROJECT_DIR$/hr/pom.xml" />
         <option value="$PROJECT_DIR$/user/pom.xml" />
+        <option value="$PROJECT_DIR$/claim/pom.xml" />
         <option value="$PROJECT_DIR$/offer/pom.xml" />
         <option value="$PROJECT_DIR$/gateway/pom.xml" />
         <option value="$PROJECT_DIR$/payment/pom.xml" />
+        <option value="$PROJECT_DIR$/complaint/pom.xml" />
         <option value="$PROJECT_DIR$/discovery/pom.xml" />
         <option value="$PROJECT_DIR$/blockchain/pom.xml" />
+        <option value="$PROJECT_DIR$/userAction/pom.xml" />
         <option value="$PROJECT_DIR$/wallet-ins/pom.xml" />
         <option value="$PROJECT_DIR$/appointment/pom.xml" />
         <option value="$PROJECT_DIR$/config-server/pom.xml" />
+        <option value="$PROJECT_DIR$/authentication/target/maven-archiver/pom.properties" />
         <option value="$PROJECT_DIR$/quote-generator/pom.xml" />
         <option value="$PROJECT_DIR$/signature-processing/pom.xml" />
       </list>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_22" default="true" project-jdk-name="jbr-17" project-jdk-type="JavaSDK">
-=======
-  <component name="ProjectRootManager">
->>>>>>> aba9580b4955b85edb796c9e8bddaf0f996053f1
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="corretto-17" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
 </project>

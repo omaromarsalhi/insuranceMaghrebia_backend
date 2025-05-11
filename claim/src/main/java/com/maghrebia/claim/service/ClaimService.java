@@ -64,9 +64,9 @@ public class ClaimService {
             else {
                 if(claim.getResponses().isEmpty())
                     claim.setStatus(ClaimStatus.NEW);
-                else if(claim.getResponses().get(claim.getResponses().size()-1).getUser().getId().equals("67c89296b3026f2d6ba56cfc")) // last response is admin
+                else if(claim.getResponses().get(claim.getResponses().size()-1).getUserId().equals("67c89296b3026f2d6ba56cfc")) // last response is admin
                     claim.setStatus(ClaimStatus.AWAITING_RESPONSE);
-                else if(claim.getResponses().get(claim.getResponses().size()-1).getUser().getId().equals("67b70e8dcb390f459e59930f")) // last response is 7amadi
+                else if(claim.getResponses().get(claim.getResponses().size()-1).getUserId().equals("67b70e8dcb390f459e59930f")) // last response is 7amadi
                     claim.setStatus(ClaimStatus.OPEN);
 
             }
