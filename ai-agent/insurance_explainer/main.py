@@ -6,8 +6,10 @@ import json
 import uuid
 import requests
 
-from auto_variables import vin_list, weather_list
-from chat_bot import ChatBotManager
+from insurance_explainer.chat_bot import ChatBotManager
+
+from insurance_explainer.auto_variables import vin_list, weather_list
+# from chat_bot import ChatBotManager
 
 app = FastAPI()
 

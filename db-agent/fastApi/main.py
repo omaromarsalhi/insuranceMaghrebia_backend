@@ -9,9 +9,9 @@ from llama_index.core.memory import ChatMemoryBuffer
 from starlette.middleware.cors import CORSMiddleware
 from starlette.websockets import WebSocket, WebSocketDisconnect
 
-from fastApi.orchestration.MyMistralAI import MyMistralAI
-from fastApi.orchestration.workflow import OrchestratorAgent, ProgressEvent
-from fastApi.sql_agent.SQLAgent import SQLAgent
+from orchestration.MyMistralAI import MyMistralAI
+from orchestration.workflow import OrchestratorAgent, ProgressEvent
+from sql_agent.SQLAgent import SQLAgent
 
 load_dotenv()
 
@@ -20,7 +20,7 @@ load_dotenv()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-
+    print(os.getenv("mistral_key"))
     app.state.llm = MyMistralAI(api_key=os.getenv("mistral_key"))
     app.state.agent_configs = [SQLAgent()]
     app.state.sessions = {}
@@ -150,5 +150,6 @@ if __name__ == "__main__":
         "main:app",
         host="0.0.0.0",
         port=9200,
-        reload=True
+        reload=False
+
     )
